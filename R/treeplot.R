@@ -613,6 +613,7 @@ add_cladelab <- function(p, nWords, label_format_cladelab,
                          fontsize, group_color, cluster_color, 
                          pdata, extend, hilight, align) {
     # align <- getOption("enriplot.treeplot.align", default = "both")
+    cluster_color <- factor(names(roots), levels = levels(cluster_color))
     cluster_label <- sapply(cluster_color, get_wordcloud, ggData = pdata,
                         nWords = nWords)
     label_func_cladelab <- default_labeller(label_format_cladelab)
