@@ -34,7 +34,7 @@ get_enrichplot_color <- function(n = 2) {
 ##' @param name name of the color legend
 ##' @param .fun force to use user provided color scale function
 ##' @param reverse whether reverse the color scheme, default is TRUE as it is more significant for lower pvalue
-##' @param log_transform whether or not to log-transform the color scale, default is TRUE as p-values operate over a wide range of orders of magnitude
+##' @param transform transform the color scale, default is "log10" as p-values operate over a wide range of orders of magnitude, set to 'identity' to disable the transformation
 ##' @param ... additional parameter that passed to the color scale function
 ##' @return a color scale
 ##' @importFrom ggplot2 scale_fill_continuous
@@ -44,7 +44,7 @@ get_enrichplot_color <- function(n = 2) {
 ##' @export
 set_enrichplot_color <- function(colors = get_enrichplot_color(2), 
                                 type = "color", name = NULL, .fun = NULL, 
-                                reverse = TRUE, log_transform = TRUE, ...) {
+                                reverse = TRUE, transform = 'log10', ...) {
 
     type <- match.arg(type, c("color", "colour", "fill"))
     if (!reverse) colors = rev(colors)
@@ -79,9 +79,7 @@ set_enrichplot_color <- function(colors = get_enrichplot_color(2),
 
     params$guide <- guide_colorbar(reverse=reverse, order=1)
     params$name <- name # no legend name setting by default as 'name = NULL'
-    if (log_transform) {
-        params$transform <- "log10"
-    }
+    params$transform <- transform
 
     params <- modifyList(params, list(...))
 

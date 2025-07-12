@@ -10,6 +10,7 @@ set_enrichplot_color(
   name = NULL,
   .fun = NULL,
   reverse = TRUE,
+  transform = "log10",
   ...
 )
 }
@@ -23,6 +24,8 @@ set_enrichplot_color(
 \item{.fun}{force to use user provided color scale function}
 
 \item{reverse}{whether reverse the color scheme, default is TRUE as it is more significant for lower pvalue}
+
+\item{transform}{transform the color scale, default is "log10" as p-values operate over a wide range of orders of magnitude, set to 'identity' to disable the transformation}
 
 \item{...}{additional parameter that passed to the color scale function}
 }
