@@ -19,7 +19,7 @@ get_enrichplot_color <- function(n = 2) {
 
     if (n != 2 && n != 3) stop("'n' should be 2 or 3")
 
-    colors = c("#ec2b54", "#005087")
+    colors = c("#e06663", "#327eba")
     if (n == 2) return(colors)
 
     if (n == 3) return(c(colors[1], "white", colors[2]))
