@@ -1,5 +1,8 @@
-# enrichplot 1.29.1.001
+# enrichplot 1.29.2
 
++ update `treeplot` with two parameters, `leave_fontsize` and `clade_fontsize` (2025-07-12, Sat, #324, #325)
+  - remove the `fontsize` parameter as it only works for `clade_fontsize`
++ 'log10' transform for pvalue color scale by default (2025-07-12, Sat, #316)
 + introduce new parameters in `gseaplot2()` (2025-07-12, Sat)
   - `pvalue_table_columns`
   - `pvalue_table_rownames`

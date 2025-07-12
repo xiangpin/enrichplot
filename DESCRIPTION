@@ -1,12 +1,12 @@
 Package: enrichplot
 Title: Visualization of Functional Enrichment Result
-Version: 1.29.1.001
+Version: 1.29.2
 Authors@R: c(
     person(given = "Guangchuang", family = "Yu", email = "guangchuangyu@gmail.com",   role  = c("aut", "cre"), comment = c(ORCID = "0000-0002-6485-8781")),
     person(given = "Chun-Hui", family = "Gao", email = "gaospecial@gmail.com", role = "ctb", comment = c(ORCID = "0000-0002-1445-7939")))
 Description: The 'enrichplot' package implements several visualization methods for interpreting functional enrichment results obtained from ORA or GSEA analysis. 
     It is mainly designed to work with the 'clusterProfiler' package suite. All the visualization methods are developed based on 'ggplot2' graphics.
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 Imports:
     aplot (>= 0.2.1),
     DOSE (>= 3.31.2),

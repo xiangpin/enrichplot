@@ -27,7 +27,8 @@ treeplot.enrichResult(
   label_format = NULL,
   label_format_cladelab = 30,
   label_format_tiplab = NULL,
-  fontsize = 4,
+  leave_fontsize = 4,
+  clade_fontsize = 4,
   offset = rel(1),
   offset_tiplab = rel(1),
   hclust_method = "ward.D",
@@ -54,7 +55,8 @@ treeplot.compareClusterResult(
   label_format = NULL,
   label_format_cladelab = 30,
   label_format_tiplab = NULL,
-  fontsize = 4,
+  leave_fontsize = 4,
+  clade_fontsize = 4,
   offset = rel(1),
   pie = "equal",
   legend_n = 3,
@@ -105,8 +107,6 @@ Will be removed in the next version.}
 \item{label_format_tiplab}{label_format for tiplabs, a numeric value sets wrap length, 
 alternatively a custom function to format axis labels.
 Will be removed in the next version.}
-
-\item{fontsize}{The size of text, default is 4.}
 
 \item{offset}{rel object or numeric value, distance bar and tree,
 offset of bar and text from the clade, default is rel(1),
@@ -203,6 +203,8 @@ clusterPanel.params control the attributes of cluster panel, it can be referred 
         \item \code{legend_n} number of circle in legend.
         \item \code{colnames_angle} set the angle of colnames.
     }}
+
+\item{fontsize}{The size of text, default is 4.}
 }
 \value{
 ggplot object
