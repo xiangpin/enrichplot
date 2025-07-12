@@ -39,7 +39,7 @@ one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
 "JC"(Jaccard similarity coefficient) methods.}
 
 \item{semData}{GOSemSimDATA object, can be obtained through
-\link{godata} function in GOSemSim package.}
+\code{\link[GOSemSim]{godata}}.}
 
 \item{showCategory}{number of enriched terms to display, default value is 200.}
 }
@@ -53,7 +53,7 @@ The Jaccard correlation coefficient(JC) is used by default, and it applies to al
 When users want to calculate the correlation between GO terms or DO terms, they can also choose
 "Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from GOSemSim packages),
 and at this time, the user needs to provide `semData` parameter, which can be obtained through
-\link{godata} function in GOSemSim package.
+\code{\link[GOSemSim]{godata}}.
 }
 \examples{
 \dontrun{

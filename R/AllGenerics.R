@@ -106,7 +106,7 @@ setGeneric("emapplot",
 ##' When users want to calculate the correlation between GO terms or DO terms, they can also choose
 ##' "Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from GOSemSim packages),
 ##' and at this time, the user needs to provide `semData` parameter, which can be obtained through
-##' \link{godata} function in GOSemSim package.
+##' \code{\link[GOSemSim]{godata}}.
 ##' @title pairwise_termsim
 ##' @rdname pairwise_termsim
 ##' @param x enrichment result.
@@ -114,7 +114,7 @@ setGeneric("emapplot",
 ##' one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
 ##' "JC"(Jaccard similarity coefficient) methods.
 ##' @param semData GOSemSimDATA object, can be obtained through
-##' \link{godata} function in GOSemSim package.
+##' \code{\link[GOSemSim]{godata}}.
 ##' @param showCategory number of enriched terms to display, default value is 200.
 ##' @examples
 ##' \dontrun{

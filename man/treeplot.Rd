@@ -108,6 +108,10 @@ Will be removed in the next version.}
 alternatively a custom function to format axis labels.
 Will be removed in the next version.}
 
+\item{leave_fontsize}{The size of tiplabel, default is 4.}
+
+\item{clade_fontsize}{The size of cladelabel, default is 4.}
+
 \item{offset}{rel object or numeric value, distance bar and tree,
 offset of bar and text from the clade, default is rel(1),
 meaning 1 * 1.2 * x_range_of_tree plus distance_between_tree_and_tiplab
@@ -203,8 +207,6 @@ clusterPanel.params control the attributes of cluster panel, it can be referred 
         \item \code{legend_n} number of circle in legend.
         \item \code{colnames_angle} set the angle of colnames.
     }}
-
-\item{fontsize}{The size of text, default is 4.}
 }
 \value{
 ggplot object

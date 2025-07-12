@@ -46,7 +46,8 @@ setMethod("treeplot", signature(x = "compareClusterResult"),
 ##' meaning 1 * 1.2 * x_range_of_tree plus distance_between_tree_and_tiplab
 ##' (1 * (1.2 * x_range_of_tree + distance_between_tree_and_tiplab)).
 ##' Will be removed in the next version.
-##' @param fontsize The size of text, default is 4.
+##' @param leave_fontsize The size of tiplabel, default is 4.
+##' @param clade_fontsize The size of cladelabel, default is 4.
 ##' @param hclust_method Method of hclust. This should be (an unambiguous abbreviation of) one of "ward.D", 
 ##' "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC).
 ##' Will be removed in the next version.
@@ -580,7 +581,7 @@ treeplot.compareClusterResult <-  function(x,
             # coord_equal(xlim = xlim)
         p <- ggtree::gheatmap(p, ID_Cluster_mat, colnames_angle = colnames_angle) + 
             # scale_fill_continuous(trans = "log10", name = color) +
-            set_enrichplot_color(type = "fill", trans = "log10", name = color)
+            set_enrichplot_color(type = "fill", transform = "log10", name = color)
             
     }
 
@@ -599,7 +600,7 @@ treeplot.compareClusterResult <-  function(x,
                        pwidth = 0.06*ncol(ID_Cluster_mat),
                        axis.params = list(axis = "x", text.size = 3, line.alpha = 0, text.angle = colnames_angle)) +
             # scale_colour_continuous(trans = "log10", name = color) + 
-            set_enrichplot_color(trans = "log10", name = color)
+            set_enrichplot_color(transform = "log10", name = color)
             
     }
     p + ggtree::hexpand(ratio = hexpand)
