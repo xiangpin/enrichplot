@@ -46,7 +46,7 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
         onto <- x@ontology
     }
 
-    if (!toupper(onto) %in% c("MF", "CC", "BF")) {
+    if (!toupper(onto) %in% c("MF", "CC", "BP")) {
         stop("Ontology should be one of 'MF', 'CC' or 'BP'")
     }
 
