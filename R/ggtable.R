@@ -17,12 +17,12 @@ ggtable <- function(d, p = NULL) {
 ##' @importFrom grid gpar
 ##' @importFrom ggplot2 ggplot_build
 ##' @importFrom rlang check_installed
-tableGrob2 <- function(d, p = NULL) {
+tableGrob2 <- function(d, p = NULL, rows=NULL) {
     # has_package("gridExtra")
     d <- d[order(rownames(d)),]
     check_installed('gridExtra', 'for `tableGrob2()`.')
-    tp <- gridExtra::tableGrob(d)
-    if (is.null(p)) {
+    tp <- gridExtra::tableGrob(d, rows=rows)
+    if (is.null(p) || is.null(rows)) {
         return(tp)
     }
 

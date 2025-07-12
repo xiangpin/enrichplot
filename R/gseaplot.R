@@ -139,7 +139,6 @@ hplot <- function(x, geneSetID) {
 
     gsdata <- get_gsdata(x, geneSetID)
 
-
     ggplot(gsdata, aes(.data$x, .data$runningScore)) + 
         ggHoriPlot::geom_horizon(origin='min', horizonscale=4) + 
         facet_grid(Description~.) +
@@ -170,6 +169,8 @@ hplot <- function(x, geneSetID) {
 ##' @param rel_heights relative heights of subplots
 ##' @param subplots which subplots to be displayed
 ##' @param pvalue_table whether add pvalue table
+##' @param pvalue_table_columns selected columns to be plotted in the `pvalue_table`
+##' @param pvalue_table_rownames selected column as the rownames of the `pvalue_table`. If set to NULL, no rownames will be displayed.
 ##' @param ES_geom geom for plotting running enrichment score,
 ##' one of 'line' or 'dot'
 ##' @return plot
@@ -191,7 +192,10 @@ hplot <- function(x, geneSetID) {
 ##' @author Guangchuang Yu
 gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
                       rel_heights=c(1.5, .5, 1), subplots = 1:3,
-                      pvalue_table = FALSE, ES_geom="line") {
+                      pvalue_table = FALSE, 
+                      pvalue_table_columns = c("pvalue", "p.adjust"),
+                      pvalue_table_rownames = "Description",
+                      ES_geom="line") {
     ES_geom <- match.arg(ES_geom, c("line", "dot"))
 
     geneList <- position <- NULL ## to satisfy codetool
@@ -208,15 +212,16 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
 
     if (ES_geom == "line") {
         es_layer <- geom_line(aes_(y = ~runningScore, color= ~Description),
-                              size=1)
+                              linewidth=1)
     } else {
         es_layer <- geom_point(aes_(y = ~runningScore, color= ~Description),
                                size=1, data = subset(gsdata, position == 1))
     }
 
     p.res <- p + es_layer +
-        theme(legend.position = c(.8, .8), legend.title = element_blank(),
-              legend.background = element_rect(fill = "transparent"))
+        theme(legend.position="inside", 
+            legend.position.inside = c(.8, .8), legend.title = element_blank(),
+            legend.background = element_rect(fill = "transparent"))
 
     p.res <- p.res + ylab("Running Enrichment Score") +
         theme(axis.text.x=element_blank(),
@@ -304,16 +309,25 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
     }
 
     if (pvalue_table) {
-        pd <- x[geneSetID, c("Description", "pvalue", "p.adjust")]
+        pd <- x[geneSetID, pvalue_table_columns]
         # pd <- pd[order(pd[,1], decreasing=FALSE),]
-        rownames(pd) <- pd$Description
+        if (is.null(pvalue_table_rownames)) {
+            rows <- NULL
+        } else {
 
-        pd <- pd[,-1]
+            # rownames(pd) <- pd$Description
+            if (length(pvalue_table_rownames) != 1) {
+                stop("the length of `pvalue_table_rownames` should be equal to 1")
+            }
+
+            rows <- x[geneSetID, pvalue_table_rownames]
+        }
+
         # pd <- round(pd, 4)
         for (i in seq_len(ncol(pd))) {
             pd[, i] <- format(pd[, i], digits = 4)
         }
-        tp <- tableGrob2(pd, p.res)
+        tp <- tableGrob2(d=pd, p=p.res, rows=rows)
 
         p.res <- p.res + theme(legend.position = "none") +
             annotation_custom(tp,

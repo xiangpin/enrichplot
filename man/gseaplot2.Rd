@@ -13,6 +13,8 @@ gseaplot2(
   rel_heights = c(1.5, 0.5, 1),
   subplots = 1:3,
   pvalue_table = FALSE,
+  pvalue_table_columns = c("pvalue", "p.adjust"),
+  pvalue_table_rownames = "Description",
   ES_geom = "line"
 )
 }
@@ -32,6 +34,10 @@ gseaplot2(
 \item{subplots}{which subplots to be displayed}
 
 \item{pvalue_table}{whether add pvalue table}
+
+\item{pvalue_table_columns}{selected columns to be plotted in the `pvalue_table`}
+
+\item{pvalue_table_rownames}{selected column as the rownames of the `pvalue_table`. If set to NULL, no rownames will be displayed.}
 
 \item{ES_geom}{geom for plotting running enrichment score,
 one of 'line' or 'dot'}

@@ -1,3 +1,10 @@
+# enrichplot 1.29.1.001
+
++ introduce new parameters in `gseaplot2()` (2025-07-12, Sat)
+  - `pvalue_table_columns`
+  - `pvalue_table_rownames`
+  - <https://github.com/YuLab-SMU/clusterProfiler/issues/774>
+  
 # enrichplot 1.29.1
 
 + throw error in `goplot()` if ontology is not one of the 'MF', 'CC' or 'BF' (2025-04-28, Mon, clusterProfiler#768)
