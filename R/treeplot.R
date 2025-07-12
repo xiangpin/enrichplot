@@ -116,7 +116,8 @@ treeplot.enrichResult <- function(x,
                                   label_format = NULL, 
                                   label_format_cladelab = 30,   # removed
                                   label_format_tiplab = NULL, 
-                                  fontsize = 4, 
+                                  leave_fontsize = 4, 
+                                  clade_fontsize = 4, 
                                   offset = rel(1),              # removed
                                   offset_tiplab = rel(1),       # removed
                                   hclust_method = "ward.D",     # removed
@@ -195,7 +196,8 @@ treeplot.enrichResult <- function(x,
         label_format = label_format, 
         label_format_cladelab = label_format_cladelab,   
         label_format_tiplab = label_format_tiplab, 
-        fontsize = fontsize, 
+        leave_fontsize = leave_fontsize, 
+        clade_fontsize = clade_fontsize, 
         offset = offset,              
         offset_tiplab = offset_tiplab,       
         hclust_method = hclust_method,     
@@ -273,12 +275,23 @@ treeplot.enrichResult <- function(x,
         count = x$Count[keep])
     
     ## Group the nodes.
-    p <- group_tree(hc = hc, clus = clus, d = d, offset_tiplab = offset_tiplab, 
-        nWords = nWords, label_format_cladelab = label_format_cladelab, 
-        label_format_tiplab = label_format_tiplab, offset = offset, 
-        fontsize = fontsize, group_color = group_color, extend = extend, 
-        hilight = hilight, cex_category = cex_category, align = align, align_tiplab = FALSE,
-        color = color)     
+    p <- group_tree(hc = hc,
+                    clus = clus,
+                    d = d,
+                    offset_tiplab = offset_tiplab,
+                    nWords = nWords,
+                    label_format_cladelab = label_format_cladelab,
+                    label_format_tiplab = label_format_tiplab, 
+                    offset = offset,
+                    leave_fontsize = leave_fontsize,
+                    clade_fontsize = clade_fontsize,
+                    group_color = group_color,
+                    extend = extend,
+                    hilight = hilight,
+                    cex_category = cex_category,
+                    align = align,
+                    align_tiplab = FALSE,
+                    color = color)
     # xlim <-  c(0, xlim * 3 * max(p$data$x))
     # p + coord_cartesian(xlim = xlim) +
     #   p + ggnewscale::new_scale_colour() +
@@ -324,7 +337,8 @@ treeplot.compareClusterResult <-  function(x,
                                       label_format = NULL, 
                                       label_format_cladelab = 30,     # removed
                                       label_format_tiplab = NULL, 
-                                      fontsize = 4, 
+                                      leave_fontsize = 4, 
+                                      clade_fontsize = 4,
                                       offset = rel(1),                 # removed
                                       pie = "equal",                   # removed
                                       legend_n = 3,                    # removed
@@ -425,7 +439,8 @@ treeplot.compareClusterResult <-  function(x,
         label_format = label_format, 
         label_format_cladelab = label_format_cladelab,     
         label_format_tiplab = label_format_tiplab, 
-        fontsize = fontsize, 
+        leave_fontsize = leave_fontsize, 
+        clade_fontsize = clade_fontsize, 
         offset = offset,                
         pie = pie,                  
         legend_n = legend_n,                   
@@ -504,13 +519,26 @@ treeplot.compareClusterResult <-  function(x,
     d <- data.frame(label = names(clus),
         count = merged_ggData[names(clus), "Count"])
   
-    p <- group_tree(hc = hc, clus = clus, d = d, offset_tiplab = offset_tiplab,
-        nWords = nWords, label_format_cladelab = label_format_cladelab, 
-        label_format_tiplab = label_format_tiplab, offset = offset, 
-        fontsize = fontsize, group_color = group_color, extend = extend, 
-        hilight = hilight, cex_category = cex_category, ID_Cluster_mat = ID_Cluster_mat,
-        geneClusterPanel = geneClusterPanel, align = align, add_tippoint = FALSE,
-        align_tiplab = TRUE, color = color)
+    p <- group_tree(hc = hc,
+                    clus = clus,
+                    d = d,
+                    offset_tiplab = offset_tiplab,
+                    nWords = nWords,
+                    label_format_cladelab = label_format_cladelab, 
+                    label_format_tiplab = label_format_tiplab,
+                    offset = offset, 
+                    leave_fontsize = leave_fontsize,
+                    clade_fontsize = clade_fontsize,
+                    group_color = group_color,
+                    extend = extend, 
+                    hilight = hilight,
+                    cex_category = cex_category,
+                    ID_Cluster_mat = ID_Cluster_mat,
+                    geneClusterPanel = geneClusterPanel,
+                    align = align,
+                    add_tippoint = FALSE,
+                    align_tiplab = TRUE,
+                    color = color)
 
      
     p_data <- as.data.frame(p$data)
@@ -664,12 +692,26 @@ add_cladelab <- function(p, nWords, label_format_cladelab,
 ##'
 ##' @return a ggtree object
 ##' @noRd
-group_tree <- function(hc, clus, d, offset_tiplab, nWords, 
-                       label_format_cladelab, label_format_tiplab,
-                       offset, fontsize, group_color, 
-                       extend, hilight, cex_category, 
-                       ID_Cluster_mat = NULL, geneClusterPanel = NULL,
-                       align, add_tippoint = TRUE, align_tiplab = TRUE, color) {
+group_tree <- function(hc,
+                       clus,
+                       d,
+                       offset_tiplab,
+                       nWords, 
+                       label_format_cladelab,
+                       label_format_tiplab,
+                       offset,
+                       leave_fontsize,
+                       clade_fontsize,
+                       group_color, 
+                       extend,
+                       hilight,
+                       cex_category, 
+                       ID_Cluster_mat = NULL,
+                       geneClusterPanel = NULL,
+                       align,
+                       add_tippoint = TRUE,
+                       align_tiplab = TRUE,
+                       color) {
     group <- count <- NULL
     # cluster data
     dat <- data.frame(name = names(clus), cls=paste0("cluster_", as.numeric(clus)))
@@ -721,11 +763,17 @@ group_tree <- function(hc, clus, d, offset_tiplab, nWords,
         p$data$label[isTip] <-  label_func_tiplab(p$data$label[isTip])
     }
 
-    p <- add_cladelab(p = p, nWords = nWords, 
-        label_format_cladelab = label_format_cladelab,
-        offset = offset, roots = roots, fontsize = fontsize, 
-        group_color = group_color, cluster_color = cluster_color, 
-        pdata = pdata, extend = extend, hilight = hilight, align = align)
+    p <- add_cladelab(p = p,
+                      nWords = nWords,
+                      label_format_cladelab = label_format_cladelab,
+                      offset = offset,
+                      roots = roots,
+                      fontsize = clade_fontsize,
+                      group_color = group_color,
+                      cluster_color = cluster_color,
+                      pdata = pdata, extend = extend,
+                      hilight = hilight,
+                      align = align)
     if (add_tippoint) {
         p <- p + ggnewscale::new_scale_colour() +
             geom_tippoint(aes(color = color, size = count)) + 
@@ -733,7 +781,11 @@ group_tree <- function(hc, clus, d, offset_tiplab, nWords,
             set_enrichplot_color(name = color)
     }
     ## add tiplab 
-    p <- p + geom_tiplab(offset = offset_tiplab, hjust = 0,
-                show.legend = FALSE, align = align_tiplab, linesize = 0)     
+    p <- p + geom_tiplab(offset = offset_tiplab,
+                         hjust = 0,
+                         show.legend = FALSE,
+                         align = align_tiplab,
+                         linesize = 0,
+                         size = leave_fontsize)
     return(p)
 }
