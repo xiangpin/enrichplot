@@ -135,7 +135,8 @@ add_node_pie <- function(p, d, pie = "equal", pie_scale = 1) {
         scatterpie::geom_scatterpie_legend(
             dd$pathway_size * pie_scale, x=min(p$data$x), y=min(p$data$y), n=3,
             # labeller=function(x) round(sum(pathway_size) * x^2)
-            labeller=function(x) round(x * sum(pathway_size))
+            # https://github.com/YuLab-SMU/enrichplot/issues/328
+            labeller=function(x) round(x / pie_scale * sum(pathway_size)) 
         ) +
         coord_fixed() +
         guides(size = "none") 

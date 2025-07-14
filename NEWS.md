@@ -1,3 +1,7 @@
+# enrichplot 1.29.2.001
+
++ bug fixed in pie scale label (2027-07-14, Mon, #328)
+
 # enrichplot 1.29.2
 
 + update `treeplot` with two parameters, `leave_fontsize` and `clade_fontsize` (2025-07-12, Sat, #324, #325)
