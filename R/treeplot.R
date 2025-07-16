@@ -21,6 +21,7 @@ setMethod("treeplot", signature(x = "compareClusterResult"),
 
 
 
+
 ##' @rdname treeplot
 ##' @param nWords The number of words in the cluster tags.
 ##' Will be removed in the next version.
