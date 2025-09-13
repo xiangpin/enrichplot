@@ -1,6 +1,8 @@
-# enrichplot 1.29.2.001
+# enrichplot 1.29.2.002
 
-+ bug fixed in pie scale label (2027-07-14, Mon, #328)
++ bug fixed of `cnetplot` for `CompareClusterResult` (2025-09-13, Sat, #329)
+  - color gene according to the gene cluster info
++ bug fixed in pie scale label (2025-07-14, Mon, #328)
 
 # enrichplot 1.29.2
 

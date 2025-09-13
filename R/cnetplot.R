@@ -87,15 +87,6 @@ cnetplot.compareClusterResult <- function(
     y <- split(d$geneID, d$Description)
     gs <- lapply(y, function(item) unique(unlist(strsplit(item, split="/"))))
 
-    if (node_label == "all") {
-        node_label = "item"
-        add_category_label <- TRUE
-    } else if (node_label == "category") {
-        node_label = "none"
-        add_category_label <- TRUE
-    } else {
-        add_category_label <- FALSE
-    }
 
     p <- cnetplot(gs, layout = layout, 
         showCategory=length(gs), 
@@ -103,32 +94,46 @@ cnetplot.compareClusterResult <- function(
         color_category = color_category,
         size_category=0, 
         color_item = color_item,
-        size_item = size_item,
+        size_item = 0,
         color_edge = color_edge,
         size_edge = size_edge,
-        node_label = node_label,
+        node_label = "none",
         hilight = hilight,
         hilight_alpha = hilight_alpha,        
         ...)
+    
+    p <- add_node_pie(p, d, pie, category_scale=size_category, item_scale=size_item)
 
-    p <- add_node_pie(p, d, pie, pie_scale=size_category)
-
-    if (add_category_label) {
-        p <- p + geom_cnet_label(node_label='category')
-    }
+    p <- p + geom_cnet_label(node_label=node_label)
+    
     return(p)
 }
 
+
+
+
 #' @importFrom ggplot2 coord_fixed
-add_node_pie <- function(p, d, pie = "equal", pie_scale = 1) {
+add_node_pie <- function(p, d, pie = "equal", category_scale = 1, item_scale=1) {
+    ## category nodes
     dd <- d[,c('Cluster', 'Description', 'Count')]
     pathway_size <- sapply(split(dd$Count, dd$Description), sum)
     if (pie == "equal") dd$Count <- 1
     dd <- tidyr::pivot_wider(dd, names_from="Cluster", values_from="Count", values_fill=0)
     # dd$pathway_size <- sqrt(pathway_size[dd$Description]/sum(pathway_size))
-    dd$pathway_size <- pathway_size[dd$Description]/sum(pathway_size)
+    dd$pathway_size <- pathway_size[dd$Description]/sum(pathway_size) * category_scale
 
-    p <- p %<+% dd +
+    ## gene nodes
+    y <- split(d$geneID, d$Cluster)
+    gs <- lapply(y, function(item) unique(unlist(strsplit(item, split="/"))))
+    dg <- ls2df(gs) |> setNames(c("Cluster", "Description")) # second column is geneID
+    dg$Count <- 1
+    dg <- tidyr::pivot_wider(dg, names_from="Cluster", values_from="Count", values_fill=0)
+    # dd$pathway_size <- sqrt(pathway_size[dd$Description]/sum(pathway_size))
+    dg$pathway_size <- .05 * item_scale # 1/nrow(dg) * item_scale
+
+    d2 <- rbind(dd, dg)
+
+    p <- p %<+% d2 +
         scatterpie::geom_scatterpie(aes(x=.data$x, y=.data$y, r=.data$pathway_size * pie_scale), 
             cols=as.character(unique(d$Cluster)), 
             legend_name = "Cluster", color=NA) +
@@ -143,6 +148,8 @@ add_node_pie <- function(p, d, pie = "equal", pie_scale = 1) {
 
     return(p)
 }
+
+
 
 tidy_compareCluster <- function(x, showCategory) {
     d <- fortify(x, showCategory = showCategory, includeAll = TRUE, split = NULL)
