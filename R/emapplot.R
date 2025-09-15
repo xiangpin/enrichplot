@@ -86,7 +86,7 @@ emapplot_internal <- function(
     p <- ggplot(g, layout = layout) + geom_edge(color = color_edge, size = size_edge) 
 
     if (inherits(x, 'compareClusterResult')) {
-        p <- add_node_pie(p, gg$data, pie, pie_scale=size_category)
+        p <- add_node_pie(p, gg$data, pie, category_scale=size_category)
     } else {
         if (color %in% names(as.data.frame(x))) {
             p <- p %<+% x[, c("Description", color)] + 

@@ -1,7 +1,7 @@
 ##' @importFrom ggplot2 ggplot_add
 ##' @method ggplot_add autofacet
 ##' @export
-ggplot_add.autofacet <- function(object, plot, object_name) {
+ggplot_add.autofacet <- function(object, plot, ...) {
     d <- plot$data
     nn <- names(d)
     if ('category' %in% nn) {
@@ -22,5 +22,5 @@ ggplot_add.autofacet <- function(object, plot, object_name) {
     } else {
         obj <- facet_grid(. ~ .data[[var]], scales=object$scales)
     }
-    ggplot_add(obj, plot, object_name)
+    ggplot_add(obj, plot, ...)
 }

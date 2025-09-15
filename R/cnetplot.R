@@ -125,7 +125,7 @@ add_node_pie <- function(p, d, pie = "equal", category_scale = 1, item_scale=1) 
     ## gene nodes
     y <- split(d$geneID, d$Cluster)
     gs <- lapply(y, function(item) unique(unlist(strsplit(item, split="/"))))
-    dg <- ls2df(gs) |> setNames(c("Cluster", "Description")) # second column is geneID
+    dg <- yulab.utils::ls2df(gs) |> setNames(c("Cluster", "Description")) # second column is geneID
     dg$Count <- 1
     dg <- tidyr::pivot_wider(dg, names_from="Cluster", values_from="Count", values_fill=0)
     # dd$pathway_size <- sqrt(pathway_size[dd$Description]/sum(pathway_size))
@@ -134,14 +134,14 @@ add_node_pie <- function(p, d, pie = "equal", category_scale = 1, item_scale=1) 
     d2 <- rbind(dd, dg)
 
     p <- p %<+% d2 +
-        scatterpie::geom_scatterpie(aes(x=.data$x, y=.data$y, r=.data$pathway_size * pie_scale), 
+        scatterpie::geom_scatterpie(aes(x=.data$x, y=.data$y, r=.data$pathway_size * category_scale), 
             cols=as.character(unique(d$Cluster)), 
             legend_name = "Cluster", color=NA) +
         scatterpie::geom_scatterpie_legend(
-            dd$pathway_size * pie_scale, x=min(p$data$x), y=min(p$data$y), n=3,
+            dd$pathway_size * category_scale, x=min(p$data$x), y=min(p$data$y), n=3,
             # labeller=function(x) round(sum(pathway_size) * x^2)
             # https://github.com/YuLab-SMU/enrichplot/issues/328
-            labeller=function(x) round(x / pie_scale * sum(pathway_size)) 
+            labeller=function(x) round(x / category_scale * sum(pathway_size)) 
         ) +
         coord_fixed() +
         guides(size = "none") 
