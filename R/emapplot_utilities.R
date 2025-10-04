@@ -75,11 +75,11 @@ has_pairsim <- function(x) {
 build_emap_graph <- function(enrichDf, geneSets, color, cex_line, min_edge,
                              pair_sim, method) {
 
-    if (!is.numeric(min_edge) | min_edge < 0 | min_edge > 1) {
+    if (!is.numeric(min_edge) || min_edge < 0 || min_edge > 1) {
     	stop('"min_edge" should be a number between 0 and 1.')
     }
 
-    if (is.null(dim(enrichDf)) | nrow(enrichDf) == 1) {  # when just one node
+    if (is.null(dim(enrichDf)) || nrow(enrichDf) == 1) {  # when just one node
         g <- graph.empty(0, directed=FALSE)
         g <- add_vertices(g, nv = 1)
         V(g)$name <- as.character(enrichDf$Description)
@@ -315,7 +315,7 @@ add_ellipse <- function(p, group_legend, label_style,
      } 
     
     if (ellipse_style == "polygon") {
-        p <- p + ggplot2::stat_ellipse(aes_(x =~ x, y =~ y, fill =~ color2),
+    p <- p + ggplot2::stat_ellipse(aes(x = .data$x, y = .data$y, fill = .data$color2),
                                        geom = "polygon", level = ellipse_pro,
                                        alpha = alpha,
                                        show.legend = group_legend, ...)

@@ -559,7 +559,7 @@ treeplot.compareClusterResult <-  function(x,
         ID_Cluster_mat$y <- p_data$y
         ID_Cluster_mat$node <- p_data$node
         p <- p + ggnewscale::new_scale_fill() +
-            scatterpie::geom_scatterpie(aes_(x=~x,y=~y,r=~radius), data=ID_Cluster_mat,
+        scatterpie::geom_scatterpie(aes(x = .data$x, y = .data$y, r = .data$radius), data=ID_Cluster_mat,
                     cols=colnames(ID_Cluster_mat)[1:(ncol(ID_Cluster_mat)-4)],color=NA) +
             scatterpie::geom_scatterpie_legend(ID_Cluster_mat$radius,
                 x = 0.8, y = 0.1, n = legend_n,
@@ -593,10 +593,10 @@ treeplot.compareClusterResult <-  function(x,
         dotdata <- dotdata[dotdata$Description %in% paths, ]
         dotdata <- dplyr::select(dotdata, Description, dplyr::everything())
         check_installed("ggtreeExtra", "for `treeplot()` with ` clusterPanel = 'dotplot'`.")
-	    p <- p + ggnewscale::new_scale_colour() + 
+        p <- p + ggnewscale::new_scale_colour() + 
             ggtreeExtra::geom_fruit(data = dotdata, geom = geom_point,
-                       mapping = aes_string(x = "Cluster", y = "Description", 
-                                     size = "Count", color = color),
+                   mapping = aes(x = .data$Cluster, y = .data$Description, 
+                         size = .data$Count, color = .data[[color]]),
                        # pwidth = 0.5, offset = -0.2,
                        pwidth = 0.06*ncol(ID_Cluster_mat),
                        axis.params = list(axis = "x", text.size = 3, line.alpha = 0, text.angle = colnames_angle)) +
@@ -669,7 +669,7 @@ add_cladelab <- function(p, nWords, label_format_cladelab,
     p <- p + ggnewscale::new_scale_colour() + 
         geom_cladelab(
             data = df,
-            mapping = aes_(node =~ node, label =~ labels, color =~ cluster),
+            mapping = aes(node = .data$node, label = .data$labels, color = .data$cluster),
             textcolor = "black",
             extend = extend,
             show.legend = FALSE,
@@ -679,7 +679,7 @@ add_cladelab <- function(p, nWords, label_format_cladelab,
     if (hilight) {
         p <- p + ggtree::geom_hilight(
             data = df,
-            mapping = aes_(node =~ node, fill =~ cluster),
+            mapping = aes(node = .data$node, fill = .data$cluster),
             show.legend = FALSE, 
             align = align) + 
             scale_fill_manual(values = df$color, 
@@ -724,7 +724,7 @@ group_tree <- function(hc,
     noids <- lapply(grp, function(x) unlist(lapply(x, function(i) ggtree::nodeid(p, i))))
     roots <- unlist(lapply(noids, function(x) ggtree::MRCA(p, x)))
     # cluster data
-    p <- ggtree::groupOTU(p, grp, "group") + aes_(color =~ group)
+    p <- ggtree::groupOTU(p, grp, "group") + aes(color = .data$group)
     rangeX <- max(p$data$x, na.rm=TRUE) - min(p$data$x, na.rm=TRUE)
     if (inherits(offset_tiplab, "rel")) {
         offset_tiplab <- unclass(offset_tiplab)

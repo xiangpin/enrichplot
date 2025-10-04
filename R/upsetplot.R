@@ -58,7 +58,7 @@ upsetplot.enrichResult <- function(x, n=10, ...) {
     check_installed('tibble', 'for `upsetplot()`.')
     check_installed('ggupset', 'for `upsetplot()`.')
     res <- tibble::tibble(Description = split(d[,1], d[,2]))
-    ggplot(res, aes_(x = ~Description)) + geom_bar() +
+    ggplot(res, aes(x = .data$Description)) + geom_bar() +
         theme_dose(font.size = 12) +
 	xlab(NULL) + ylab(NULL) +
 	ggupset::scale_x_upset(order_by = "freq")
@@ -87,7 +87,7 @@ upsetplot.gseaResult <- function(x, n = 10, type = "boxplot", ...) {
     }
     
     check_installed('ggupset', 'for `upsetplot()`.')
-    ggplot(y, aes_(x = ~Description, y = ~foldChange)) +
+    ggplot(y, aes(x = .data$Description, y = .data$foldChange)) +
         ly_dist +
         geom_jitter(width = .2, alpha = .6) +
         theme_dose(font.size = 12) +
@@ -109,8 +109,8 @@ upsetplot.compareClusterResult <- function(x, n, ...) {
 
     ## ggplot(x, aes(-10*log10(p.adjust), Description)) + geom_point() + facet_grid(set~., scales="free")
 
-    ggplot(x, aes(.data$Cluster, .data$Description), showCategory=n) + 
-        geom_point(aes(size=-10*log10(.data$p.adjust), color=.data$Cluster)) + 
+    ggplot(x, aes(x = .data$Cluster, y = .data$Description), showCategory=n) + 
+        geom_point(aes(size = -10 * log10(.data$p.adjust), color = .data$Cluster)) + 
         facet_grid(intersect ~ ., scales = "free", space = 'free') + guides(color = "none") +
         theme_dose(font.size = 12) +
         theme(strip.text = element_text(size = 14)) +

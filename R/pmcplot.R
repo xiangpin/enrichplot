@@ -23,10 +23,10 @@ pmcplot <- function(query, period, proportion = TRUE) {
         return(y)
     })
 
-    mapping <- aes_(x=~year, y = ~query_hits, color = ~query)
+    mapping <- aes(x = .data$year, y = .data$query_hits, color = .data$query)
     ylab <- "Number of articles"
     if (proportion) {
-        mapping <- modifyList(mapping, aes_(y = ~query_hits/all_hits))
+    mapping <- modifyList(mapping, aes(y = .data$query_hits/.data$all_hits))
         ylab <- "Proportion of articles"
     }
     ggplot(res, mapping) + geom_line() + geom_point() +

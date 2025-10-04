@@ -13,7 +13,6 @@ setMethod("ridgeplot", signature(x = "gseaResult"),
 ##' @param orderBy The order of the Y-axis
 ##' @param decreasing logical. Should the orderBy order be increasing or decreasing? 
 ##' @importFrom ggplot2 scale_fill_gradientn
-##' @importFrom ggplot2 aes_string
 ##' @importFrom ggplot2 scale_x_reverse
 ##' @importFrom ggplot2 xlab
 ##' @importFrom ggplot2 ylab
@@ -85,7 +84,7 @@ ridgeplot.gseaResult <- function(x, showCategory=30, fill="p.adjust",
 
     check_installed('ggridges', 'for `ridgeplot()`.')
 
-    ggplot(gs2val.df, aes_string(x="value", y="category", fill=fill)) +
+    ggplot(gs2val.df, aes(x = .data[["value"]], y = .data[["category"]], fill = .data[[fill]])) +
         ggridges::geom_density_ridges() +
         # scale_fill_continuous(name = fill) +
         set_enrichplot_color(type = "fill", name = fill) + 

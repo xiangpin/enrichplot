@@ -34,8 +34,7 @@ setMethod("dotplot", signature(object = "gseaResult"),
                         label_format = label_format, ...)
                 
                 if (NES) {
-                    p <- suppressMessages(p + aes_(fill=~NES) + 
-                        # scale_fill_continuous(name = "NES") +
+                    p <- suppressMessages(p + aes(fill = .data$NES) + 
                         set_enrichplot_color(type = "fill", name = "NES")
                     )
                 }
@@ -106,8 +105,7 @@ setMethod("dotplot", signature(object = "gseaResultList"),
                       label_format = label_format, ...)
               
               if (NES) {
-                  p <- suppressMessages(p + aes_(fill=~NES) + 
-                      # scale_fill_continuous(name = "NES") + 
+                  p <- suppressMessages(p + aes(fill = .data$NES) + 
                       set_enrichplot_color(type = "fill", name = "NES")
                   )
               }
@@ -133,7 +131,7 @@ setMethod("dotplot", signature(object = "gseaResultList"),
 #' @param decreasing logical. Should the orderBy order be increasing or decreasing?
 #' @importFrom ggplot2 fortify
 #' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 aes_string
+#' @importFrom ggplot2 aes
 #' @importFrom ggplot2 geom_point
 #' @importFrom ggplot2 scale_color_gradient
 #' @importFrom ggplot2 scale_color_continuous
@@ -276,24 +274,24 @@ dotplot.compareClusterResult <- function(object, x= "Cluster", colorBy="p.adjust
         by2 <- size
     }
 
-    p <- ggplot(df, aes_string(x = x, y = "Description", size = by2)) +
+    p <- ggplot(df, aes(x = .data[[x]], y = .data[["Description"]], size = .data[[by2]])) +
         scale_y_discrete(labels = label_func)
 
-    if (group) {
-        p <- p + geom_line(aes_string(color = "Cluster", group = "Cluster"), size=.3) +
-          ggnewscale::new_scale_colour()
-    }
+        if (group) {
+                p <- p + geom_line(aes(color = .data$Cluster, group = .data$Cluster), size=.3) +
+                    ggnewscale::new_scale_colour()
+        }
 
 
     if (shape) {
         check_installed('ggstar', 'for `dotplot()` with `shape = TRUE`.')
         ggstar <- "ggstar"
         require(ggstar, character.only=TRUE)
-        # p <- p + ggsymbol::geom_symbol(aes_string(symbol = "Cluster", fill = colorBy)) +
-        p <- p + ggstar::geom_star(aes_string(starshape="Cluster", fill=colorBy)) +
+    # p <- p + ggsymbol::geom_symbol(aes(symbol = .data$Cluster, fill = .data[[colorBy]])) +
+        p <- p + ggstar::geom_star(aes(starshape = .data$Cluster, fill = .data[[colorBy]])) +
             set_enrichplot_color(type = "fill")
     }  else {
-        p <- p +  geom_point(aes_string(fill = colorBy)) + 
+        p <- p +  geom_point(aes(fill = .data[[colorBy]])) + 
             aes(shape = I(enrichplot_point_shape))
     }
 
