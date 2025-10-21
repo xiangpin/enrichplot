@@ -1,4 +1,4 @@
-# enrichplot 1.29.2.003
+# enrichplot 1.29.3
 
 + bug fixed of `cnetplot` for `CompareClusterResult` (2025-09-13, Sat, #329)
   - color gene according to the gene cluster info
