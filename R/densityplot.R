@@ -36,14 +36,14 @@ gseadist <- function(x, IDs, type =  'density') {
 
     if (type == 'density') {
         p <- p + 
-            geom_density(aes_(x = ~logFC, color = ~category)) +
+            geom_density(aes(x = .data$logFC, color = .data$category)) +
             ## geom_rug(data = ds, show.legend = FALSE) +
             ylab(NULL) +
             theme(legend.title = element_blank(),
                   legend.position = 'bottom')
     } else if (type == 'boxplot') {
         p <- p +
-            geom_boxplot(aes_(x = ~category, y = ~logFC, fill = ~category))  +
+            geom_boxplot(aes(x = .data$category, y = .data$logFC, fill = .data$category))  +
             xlab(NULL) +
             theme(legend.position = 'none')
     } 

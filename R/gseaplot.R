@@ -38,15 +38,15 @@ gseaplot.gseaResult <- function (x, geneSetID, by = "all", title = "",
                                  color.vline="#FA5860", ...){
     by <- match.arg(by, c("runningScore", "preranked", "all"))
     gsdata <- gsInfo(x, geneSetID)
-    p <- ggplot(gsdata, aes_(x = ~x)) +
+    p <- ggplot(gsdata, aes(x = .data$x)) +
         theme_dose() + xlab("Position in the Ranked List of Genes")
     if (by == "runningScore" || by == "all") {
-        p.res <- p + geom_linerange(aes_(ymin=~ymin, ymax=~ymax), color=color)
-        p.res <- p.res + geom_line(aes_(y = ~runningScore), color=color.line,
+    p.res <- p + geom_linerange(aes(ymin = .data$ymin, ymax = .data$ymax), color=color)
+    p.res <- p.res + geom_line(aes(y = .data$runningScore), color=color.line,
                                    size=1)
         enrichmentScore <- x@result[geneSetID, "enrichmentScore"]
         es.df <- data.frame(es = which.min(abs(p$data$runningScore - enrichmentScore)))
-        p.res <- p.res + geom_vline(data = es.df, aes_(xintercept = ~es),
+    p.res <- p.res + geom_vline(data = es.df, aes(xintercept = .data$es),
                                     colour = color.vline, linetype = "dashed")
         p.res <- p.res + ylab("Running Enrichment Score")
         p.res <- p.res + geom_hline(yintercept = 0)
@@ -54,7 +54,7 @@ gseaplot.gseaResult <- function (x, geneSetID, by = "all", title = "",
     if (by == "preranked" || by == "all") {
         df2 <- data.frame(x = which(p$data$position == 1))
         df2$y <- p$data$geneList[df2$x]
-        p.pos <- p + geom_segment(data=df2, aes_(x=~x, xend=~x, y=~y, yend=0),
+    p.pos <- p + geom_segment(data=df2, aes(x = .data$x, xend = .data$x, y = .data$y, yend = 0),
                                   color=color)
         p.pos <- p.pos + ylab("Ranked List Metric") +
             xlim(0, length(p$data$geneList))
@@ -202,7 +202,7 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
 
     gsdata <- get_gsdata(x, geneSetID)
 
-    p <- ggplot(gsdata, aes_(x = ~x)) + xlab(NULL) +
+    p <- ggplot(gsdata, aes(x = .data$x)) + xlab(NULL) +
         theme_classic(base_size) +
         theme(panel.grid.major = element_line(colour = "grey92"),
               panel.grid.minor = element_line(colour = "grey92"),
@@ -211,10 +211,10 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
         scale_x_continuous(expand=c(0,0))
 
     if (ES_geom == "line") {
-        es_layer <- geom_line(aes_(y = ~runningScore, color= ~Description),
+        es_layer <- geom_line(aes(y = .data$runningScore, color = .data$Description),
                               linewidth=1)
     } else {
-        es_layer <- geom_point(aes_(y = ~runningScore, color= ~Description),
+        es_layer <- geom_point(aes(y = .data$runningScore, color = .data$Description),
                                size=1, data = subset(gsdata, position == 1))
     }
 
@@ -236,8 +236,8 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
         gsdata[idx, "ymax"] <- i + 1
         i <- i + 1
     }
-    p2 <- ggplot(gsdata, aes_(x = ~x)) +
-        geom_linerange(aes_(ymin=~ymin, ymax=~ymax, color=~Description)) +
+    p2 <- ggplot(gsdata, aes(x = .data$x)) +
+        geom_linerange(aes(ymin = .data$ymin, ymax = .data$ymax, color = .data$Description)) +
         xlab(NULL) + ylab(NULL) + theme_classic(base_size) +
         theme(legend.position = "none",
               plot.margin = margin(t=-.1, b=0,unit="cm"),
@@ -270,12 +270,12 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
                         xmin = xmin,
                         xmax = xmax,
                         col = col[unique(inv)])
-        p2 <- p2 + geom_rect(
-                       aes_(xmin=~xmin,
-                            xmax=~xmax,
-                            ymin=~ymin,
-                            ymax=~ymax,
-                            fill=~I(col)),
+       p2 <- p2 + geom_rect(
+                   aes(xmin = .data$xmin,
+                       xmax = .data$xmax,
+                       ymin = .data$ymin,
+                       ymax = .data$ymax,
+                       fill = I(col)),
                        data=d,
                        alpha=.9,
                        inherit.aes=FALSE)
@@ -289,7 +289,7 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
 
     df2 <- p$data #data.frame(x = which(p$data$position == 1))
     df2$y <- p$data$geneList[df2$x]
-    p.pos <- p + geom_segment(data=df2, aes_(x=~x, xend=~x, y=~y, yend=0),
+    p.pos <- p + geom_segment(data=df2, aes(x = .data$x, xend = .data$x, y = .data$y, yend = 0),
                               color="grey")
     p.pos <- p.pos + ylab("Ranked List Metric") +
         xlab("Rank in Ordered Dataset") +
@@ -392,8 +392,8 @@ gsearank <- function(x, geneSetID, title="", output = "plot") {
         return(res)
     }
 
-    p <- ggplot(gsdata, aes_(x = ~x, y = ~runningScore)) +
-        geom_segment(aes_(xend=~x, yend=0)) +
+    p <- ggplot(gsdata, aes(x = .data$x, y = .data$runningScore)) +
+        geom_segment(aes(xend = .data$x, yend = 0)) +
         ggtitle(title) +
         xlab("Position in the Ranked List of Genes") +
         ylab("Running Enrichment Score") +
@@ -416,7 +416,7 @@ gsearank <- function(x, geneSetID, title="", output = "plot") {
 ##' @export
 ##' @author Guangchuang Yu
 geom_gsea_gene <- function(genes, mapping=NULL, geom = ggplot2::geom_text, ..., geneSet = NULL) {
-    default_mapping <- aes_(x=~x, y=~runningScore, label=~gene)
+    default_mapping <- aes(x = .data$x, y = .data$runningScore, label = .data$gene)
     if (is.null(mapping)) {
         mapping <- default_mapping
     } else {

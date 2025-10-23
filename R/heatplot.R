@@ -51,19 +51,18 @@ heatplot.enrichResult <- function(x, showCategory = 30, symbol = "rect", foldCha
         d$pvalue <- pvalue[as.character(d[,2])]
     } 
  
-    p <- ggplot(d, aes_(~Gene, ~categoryID))
+    p <- ggplot(d, aes(x = .data$Gene, y = .data$categoryID))
 
     if (symbol == "rect") {
         p <- p + geom_tile(color = 'white')
     } 
 
     get_dotp <-function(p, foldChange, pvalue) {
-        if (is.null(foldChange) & is.null(pvalue)) {
+        if (is.null(foldChange) && is.null(pvalue)) {
             p <- p + geom_point(color = 'black', shape = 21, fill = "black", size = 5)
             return(p)
         }
-
-        if (!is.null(foldChange) & !is.null(pvalue)) {
+        if (!is.null(foldChange) && !is.null(pvalue)) {
             p <- p + geom_point(color = 'black', shape = 21)
             return(p)
         }
@@ -92,14 +91,14 @@ heatplot.enrichResult <- function(x, showCategory = 30, symbol = "rect", foldCha
         p <- get_dotp(p, foldChange, pvalue)     
         ## only dot need size(pvalue) parameter
         if (!is.null(pvalue)) {
-            p <- p + aes_(size = ~pvalue) + 
+            p <- p + aes(size = .data$pvalue) + 
                 scale_size_continuous(range=c(3, 8), 
                     trans = reverselog_trans(10))
         } 
     }
 
     if (!is.null(foldChange)) {
-            p <- p + aes_(fill = ~foldChange) + 
+            p <- p + aes(fill = .data$foldChange) + 
                 set_enrichplot_color(colors = get_enrichplot_color(3), type = "fill")
                 # scale_fill_gradient2(name = "fold change", low = "#327eba",
                 #                    mid = "white", high = "#e06663") +

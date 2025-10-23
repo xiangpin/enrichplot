@@ -309,8 +309,6 @@ extract_geneSets <- function(x, n) {
 ##' @return ggplot object
 ##' @importFrom ggplot2 ggplot
 ##' @importFrom ggplot2 aes
-##' @importFrom ggplot2 aes_
-##' @importFrom ggplot2 aes_string
 ##' @importFrom ggplot2 geom_bar
 ##' @importFrom ggplot2 coord_flip
 ##' @importFrom ggplot2 geom_point

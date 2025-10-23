@@ -186,10 +186,12 @@ setGeneric("goplot",
 ##' @return ggplot2 object
 ##' @export
 ##' @examples
+##' \donttest{
 ##' library(DOSE)
 ##' data(geneList)
 ##' x <- gseDO(geneList)
 ##' gseaplot(x, geneSetID=1)
+##' }
 ##' @author Guangchuang Yu
 setGeneric("gseaplot",
            function(x, geneSetID, by = "all", title = "", ...) {
@@ -271,10 +273,12 @@ setGeneric("volplot",
 ##' @return ggplot object
 ##' @export
 ##' @examples
+##' \donttest{
 ##' library(DOSE)
 ##' data(geneList)
 ##' x <- gseDO(geneList)
 ##' ridgeplot(x)
+##' }
 ##' @author Guangchuang Yu
 setGeneric("ridgeplot",
            function(x, showCategory=30, fill="p.adjust", core_enrichment = TRUE,

@@ -56,13 +56,12 @@ barplot.enrichResult <- function(height, x="Count", color='p.adjust',
     df <- fortify(object, showCategory=showCategory, by=x, ...)
 
     if(colorBy %in% colnames(df)) {
-        p <- ggplot(df, aes_string(x = x, y = "Description", fill = colorBy)) +
+        p <- ggplot(df, aes(x = .data[[x]], y = .data[["Description"]], fill = .data[[colorBy]])) +
             theme_dose(font.size) +
-            # scale_fill_continuous(name = color) + 
             set_enrichplot_color(type = "fill", name = color)
     } else {
-        p <- ggplot(df, aes_string(x = x, y = "Description",
-                                   fill = "Description")) +
+        p <- ggplot(df, aes(x = .data[[x]], y = .data[["Description"]],
+                                   fill = .data[["Description"]])) +
             theme_dose(font.size) +
             theme(legend.position="none")
     }
