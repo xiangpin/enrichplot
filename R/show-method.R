@@ -17,7 +17,7 @@
 ## ##' de <- names(geneList)[1:100]
 ## ##' x <- enrichDO(de)
 ## ##' print(x)
-## ##' @author Guangchuang Yu \url{https://guangchuangyu.github.io}
+## ##' @author Guangchuang Yu \url{https://yulab-smu.top}
 ## setMethod("show", signature(object="enrichResult"),
 ##           function (object){
 ##               cat("#\n# over-representation test\n#\n")
@@ -62,7 +62,7 @@
 ## ##' @importFrom methods show
 ## ##' @exportMethod show
 ## ##' @usage show(object)
-## ##' @author Guangchuang Yu \url{https://guangchuangyu.github.io}
+## ##' @author Guangchuang Yu \url{https://yulab-smu.top}
 ## setMethod("show", signature(object="gseaResult"),
 ##           function (object){
 ##               params <- object@params

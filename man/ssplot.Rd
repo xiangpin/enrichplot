@@ -46,9 +46,9 @@ ssplot.compareClusterResult(
 additional parameters can refer the following parameters.
     \itemize{
        \item \code{color} Variable that used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
-        the starting position of each text label. 
+        the starting position of each text label.
        \item \code{size_edge} Scale of line width.
-       \item \code{min_edge} The minimum similarity threshold for whether 
+       \item \code{min_edge} The minimum similarity threshold for whether
         two nodes are connected, should between 0 and 1, default value is 0.2.
        \item \code{size_category} Number indicating the amount by which plotting category
         nodes should be scaled relative to the default.
@@ -60,7 +60,7 @@ additional parameters can refer the following parameters.
         custom function to format axis labels.
        \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
         cluster::clara, cluster::fanny or cluster::pam.
-       \item \code{nCluster} Numeric, the number of clusters, 
+       \item \code{nCluster} Numeric, the number of clusters,
         the default value is square root of the number of nodes.
     }
 

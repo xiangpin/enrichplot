@@ -1,3 +1,7 @@
+# enrichplot 1.29.4
+
++ remove deprecated `aes_string`/`aes_` (2025-10-23, Thu, #332)
+
 # enrichplot 1.29.3
 
 + bug fixed of `cnetplot` for `CompareClusterResult` (2025-09-13, Sat, #329)

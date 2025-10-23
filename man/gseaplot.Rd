@@ -60,10 +60,12 @@ visualize analyzing result of GSEA
 plotting function for gseaResult
 }
 \examples{
+\donttest{
 library(DOSE)
 data(geneList)
 x <- gseDO(geneList)
 gseaplot(x, geneSetID=1)
+}
 }
 \author{
 Guangchuang Yu

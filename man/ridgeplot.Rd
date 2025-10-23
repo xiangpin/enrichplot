@@ -62,10 +62,12 @@ ggplot object
 ridgeline plot for GSEA result
 }
 \examples{
+\donttest{
 library(DOSE)
 data(geneList)
 x <- gseDO(geneList)
 ridgeplot(x)
+}
 }
 \author{
 Guangchuang Yu
