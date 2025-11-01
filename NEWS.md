@@ -1,3 +1,7 @@
+# enrichplot 1.30.0
+
++ Bioconductor RELEASE_3_22 (2025-11-01, Sat)
+
 # enrichplot 1.29.4
 
 + remove deprecated `aes_string`/`aes_` (2025-10-23, Thu, #332)
