@@ -1,5 +1,5 @@
 ##' automatically split barplot or dotplot into several facets
-##' 
+##'
 ##'
 ##' @param by one of 'row' or 'column'
 ##' @param scales wether 'fixed' or 'free'
@@ -7,27 +7,33 @@
 ##' @return a ggplot object
 ##' @export
 autofacet <- function(by = 'row', scales = "free", levels = NULL) {
-    structure(list(by = by,
-                scales = scales,
-                levels = levels), 
-            class = "autofacet")
+    structure(
+        list(by = by, scales = scales, levels = levels),
+        class = "autofacet"
+    )
 }
 
 get_enrichplot_color <- function(n = 2) {
     colors <- getOption("enrichplot.colours")
-    if (!is.null(colors)) return(colors)
+    if (!is.null(colors)) {
+        return(colors)
+    }
 
-    if (n != 2 && n != 3) stop("'n' should be 2 or 3")
+    if (n != 2 && n != 3) {
+        stop("'n' should be 2 or 3")
+    }
 
     colors = c("#e06663", "#327eba")
-    if (n == 2) return(colors)
+    if (n == 2) {
+        return(colors)
+    }
 
     if (n == 3) return(c(colors[1], "white", colors[2]))
 }
 
 ##' helper function to set color for enrichplot
-##' 
-##' 
+##'
+##'
 ##' @title set_enrichplot_color
 ##' @param colors user provided color vector
 ##' @param type one of 'color', 'colour' or 'fill'
@@ -42,12 +48,19 @@ get_enrichplot_color <- function(n = 2) {
 ##' @importFrom ggplot2 scale_fill_gradientn
 ##' @importFrom ggplot2 scale_color_gradientn
 ##' @export
-set_enrichplot_color <- function(colors = get_enrichplot_color(2), 
-                                type = "color", name = NULL, .fun = NULL, 
-                                reverse = TRUE, transform = 'log10', ...) {
-
+set_enrichplot_color <- function(
+    colors = get_enrichplot_color(2),
+    type = "color",
+    name = NULL,
+    .fun = NULL,
+    reverse = TRUE,
+    transform = 'log10',
+    ...
+) {
     type <- match.arg(type, c("color", "colour", "fill"))
-    if (!reverse) colors = rev(colors)
+    if (!reverse) {
+        colors = rev(colors)
+    }
     n <- length(colors)
     if (n < 2) {
         stop("'colors' should be of length >= 2")
@@ -58,18 +71,22 @@ set_enrichplot_color <- function(colors = get_enrichplot_color(2),
         params <- list(low = colors[1], mid = colors[2], high = colors[3])
         fn_suffix <- "gradient2"
     } else {
-        params <- list(colors = colors) 
-        fn_suffix <- "gradientn"   
+        params <- list(colors = colors)
+        fn_suffix <- "gradientn"
     }
-    
+
     if (!is.null(.fun)) {
-        if (n == 3) { 
+        if (n == 3) {
             # should determine parameter for user selected functions: 'gradient2' or 'gradientn'
             fn_type <- which_scale_fun(.fun)
             if (fn_type == "gradientn") {
-                 params <- list(colors = colors) 
+                params <- list(colors = colors)
             } else {
-                params <- list(low = colors[1], mid = colors[2], high = colors[3])
+                params <- list(
+                    low = colors[1],
+                    mid = colors[2],
+                    high = colors[3]
+                )
             }
         }
     } else {
@@ -77,7 +94,7 @@ set_enrichplot_color <- function(colors = get_enrichplot_color(2),
         .fun <- getFromNamespace(fn, "ggplot2")
     }
 
-    params$guide <- guide_colorbar(reverse=reverse, order=1)
+    params$guide <- guide_colorbar(reverse = reverse, order = 1)
     params$name <- name # no legend name setting by default as 'name = NULL'
     params$transform <- transform
 
@@ -116,11 +133,11 @@ as.data.frame.compareClusterResult <- function(x, ...) {
 ##' @noRd
 prepare_pie_gene <- function(y) {
     check_installed('tibble', 'for `prepare_pie_gene()`.')
-    gene_pie <- tibble::as_tibble(y[,c("Cluster", "Description", "geneID")])
+    gene_pie <- tibble::as_tibble(y[, c("Cluster", "Description", "geneID")])
     gene_pie$geneID <- strsplit(gene_pie$geneID, '/')
-    gene_pie2 <- as.data.frame(tidyr::unnest(gene_pie, cols=geneID))
+    gene_pie2 <- as.data.frame(tidyr::unnest(gene_pie, cols = geneID))
     gene_pie2 <- unique(gene_pie2)
-    prepare_pie_data(gene_pie2, pie =  "equal", type = "gene")
+    prepare_pie_data(gene_pie2, pie = "equal", type = "gene")
 }
 
 
@@ -134,44 +151,47 @@ prepare_pie_gene <- function(y) {
 ##' @noRd
 prepare_pie_category <- function(enrichDf, pie = "equal") {
     pie <- match.arg(pie, c("equal", "count", "Count"))
-    if (pie == "count") pie <- "Count"
+    if (pie == "count") {
+        pie <- "Count"
+    }
 
-    pie_data <- enrichDf[,c("Cluster", "Description", "Count")]
-    pie_data[,"Description"] <- as.character(pie_data[,"Description"])
+    pie_data <- enrichDf[, c("Cluster", "Description", "Count")]
+    pie_data[, "Description"] <- as.character(pie_data[, "Description"])
     prepare_pie_data(pie_data, pie = pie)
 }
 
 
-
-
-prepare_pie_data <- function(pie_data, pie = "equal",type = "category") {
-    if(type == "category"){
-        ID_unique <- unique(pie_data[,2])
+prepare_pie_data <- function(pie_data, pie = "equal", type = "category") {
+    if (type == "category") {
+        ID_unique <- unique(pie_data[, 2])
     } else {
-        ID_unique <- unique(pie_data[,3])
+        ID_unique <- unique(pie_data[, 3])
     }
 
-    Cluster_unique <- unique(pie_data[,1])
-    ID_Cluster_mat <- matrix(0, nrow = length(ID_unique), ncol = length(Cluster_unique))
+    Cluster_unique <- unique(pie_data[, 1])
+    ID_Cluster_mat <- matrix(
+        0,
+        nrow = length(ID_unique),
+        ncol = length(Cluster_unique)
+    )
     rownames(ID_Cluster_mat) <- ID_unique
     colnames(ID_Cluster_mat) <- Cluster_unique
     ID_Cluster_mat <- as.data.frame(ID_Cluster_mat, stringAsFactors = FALSE)
-    if(pie == "Count") {
-        for(i in seq_len(nrow(pie_data))) {
-            ID_Cluster_mat[pie_data[i,2],pie_data[i,1]] <- pie_data[i,3]
+    if (pie == "Count") {
+        for (i in seq_len(nrow(pie_data))) {
+            ID_Cluster_mat[pie_data[i, 2], pie_data[i, 1]] <- pie_data[i, 3]
         }
-        for(kk in seq_len(ncol(ID_Cluster_mat))) {
-            ID_Cluster_mat[,kk] <- as.numeric(ID_Cluster_mat[,kk])
+        for (kk in seq_len(ncol(ID_Cluster_mat))) {
+            ID_Cluster_mat[, kk] <- as.numeric(ID_Cluster_mat[, kk])
         }
         return(ID_Cluster_mat)
     }
-    for(i in seq_len(nrow(pie_data))) {
-        if(type == "category"){
-            ID_Cluster_mat[pie_data[i,2],pie_data[i,1]] <- 1
+    for (i in seq_len(nrow(pie_data))) {
+        if (type == "category") {
+            ID_Cluster_mat[pie_data[i, 2], pie_data[i, 1]] <- 1
         } else {
-            ID_Cluster_mat[pie_data[i,3],pie_data[i,1]] <- 1
+            ID_Cluster_mat[pie_data[i, 3], pie_data[i, 1]] <- 1
         }
-
     }
     return(ID_Cluster_mat)
 }
@@ -203,32 +223,33 @@ heatmap_palette <- color_palette(c("red", "yellow", "green"))
 overlap_ratio <- function(x, y) {
     x <- unlist(x)
     y <- unlist(y)
-    length(intersect(x, y))/length(unique(c(x,y)))
+    length(intersect(x, y)) / length(unique(c(x, y)))
 }
 
-.cal_jc_similarity <- function(gsetlist, id = NULL, name=NULL){
+.cal_jc_similarity <- function(gsetlist, id = NULL, name = NULL) {
     if (is.null(id)) {
         id <- names(gsetlist)
     }
     n <- length(id)
-    w <- matrix(NA, nrow=n, ncol=n)
+    w <- matrix(NA, nrow = n, ncol = n)
     if (is.null(name)) {
-        name <- id 
+        name <- id
     }
     colnames(w) <- rownames(w) <- name
-    for (i in seq_len(n-1)) {
-        for (j in (i+1):n) {
-            w[i,j] <- overlap_ratio(gsetlist[id[i]], gsetlist[id[j]])
+    for (i in seq_len(n - 1)) {
+        for (j in (i + 1):n) {
+            w[i, j] <- overlap_ratio(gsetlist[id[i]], gsetlist[id[j]])
         }
     }
     w[lower.tri(w)] <- t(w)[lower.tri(t(w))]
-    diag(w) <- 1    
+    diag(w) <- 1
     return(w)
 }
 
 fc_readable <- function(x, foldChange = NULL) {
-    if (is.null(foldChange))
+    if (is.null(foldChange)) {
         return(NULL)
+    }
 
     if (x@readable && x@keytype != "SYMBOL") {
         gid <- names(foldChange)
@@ -244,14 +265,14 @@ fc_readable <- function(x, foldChange = NULL) {
 }
 
 # fc_palette <- function(fc) {
-    # if (all(fc > 0, na.rm=TRUE)) {
-        # palette <- color_palette(c("blue", "red"))
-    # } else if (all(fc < 0, na.rm=TRUE)) {
-        # palette <- color_palette(c("green", "blue"))
-    # } else {
-        ## palette <- color_palette(c("darkgreen", "#0AFF34", "#B3B3B3", "#FF6347", "red"))
-    # }
-    # return(palette)
+# if (all(fc > 0, na.rm=TRUE)) {
+# palette <- color_palette(c("blue", "red"))
+# } else if (all(fc < 0, na.rm=TRUE)) {
+# palette <- color_palette(c("green", "blue"))
+# } else {
+## palette <- color_palette(c("darkgreen", "#0AFF34", "#B3B3B3", "#FF6347", "red"))
+# }
+# return(palette)
 # }
 
 update_n <- function(x, showCategory) {
@@ -323,35 +344,36 @@ extract_geneSets <- function(x, n) {
 ##' @importFrom ggplot2 guide_colorbar
 ##' @importFrom DOSE theme_dose
 ##' @author Guangchuang Yu \url{https://yulab-smu.top}
-plotting.clusterProfile <- function(clProf.reshape.df,
-                                    x = ~Cluster,
-                                    type = "dot",
-                                    colorBy = "p.adjust",
-                                    by = "geneRatio",
-                                    title="",
-                                    font.size=12) {
+plotting.clusterProfile <- function(
+    clProf.reshape.df,
+    x = ~Cluster,
+    type = "dot",
+    colorBy = "p.adjust",
+    by = "geneRatio",
+    title = "",
+    font.size = 12
+) {
     Description <- Percentage <- Count <- Cluster <- GeneRatio <- p.adjust <- pvalue <- NULL # to satisfy codetools
     if (type == "bar") {
         if (by == "percentage") {
-            p <- ggplot(clProf.reshape.df,
-                        aes(x=Description, y = Percentage, fill=Cluster))
+            p <- ggplot(
+                clProf.reshape.df,
+                aes(x = Description, y = Percentage, fill = Cluster)
+            )
         } else if (by == "count") {
-            p <- ggplot(clProf.reshape.df,
-                        aes(x=Description, y = Count, fill=Cluster))
-        } else {
-
-        }
+            p <- ggplot(
+                clProf.reshape.df,
+                aes(x = Description, y = Count, fill = Cluster)
+            )
+        } else {}
         p <- p +
             geom_bar() +
-                coord_flip()
+            coord_flip()
     }
-    
-    p <- p + xlab("") + ylab("") + ggtitle(title) +
-        theme_dose(font.size)
+
+    p <- p + xlab("") + ylab("") + ggtitle(title) + theme_dose(font.size)
     return(p)
 }
-
-
 
 
 ##' Get the distance of the label
@@ -365,37 +387,35 @@ get_label_diss <- function(dimension, label_location) {
     colnames(label_dis) <- rownames(label_dis) <- label_location$label
     for (i in seq_len(nn - 1)) {
         for (j in (i + 1):nn) {
-        label_dis[i ,j] <- label_location[i, dimension] -  label_location[j, dimension]
+            label_dis[i, j] <- label_location[i, dimension] -
+                label_location[j, dimension]
         }
     }
     label_diss <- reshape2::melt(label_dis)
-    label_diss <- label_diss[label_diss[,1] != label_diss[,2], ]
-    label_diss <- label_diss[!is.na(label_diss[,3]), ]
+    label_diss <- label_diss[label_diss[, 1] != label_diss[, 2], ]
+    label_diss <- label_diss[!is.na(label_diss[, 3]), ]
     label_diss[, 1] <- as.character(label_diss[, 1])
     label_diss[, 2] <- as.character(label_diss[, 2])
     return(label_diss)
 }
 
 
-
 # adjust_location <- function(label_location, x_adjust, y_adjust) {
-    # label_diss_x <- get_label_diss(1, label_location)
-    # label_diss_y <- get_label_diss(2, label_location)
+# label_diss_x <- get_label_diss(1, label_location)
+# label_diss_y <- get_label_diss(2, label_location)
 
-    # label_diss_large <- which(abs(label_diss_y[, 3]) < y_adjust) %>%
-        # intersect(which(label_diss_y[, 3] > 0)) %>%
-        # intersect(which(abs(label_diss_x[, 3]) < x_adjust))
+# label_diss_large <- which(abs(label_diss_y[, 3]) < y_adjust) %>%
+# intersect(which(label_diss_y[, 3] > 0)) %>%
+# intersect(which(abs(label_diss_x[, 3]) < x_adjust))
 
-    # label_diss_small <- which(abs(label_diss_y[, 3]) < y_adjust) %>%
-        # intersect(which(label_diss_y[, 3] < 0)) %>%
-        # intersect(which(abs(label_diss_x[, 3]) < x_adjust))
+# label_diss_small <- which(abs(label_diss_y[, 3]) < y_adjust) %>%
+# intersect(which(label_diss_y[, 3] < 0)) %>%
+# intersect(which(abs(label_diss_x[, 3]) < x_adjust))
 
-    # label_location[label_diss_y[label_diss_large, 1], 2] <- label_location[label_diss_y[label_diss_large, 2], 2] + y_adjust
-    # label_location[label_diss_y[label_diss_small, 1], 2] <- label_location[label_diss_y[label_diss_small, 2], 2] - y_adjust
-    # return(label_location)
+# label_location[label_diss_y[label_diss_large, 1], 2] <- label_location[label_diss_y[label_diss_large, 2], 2] + y_adjust
+# label_location[label_diss_y[label_diss_small, 1], 2] <- label_location[label_diss_y[label_diss_small, 2], 2] - y_adjust
+# return(label_location)
 # }
-
-
 
 #' default_labeller
 #'
@@ -404,11 +424,11 @@ get_label_diss <- function(dimension, label_location) {
 #' @noRd
 #' @importFrom yulab.utils str_wrap
 default_labeller <- function(n) {
-    fun <- function(str){
+    fun <- function(str) {
         str <- gsub("_", " ", str)
         yulab.utils::str_wrap(str, n)
     }
-    
+
     structure(fun, class = "labeller")
 }
 
@@ -418,9 +438,9 @@ default_labeller <- function(n) {
 #' @param x some code
 #' @noRd
 quiet <- function(x) {
-  sink(tempfile())
-  on.exit(sink())
-  invisible(force(x))
+    sink(tempfile())
+    on.exit(sink())
+    invisible(force(x))
 }
 
 
@@ -436,9 +456,15 @@ get_ggrepel_segsize <- function(default = 0.2) {
 #' @param params_df data frame with three columns: "original", "listname", and "present"
 #' @noRd
 get_param_change_message <- function(parameter, params_df) {
-    paste0("Use '", params_df[parameter, "listname"], 
-           " = list(", params_df[parameter, "present"], 
-           " = your_value)' instead of '", params_df[parameter, "original"],
-         "'.\n The ", params_df[parameter, "original"],
-          " parameter will be removed in the next version.")
-} 
+    paste0(
+        "Use '",
+        params_df[parameter, "listname"],
+        " = list(",
+        params_df[parameter, "present"],
+        " = your_value)' instead of '",
+        params_df[parameter, "original"],
+        "'.\n The ",
+        params_df[parameter, "original"],
+        " parameter will be removed in the next version."
+    )
+}
