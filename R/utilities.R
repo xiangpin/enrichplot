@@ -54,7 +54,7 @@ set_enrichplot_color <- function(
     name = NULL,
     .fun = NULL,
     reverse = TRUE,
-    transform = 'log10',
+    transform = 'identity',
     ...
 ) {
     type <- match.arg(type, c("color", "colour", "fill"))

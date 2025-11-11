@@ -1,5 +1,8 @@
-# enrichplot 1.31.0.003
+# enrichplot 1.31.0.004
 
++ change `set_enrichplot_color(transform = 'identity')` as default behavior (2025-11-11, Tue)
+  - now it only sets the color scale without changing the transform method
+  - explicitly set `transform = 'log10'` in `dotplot`
 + use 'quarto' as vignette engine (2025-11-11, Tue)
 + use `set_enrichplot_color(transform = 'identity')` in `heatplot` (2025-11-11, Tue)
 + use `set_enrichplot_color(transform = 'identity')` in `cnetplot` (2025-11-05, Wed)

@@ -10,7 +10,7 @@ set_enrichplot_color(
   name = NULL,
   .fun = NULL,
   reverse = TRUE,
-  transform = "log10",
+  transform = "identity",
   ...
 )
 }

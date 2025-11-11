@@ -1,116 +1,212 @@
 ##' @rdname dotplot
 ##' @exportMethod dotplot
 ##' @author Guangchuang Yu
-setMethod("dotplot", signature(object = "enrichResult"),
-          function(object, x = "GeneRatio", color = "p.adjust",
-                   showCategory=10, size = NULL,
-                   split = NULL, font.size=12, title = "",
-                   orderBy="x", label_format = 30, ...) {
-              dotplot.enrichResult(object = object, x = x, color = color,
-                                   showCategory = showCategory,
-                                   size = size, split = split,
-                                   font.size = font.size,
-                                   title = title, orderBy = orderBy,
-                                   label_format = label_format, ...)
-          })
+setMethod(
+    "dotplot",
+    signature(object = "enrichResult"),
+    function(
+        object,
+        x = "GeneRatio",
+        color = "p.adjust",
+        showCategory = 10,
+        size = NULL,
+        split = NULL,
+        font.size = 12,
+        title = "",
+        orderBy = "x",
+        label_format = 30,
+        ...
+    ) {
+        dotplot.enrichResult(
+            object = object,
+            x = x,
+            color = color,
+            showCategory = showCategory,
+            size = size,
+            split = split,
+            font.size = font.size,
+            title = title,
+            orderBy = orderBy,
+            label_format = label_format,
+            ...
+        )
+    }
+)
 
 ##' @rdname dotplot
 ##' @exportMethod dotplot
-setMethod("dotplot", signature(object = "gseaResult"),
-          function(object, x = "GeneRatio", color = "p.adjust", showCategory=10,
-                   size = NULL, split = NULL, font.size=12, title = "",
-                   orderBy="x", label_format = 30, ...) {
-                if (color == "NES") {
-                    NES <- TRUE
-                    color <- "p.adjust"
-                } else {
-                    NES <- FALSE
-                }
-                p <- dotplot.enrichResult(object = object, x = x, color = color,
-                        showCategory = showCategory,
-                        size = size, split = split,
-                        font.size = font.size,
-                        title = title, orderBy = orderBy,
-                        label_format = label_format, ...)
-                
-                if (NES) {
-                    p <- suppressMessages(p + aes(fill = .data$NES) + 
-                        set_enrichplot_color(type = "fill", name = "NES")
+setMethod(
+    "dotplot",
+    signature(object = "gseaResult"),
+    function(
+        object,
+        x = "GeneRatio",
+        color = "p.adjust",
+        showCategory = 10,
+        size = NULL,
+        split = NULL,
+        font.size = 12,
+        title = "",
+        orderBy = "x",
+        label_format = 30,
+        ...
+    ) {
+        if (color == "NES") {
+            NES <- TRUE
+            color <- "p.adjust"
+        } else {
+            NES <- FALSE
+        }
+        p <- dotplot.enrichResult(
+            object = object,
+            x = x,
+            color = color,
+            showCategory = showCategory,
+            size = size,
+            split = split,
+            font.size = font.size,
+            title = title,
+            orderBy = orderBy,
+            label_format = label_format,
+            ...
+        )
+
+        if (NES) {
+            p <- suppressMessages(
+                p +
+                    aes(fill = .data$NES) +
+                    set_enrichplot_color(
+                        type = "fill",
+                        name = "NES"
                     )
-                }
-                return(p)
-          })
+            )
+        }
+        return(p)
+    }
+)
 
 ##' @rdname dotplot
 ##' @aliases dotplot,compareClusterResult,ANY-method
 ##' @exportMethod dotplot
-setMethod("dotplot", signature(object="compareClusterResult"),
-          function(object,
-                   x = "Cluster",
-                   color ="p.adjust",
-                   showCategory=5,
-                   split=NULL,
-                   font.size=12,
-                   title="",
-                   by="geneRatio",
-                   size=NULL,
-                   includeAll=TRUE,
-                   label_format = 30,
-                   ...
-                   ) {
-              dotplot.compareClusterResult(object, x=x, colorBy = color,
-                                           showCategory = showCategory, by = by,
-                                           size = size, includeAll = includeAll,
-                                           split = split, font.size = font.size,
-                                           title = title, label_format = label_format,
-                                           ...)
-})
+setMethod(
+    "dotplot",
+    signature(object = "compareClusterResult"),
+    function(
+        object,
+        x = "Cluster",
+        color = "p.adjust",
+        showCategory = 5,
+        split = NULL,
+        font.size = 12,
+        title = "",
+        by = "geneRatio",
+        size = NULL,
+        includeAll = TRUE,
+        label_format = 30,
+        ...
+    ) {
+        dotplot.compareClusterResult(
+            object,
+            x = x,
+            colorBy = color,
+            showCategory = showCategory,
+            by = by,
+            size = size,
+            includeAll = includeAll,
+            split = split,
+            font.size = font.size,
+            title = title,
+            label_format = label_format,
+            ...
+        )
+    }
+)
 
 ##' @rdname dotplot
 ##' @exportMethod dotplot
 ##' @aliases dotplot,enrichResultList,ANY-method
 ##' @author Guangchuang Yu
-setMethod("dotplot", signature(object = "enrichResultList"),
-          function(object, x = "GeneRatio", color = "p.adjust",
-                   showCategory=10, size = NULL,
-                   split = NULL, font.size=12, title = "",
-                   orderBy="x", label_format = 30, ...) {
-              dotplot.enrichResult(object = object, x = x, color = color,
-                                   showCategory = showCategory,
-                                   size = size, split = split,
-                                   font.size = font.size,
-                                   title = title, orderBy = orderBy,
-                                   label_format = label_format, ...)
-})
+setMethod(
+    "dotplot",
+    signature(object = "enrichResultList"),
+    function(
+        object,
+        x = "GeneRatio",
+        color = "p.adjust",
+        showCategory = 10,
+        size = NULL,
+        split = NULL,
+        font.size = 12,
+        title = "",
+        orderBy = "x",
+        label_format = 30,
+        ...
+    ) {
+        dotplot.enrichResult(
+            object = object,
+            x = x,
+            color = color,
+            showCategory = showCategory,
+            size = size,
+            split = split,
+            font.size = font.size,
+            title = title,
+            orderBy = orderBy,
+            label_format = label_format,
+            ...
+        )
+    }
+)
 
 ##' @rdname dotplot
 ##' @exportMethod dotplot
 ##' @aliases dotplot,gseaResultList,ANY-method
-setMethod("dotplot", signature(object = "gseaResultList"),
-          function(object, x = "GeneRatio", color = "p.adjust",
-                   showCategory=10, size = NULL,
-                   split = NULL, font.size=12, title = "",
-                   orderBy="x", label_format = 30, ...) {
-              if (color == "NES") {
-                      NES <- TRUE
-                      color <- "p.adjust"
-              } else {
-                      NES <- FALSE
-              }
-              p <- dotplot.enrichResult(object = object, x = x, color = color,
-                      showCategory = showCategory,
-                      size = size, split = split,
-                      font.size = font.size,
-                      title = title, orderBy = orderBy,
-                      label_format = label_format, ...)
-              
-              if (NES) {
-                  p <- suppressMessages(p + aes(fill = .data$NES) + 
-                      set_enrichplot_color(type = "fill", name = "NES")
-                  )
-              }
-              return(p)
-})
+setMethod(
+    "dotplot",
+    signature(object = "gseaResultList"),
+    function(
+        object,
+        x = "GeneRatio",
+        color = "p.adjust",
+        showCategory = 10,
+        size = NULL,
+        split = NULL,
+        font.size = 12,
+        title = "",
+        orderBy = "x",
+        label_format = 30,
+        ...
+    ) {
+        if (color == "NES") {
+            NES <- TRUE
+            color <- "p.adjust"
+        } else {
+            NES <- FALSE
+        }
+        p <- dotplot.enrichResult(
+            object = object,
+            x = x,
+            color = color,
+            showCategory = showCategory,
+            size = size,
+            split = split,
+            font.size = font.size,
+            title = title,
+            orderBy = orderBy,
+            label_format = label_format,
+            ...
+        )
+
+        if (NES) {
+            p <- suppressMessages(
+                p +
+                    aes(fill = .data$NES) +
+                    set_enrichplot_color(type = "fill", name = "NES")
+            )
+        }
+        return(p)
+    }
+)
 
 #' @rdname dotplot
 #' @param x variable for x-axis, one of 'GeneRatio' and 'Count'
@@ -143,86 +239,114 @@ setMethod("dotplot", signature(object = "gseaResultList"),
 #' @importFrom ggplot2 guides
 #' @importFrom ggplot2 guide_legend
 #' @importFrom methods is
-dotplot.enrichResult <- function(object, x = "geneRatio", color = "p.adjust",
-                             showCategory=10, size=NULL, split = NULL,
-                             font.size=12, title = "", orderBy="x",
-                             label_format = 30, decreasing=TRUE) {
+dotplot.enrichResult <- function(
+    object,
+    x = "geneRatio",
+    color = "p.adjust",
+    showCategory = 10,
+    size = NULL,
+    split = NULL,
+    font.size = 12,
+    title = "",
+    orderBy = "x",
+    label_format = 30,
+    decreasing = TRUE
+) {
     colorBy <- match.arg(color, c("pvalue", "p.adjust", "qvalue"))
     if (x == "geneRatio" || x == "GeneRatio") {
         x <- "GeneRatio"
-        if (is.null(size))
+        if (is.null(size)) {
             size <- "Count"
+        }
     } else if (x == "count" || x == "Count") {
         x <- "Count"
-        if (is.null(size))
+        if (is.null(size)) {
             size <- "GeneRatio"
+        }
     } else if (is(x, "formula")) {
         x <- as.character(x)[2]
-        if (is.null(size))
+        if (is.null(size)) {
             size <- "Count"
+        }
     } else {
         ## message("invalid x, setting to 'GeneRatio' by default")
         ## x <- "GeneRatio"
         ## size <- "Count"
-        if (is.null(size))
-            size  <- "Count"
+        if (is.null(size)) {
+            size <- "Count"
+        }
     }
-    
+
     if (inherits(object, c("enrichResultList", "gseaResultList"))) {
-        ldf <- lapply(object, fortify, showCategory=showCategory, split=split)
-        df <- dplyr::bind_rows(ldf, .id="category")
-        df$category <- factor(df$category, levels=names(object))
+        ldf <- lapply(
+            object,
+            fortify,
+            showCategory = showCategory,
+            split = split
+        )
+        df <- dplyr::bind_rows(ldf, .id = "category")
+        df$category <- factor(df$category, levels = names(object))
     } else {
-        df <- fortify(object, showCategory = showCategory, split=split)
+        df <- fortify(object, showCategory = showCategory, split = split)
         ## already parsed in fortify
         ## df$GeneRatio <- parse_ratio(df$GeneRatio)
     }
 
-    if (orderBy !=  'x' && !orderBy %in% colnames(df)) {
+    if (orderBy != 'x' && !orderBy %in% colnames(df)) {
         message('wrong orderBy parameter; set to default `orderBy = "x"`')
         orderBy <- "x"
     }
 
     if (orderBy == "x") {
-        df <- dplyr::mutate(df, x = eval(parse(text=x)))
+        df <- dplyr::mutate(df, x = eval(parse(text = x)))
     }
 
     label_func <- .label_format(label_format)
 
     idx <- order(df[[orderBy]], decreasing = decreasing)
 
-    df$Description <- factor(df$Description,
-                          levels=rev(unique(df$Description[idx])))
-    
+    df$Description <- factor(
+        df$Description,
+        levels = rev(unique(df$Description[idx]))
+    )
 
-    p <- ggplot(df, aes(x=.data[[x]], y=.data[["Description"]], 
-                        size=.data[[size]], fill=.data[[colorBy]])) +
+    p <- ggplot(
+        df,
+        aes(
+            x = .data[[x]],
+            y = .data[["Description"]],
+            size = .data[[size]],
+            fill = .data[[colorBy]]
+        )
+    ) +
         geom_point() +
-        aes(shape = I(enrichplot_point_shape)) + 
+        aes(shape = I(enrichplot_point_shape)) +
         # scale_fill_continuous(name = color) +
-        set_enrichplot_color(type = "fill", name = color) + 
+        set_enrichplot_color(type = "fill", name = color, transform = 'log10') +
         scale_y_discrete(labels = label_func) +
-        ylab(NULL) + ggtitle(title) + theme_dose(font.size) 
-        
+        ylab(NULL) +
+        ggtitle(title) +
+        theme_dose(font.size)
+
     if (size == "Count") {
         # integer
         #size_n <- ceiling(sqrt(length(unique(df[[size]]))))
-        size_break <- pretty(df[[size]], n=4)
-        p <- p + scale_size(range=c(3, 8), breaks = size_break)
+        size_break <- pretty(df[[size]], n = 4)
+        p <- p + scale_size(range = c(3, 8), breaks = size_break)
     } else {
-        p <- p + scale_size(range=c(3, 8))
+        p <- p + scale_size(range = c(3, 8))
     }
-    
+
     class(p) <- c("enrichplotDot", class(p))
     return(p)
 }
 
 .label_format <- function(label_format = 30) {
     label_func <- default_labeller(label_format)
-    if(is.function(label_format)) {
+    if (is.function(label_format)) {
         label_func <- label_format
-    } 
-    return(label_func)   
+    }
+    return(label_func)
 }
 
 
@@ -243,79 +367,120 @@ dotplot.enrichResult <- function(object, x = "geneRatio", color = "p.adjust",
 #' e.g. 'pvalue', 'p.adjust' or 'qvalue'
 #' @importFrom ggplot2 facet_grid
 #' @importFrom ggplot2 scale_size_continuous
-#' @importFrom rlang check_installed  
-dotplot.compareClusterResult <- function(object, x= "Cluster", colorBy="p.adjust",
-                                         showCategory=5, by="geneRatio", size="geneRatio",
-                                         split=NULL, includeAll=TRUE,
-                                         font.size=12, title="", label_format = 30,
-                                         group = FALSE, shape = FALSE, facet=NULL, strip_width=15) {                                   
+#' @importFrom rlang check_installed
+dotplot.compareClusterResult <- function(
+    object,
+    x = "Cluster",
+    colorBy = "p.adjust",
+    showCategory = 5,
+    by = "geneRatio",
+    size = "geneRatio",
+    split = NULL,
+    includeAll = TRUE,
+    font.size = 12,
+    title = "",
+    label_format = 30,
+    group = FALSE,
+    shape = FALSE,
+    facet = NULL,
+    strip_width = 15
+) {
     color <- NULL
-    if (is.null(size)) size <- by ## by may deprecated in future release
+    if (is.null(size)) {
+        size <- by
+    } ## by may deprecated in future release
 
     if (!is.null(facet) && facet == "intersect") {
         object <- append_intersect(object)
     }
 
-    df <- fortify(object, showCategory=showCategory, by=size,
-                  includeAll=includeAll, split=split)
+    df <- fortify(
+        object,
+        showCategory = showCategory,
+        by = size,
+        includeAll = includeAll,
+        split = split
+    )
 
     # if (by != "geneRatio")
     #    df$GeneRatio <- parse_ratio(df$GeneRatio)
     label_func <- default_labeller(label_format)
-    if(is.function(label_format)) {
+    if (is.function(label_format)) {
         label_func <- label_format
     }
 
     if (size %in% c("rowPercentage", "count", "geneRatio")) {
-        by2 <- switch(size, rowPercentage = "Percentage",
-                            count         = "Count",
-                            geneRatio     = "GeneRatio")
+        by2 <- switch(
+            size,
+            rowPercentage = "Percentage",
+            count = "Count",
+            geneRatio = "GeneRatio"
+        )
     } else {
         by2 <- size
     }
 
-    p <- ggplot(df, aes(x = .data[[x]], y = .data[["Description"]], size = .data[[by2]])) +
+    p <- ggplot(
+        df,
+        aes(x = .data[[x]], y = .data[["Description"]], size = .data[[by2]])
+    ) +
         scale_y_discrete(labels = label_func)
 
-        if (group) {
-                p <- p + geom_line(aes(color = .data$Cluster, group = .data$Cluster), size=.3) +
-                    ggnewscale::new_scale_colour()
-        }
-
+    if (group) {
+        p <- p +
+            geom_line(
+                aes(color = .data$Cluster, group = .data$Cluster),
+                size = .3
+            ) +
+            ggnewscale::new_scale_colour()
+    }
 
     if (shape) {
         check_installed('ggstar', 'for `dotplot()` with `shape = TRUE`.')
         ggstar <- "ggstar"
-        require(ggstar, character.only=TRUE)
-    # p <- p + ggsymbol::geom_symbol(aes(symbol = .data$Cluster, fill = .data[[colorBy]])) +
-        p <- p + ggstar::geom_star(aes(starshape = .data$Cluster, fill = .data[[colorBy]])) +
-            set_enrichplot_color(type = "fill")
-    }  else {
-        p <- p +  geom_point(aes(fill = .data[[colorBy]])) + 
+        require(ggstar, character.only = TRUE)
+        # p <- p + ggsymbol::geom_symbol(aes(symbol = .data$Cluster, fill = .data[[colorBy]])) +
+        p <- p +
+            ggstar::geom_star(aes(
+                starshape = .data$Cluster,
+                fill = .data[[colorBy]]
+            )) +
+            set_enrichplot_color(type = "fill", transform = 'log10')
+    } else {
+        p <- p +
+            geom_point(aes(fill = .data[[colorBy]])) +
             aes(shape = I(enrichplot_point_shape))
     }
 
-    p <- p + set_enrichplot_color(type = "fill") +
-        ylab(NULL) + ggtitle(title) + DOSE::theme_dose(font.size) +
-        scale_size_continuous(range=c(3, 8))
-
+    p <- p +
+        set_enrichplot_color(type = "fill", transform = 'log10') +
+        ylab(NULL) +
+        ggtitle(title) +
+        DOSE::theme_dose(font.size) +
+        scale_size_continuous(range = c(3, 8))
 
     if (!is.null(facet)) {
-        p <- p + facet_grid(.data[[facet]] ~ ., 
-                scales = "free", space = 'free',
+        p <- p +
+            facet_grid(
+                .data[[facet]] ~ .,
+                scales = "free",
+                space = 'free',
                 switch = 'y',
-                labeller = ggplot2::label_wrap_gen(strip_width)) +
+                labeller = ggplot2::label_wrap_gen(strip_width)
+            ) +
             theme(strip.text = element_text(size = 14))
     }
 
     class(p) <- c("enrichplotDot", class(p))
-    
+
     return(p)
 }
 
 
 append_intersect <- function(x) {
-    if (!inherits(x, 'compareClusterResult')) stop("x should be a compareClusterResult object")
+    if (!inherits(x, 'compareClusterResult')) {
+        stop("x should be a compareClusterResult object")
+    }
 
     d <- as.data.frame(x)
     # sets <- split(d$Description, d$Cluster)
@@ -330,29 +495,29 @@ append_intersect <- function(x) {
     #     }, character(1)
     # )
 
-
     # set_info <- data.frame(
-    #     intersect = so, 
+    #     intersect = so,
     #     Description = df2$item
     # )
-    
 
-    so <- vapply(split(d$Cluster, d$Description), 
-        FUN = paste, 
+    so <- vapply(
+        split(d$Cluster, d$Description),
+        FUN = paste,
         FUN.VALUE = character(1),
-        collapse = " & ")
+        collapse = " & "
+    )
 
     set_info <- data.frame(
-        intersect = so, 
+        intersect = so,
         Description = names(so)
     )
 
-    d2 <- merge(d, set_info, by="Description")
+    d2 <- merge(d, set_info, by = "Description")
     n <- levels(d2$Cluster)
     cc <- yulab.utils::combinations(length(n))
     lv <- vapply(cc, function(i) paste(n[i], collapse = " & "), character(1))
-    d2$intersect <- factor(d2$intersect, levels=lv)
-    
+    d2$intersect <- factor(d2$intersect, levels = lv)
+
     x@compareClusterResult <- d2
 
     return(x)
@@ -376,7 +541,13 @@ append_intersect <- function(x) {
 #' @importFrom ggplot2 geom_text
 #' @export
 #' @author Guangchuang Yu
-dotplot2 <- function(object, x="FoldEnrichment", vars = NULL, label = "auto", ...) {
+dotplot2 <- function(
+    object,
+    x = "FoldEnrichment",
+    vars = NULL,
+    label = "auto",
+    ...
+) {
     if (!is(object, 'compareClusterResult')) {
         stop('only compareClusterResult object is supported')
     }
@@ -387,29 +558,46 @@ dotplot2 <- function(object, x="FoldEnrichment", vars = NULL, label = "auto", ..
     object <- dplyr::filter(object, .data$Cluster %in% vars)
     d <- object@compareClusterResult
     d[[x]] <- d[[x]] * ifelse(d$Cluster == vars[1], -1, 1)
-    object@compareClusterResult <-  d
+    object@compareClusterResult <- d
     p <- dotplot(object, x = x, ...)
-    p <- p + geom_segment(aes(xend=0, yend=.data$Description), 
-            size=1, color='grey50') + 
-        geom_vline(xintercept=0, lty='dashed') + 
+    p <- p +
+        geom_segment(
+            aes(xend = 0, yend = .data$Description),
+            size = 1,
+            color = 'grey50'
+        ) +
+        geom_vline(xintercept = 0, lty = 'dashed') +
         scale_x_continuous(labels = abs)
-    
-    p$layers <- rev(p$layers)
-    
-    if (is.null(label)) return (p)
 
-    d <- dplyr::group_by(object, .data$Cluster) |> 
-        dplyr::summarise(mid = max(abs(.data[[x]])) * sign(max(.data[[x]]))/2)
+    p$layers <- rev(p$layers)
+
+    if (is.null(label)) {
+        return(p)
+    }
+
+    d <- dplyr::group_by(object, .data$Cluster) |>
+        dplyr::summarise(mid = max(abs(.data[[x]])) * sign(max(.data[[x]])) / 2)
 
     if (label != "auto") {
         d$Cluster <- label[d$Cluster]
     }
 
-    p + geom_text(aes(x=.data$mid, y=.4, label=.data$Cluster), 
-                data=d, inherit.aes = FALSE, size=5) + 
-        geom_segment(aes(x=0, xend=.data$mid, y=.2, yend=.2), 
-                data=d, inherit.aes=FALSE, 
-                arrow = arrow(length=unit(0.30,"cm"), type = "closed")) +
-        geom_blank(data = data.frame(y=0), aes(y=.data$y), inherit.aes=FALSE)
-
+    p +
+        geom_text(
+            aes(x = .data$mid, y = .4, label = .data$Cluster),
+            data = d,
+            inherit.aes = FALSE,
+            size = 5
+        ) +
+        geom_segment(
+            aes(x = 0, xend = .data$mid, y = .2, yend = .2),
+            data = d,
+            inherit.aes = FALSE,
+            arrow = arrow(length = unit(0.30, "cm"), type = "closed")
+        ) +
+        geom_blank(
+            data = data.frame(y = 0),
+            aes(y = .data$y),
+            inherit.aes = FALSE
+        )
 }
