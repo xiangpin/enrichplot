@@ -1,17 +1,22 @@
 ##' @rdname heatplot
 ##' @exportMethod heatplot
-setMethod("heatplot", signature(x = "enrichResult"),
-          function(x, showCategory = 30, ...) {
-              heatplot.enrichResult(x, showCategory, ...)
-          })
+setMethod(
+    "heatplot",
+    signature(x = "enrichResult"),
+    function(x, showCategory = 30, ...) {
+        heatplot.enrichResult(x, showCategory, ...)
+    }
+)
 
 ##' @rdname heatplot
 ##' @exportMethod heatplot
-setMethod("heatplot", signature(x = "gseaResult"),
-          function(x, showCategory = 30, ...) {
-              heatplot.enrichResult(x, showCategory, ...)
-          })
-
+setMethod(
+    "heatplot",
+    signature(x = "gseaResult"),
+    function(x, showCategory = 30, ...) {
+        heatplot.enrichResult(x, showCategory, ...)
+    }
+)
 
 
 ##' @rdname heatplot
@@ -29,12 +34,17 @@ setMethod("heatplot", signature(x = "gseaResult"),
 ##' by default wraps names longer that 30 characters
 ##' @param pvalue pvalue of genes
 ##' @author Guangchuang Yu
-heatplot.enrichResult <- function(x, showCategory = 30, symbol = "rect", foldChange = NULL,
-                                  pvalue = NULL, label_format = 30) {
-
+heatplot.enrichResult <- function(
+    x,
+    showCategory = 30,
+    symbol = "rect",
+    foldChange = NULL,
+    pvalue = NULL,
+    label_format = 30
+) {
     symbol <- match.arg(symbol, c("rect", "dot"))
     label_func <- default_labeller(label_format)
-    if(is.function(label_format)) {
+    if (is.function(label_format)) {
         label_func <- label_format
     }
 
@@ -44,22 +54,28 @@ heatplot.enrichResult <- function(x, showCategory = 30, symbol = "rect", foldCha
     pvalue <- fc_readable(x, pvalue)
     d <- list2df(geneSets)
     if (!is.null(foldChange)) {
-        d$foldChange <- foldChange[as.character(d[,2])]
-    } 
+        d$foldChange <- foldChange[as.character(d[, 2])]
+    }
 
     if (!is.null(pvalue)) {
-        d$pvalue <- pvalue[as.character(d[,2])]
-    } 
- 
+        d$pvalue <- pvalue[as.character(d[, 2])]
+    }
+
     p <- ggplot(d, aes(x = .data$Gene, y = .data$categoryID))
 
     if (symbol == "rect") {
         p <- p + geom_tile(color = 'white')
-    } 
+    }
 
-    get_dotp <-function(p, foldChange, pvalue) {
+    get_dotp <- function(p, foldChange, pvalue) {
         if (is.null(foldChange) && is.null(pvalue)) {
-            p <- p + geom_point(color = 'black', shape = 21, fill = "black", size = 5)
+            p <- p +
+                geom_point(
+                    color = 'black',
+                    shape = 21,
+                    fill = "black",
+                    size = 5
+                )
             return(p)
         }
         if (!is.null(foldChange) && !is.null(pvalue)) {
@@ -72,43 +88,55 @@ heatplot.enrichResult <- function(x, showCategory = 30, symbol = "rect", foldCha
         } else {
             p <- p + geom_point(color = 'black', shape = 21, size = 5)
         }
-        
+
         return(p)
     }
     # copy from https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2
     reverselog_trans <- function(base = exp(1)) {
         trans <- function(x) -log(x, base)
-   
+
         check_installed('scales', 'for `heatplot()`.')
-    
+
         inv <- function(x) base^(-x)
-        scales::trans_new(paste0("reverselog-", format(base)), trans, inv, 
-                  scales::log_breaks(base = base), 
-                  domain = c(1e-100, Inf))
+        scales::trans_new(
+            paste0("reverselog-", format(base)),
+            trans,
+            inv,
+            scales::log_breaks(base = base),
+            domain = c(1e-100, Inf)
+        )
     }
 
     if (symbol == "dot") {
-        p <- get_dotp(p, foldChange, pvalue)     
+        p <- get_dotp(p, foldChange, pvalue)
         ## only dot need size(pvalue) parameter
         if (!is.null(pvalue)) {
-            p <- p + aes(size = .data$pvalue) + 
-                scale_size_continuous(range=c(3, 8), 
-                    trans = reverselog_trans(10))
-        } 
+            p <- p +
+                aes(size = .data$pvalue) +
+                scale_size_continuous(
+                    range = c(3, 8),
+                    trans = reverselog_trans(10)
+                )
+        }
     }
 
     if (!is.null(foldChange)) {
-            p <- p + aes(fill = .data$foldChange) + 
-                set_enrichplot_color(colors = get_enrichplot_color(3), type = "fill")
-                # scale_fill_gradient2(name = "fold change", low = "#327eba",
-                #                    mid = "white", high = "#e06663") +
-
+        p <- p +
+            aes(fill = .data$foldChange) +
+            set_enrichplot_color(
+                colors = get_enrichplot_color(3),
+                type = "fill",
+                transform = 'identity'
+            )
     }
-    
 
-    p + xlab(NULL) + ylab(NULL) + theme_minimal() +
+    p +
+        xlab(NULL) +
+        ylab(NULL) +
+        theme_minimal() +
         scale_y_discrete(labels = label_func) +
-        theme(panel.grid.major = element_blank(),
-              axis.text.x=element_text(angle = 60, hjust = 1))
+        theme(
+            panel.grid.major = element_blank(),
+            axis.text.x = element_text(angle = 60, hjust = 1)
+        )
 }
-

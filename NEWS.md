@@ -1,5 +1,6 @@
-# enrichplot 1.31.0.001
+# enrichplot 1.31.0.002
 
++ use `set_enrichplot_color(transform = 'identity')` in `heatplot` (2025-11-11, Tue)
 + use `set_enrichplot_color(transform = 'identity')` in `cnetplot` (2025-11-05, Wed)
 
 # enrichplot 1.30.0
