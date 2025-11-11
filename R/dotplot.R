@@ -483,22 +483,6 @@ append_intersect <- function(x) {
     }
 
     d <- as.data.frame(x)
-    # sets <- split(d$Description, d$Cluster)
-    # yulab.utils::check_pkg('aplotExtra', 'for upsetplot of compareCluster Result')
-    # tidy_main_subsets <- yulab.utils::get_fun_from_pkg('aplotExtra', 'tidy_main_subsets')
-
-    # df <- tidy_main_subsets(sets, order.intersect.by = 'name', nintersects = 10, order.set.by = 'name')
-    # nn <- names(sets)
-    # df2 <- tidyr::unnest(df[, c('id', 'item')], cols="item")
-    # so <- vapply(df2$id, function(x) {
-    #         paste(nn[as.numeric(strsplit(x, '/')[[1]])], collapse = " & ")
-    #     }, character(1)
-    # )
-
-    # set_info <- data.frame(
-    #     intersect = so,
-    #     Description = df2$item
-    # )
 
     so <- vapply(
         split(d$Cluster, d$Description),
