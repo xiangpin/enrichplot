@@ -46,7 +46,7 @@ volplot.enrichResult(
 
 \item{yintercept}{value to set y intercept}
 
-\item{showCategory}{number of most significant enriched terms or selected terms to 
+\item{showCategory}{number of most significant enriched terms or selected terms to
 display determined by the variable selected to color the dots}
 
 \item{label_format}{a numeric value sets wrap length, alternatively a

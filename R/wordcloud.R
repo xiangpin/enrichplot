@@ -1,85 +1,121 @@
-##' Get the frequency of each word in a vector of terms.
-##' 
-##' @param wordd clusters, a vector of terms.
-##' @noRd
-get_word_freq <- function(wordd){     
-    dada <- strsplit(wordd, " ")
-    didi <- table(unlist(dada))
-    didi <- didi[order(didi, decreasing = TRUE)]
-    # Get the number of each word
-    word_name <- names(didi)
-    fun_num_w <- function(ww){
-        sum(vapply(dada, function(w){ww %in% w}, FUN.VALUE = 1))
-    }
-    word_num <- vapply(word_name, fun_num_w, FUN.VALUE = 1)
-    word_w <- word_num[order(word_num, decreasing = TRUE)]
-}
-
 ##' Use wordcloud algorithm to get group tags
-##' 
+##'
 ##' @param cluster a cluster name
-##' @param ggData the data section of the ggraph object, 
+##' @param ggData the data section of the ggraph object,
 ##' which contains clustering information.
-##' @param nWords the number of words in the cluster tags 
+##' @param nWords the number of words in the cluster tags
 ##' @importFrom magrittr %>%
 ##' @noRd
-get_wordcloud <- function(cluster, ggData, nWords){
-    words <- ggData$name %>%
+get_wordcloud <- function(cluster, ggData, nWords = 4) {
+    cluster_terms <- ggData$name[ggData$color2 == cluster]
+
+    if (length(cluster_terms) == 0) {
+        return(cluster)
+    }
+
+    words <- cluster_terms %>%
+        tolower() %>%
         gsub(" in ", " ", .) %>%
         gsub(" [0-9]+ ", " ", .) %>%
         gsub("^[0-9]+ ", "", .) %>%
         gsub(" [0-9]+$", "", .) %>%
-        gsub(" [A-Za-z] ", " ", .) %>%
-        gsub("^[A-Za-z] ", "", .) %>%
-        gsub(" [A-Za-z]$", "", .) %>%
+        gsub(" [a-z] ", " ", .) %>%
+        gsub("^[a-z] ", "", .) %>%
+        gsub(" [a-z]$", "", .) %>%
         gsub(" / ", " ", .) %>%
         gsub(" and ", " ", .) %>%
         gsub(" of ", " ", .) %>%
         gsub(",", " ", .) %>%
-        gsub(" - ", " ", .)
-    net_tot <- length(words)
+        gsub(" - ", " ", .) %>%
+        gsub("\\s+", " ", .) %>% # multiple spaces to single space
+        trimws() # remove leading/trailing whitespace
 
-    clusters <- unique(ggData$color2)
-    words_i <- words[which(ggData$color2 == cluster)]
+    # Split into words and calculate frequencies
+    all_words <- unlist(strsplit(words, "\\s+"))
 
-    sel_tot <- length(words_i)
-    sel_w <- get_word_freq(words_i)
-    net_w_all <- get_word_freq(words)
-    net_w <- net_w_all[names(sel_w)]
-    tag_size <- (sel_w/sel_tot)/(net_w/net_tot)
-    tag_size <- tag_size[order(tag_size, decreasing = TRUE)]
-    nWords <- min(nWords, length(tag_size))
-    tag <- names(tag_size[seq_len(nWords)])
-
-    # Order of words
-    dada <- strsplit(words_i, " ")
-    len <- vapply(dada, length, FUN.VALUE=1)
-    rank <- NULL
-    for(i in seq_len(sel_tot)) {
-        rank <- c(rank, seq_len(len[i]))
+    if (length(all_words) == 0) {
+        return(cluster)
     }
 
-    word_data <- data.frame(word = unlist(dada), rank = rank)
-    word_rank1 <- stats::aggregate(rank ~ word, data = word_data, sum)
-    rownames(word_rank1) <- word_rank1[, 1]
+    word_freq <- table(all_words)
+    word_freq <- word_freq[order(word_freq, decreasing = TRUE)]
 
-    word_rank1 <- word_rank1[names(sel_w), ]
-    # Get an average ranking order
-    word_rank1[, 2] <- word_rank1[, 2]/as.numeric(sel_w)
-    tag_order <- word_rank1[tag, ]
-    tag_order <- tag_order[order(tag_order[, 2]), ]
-    tag_clu_i <- paste(tag_order$word, collapse=" ")
+    # Remove common stop words
+    stop_words <- c(
+        "the",
+        "and",
+        "for",
+        "with",
+        "via",
+        "by",
+        "to",
+        "a",
+        "an",
+        "in",
+        "of",
+        "on",
+        "at"
+    )
+    meaningful_words <- names(word_freq)[
+        !tolower(names(word_freq)) %in% stop_words
+    ]
+
+    # Get top nWords meaningful words
+    if (length(meaningful_words) > 0) {
+        top_words <- head(meaningful_words, nWords)
+
+        # Consider word position for ordering (optional enhancement)
+        word_positions <- calculate_word_positions(cluster_terms, top_words)
+        if (!is.null(word_positions)) {
+            top_words <- word_positions
+        }
+
+        return(paste(top_words, collapse = " "))
+    } else {
+        # Fallback: use most frequent words regardless
+        top_words <- head(names(word_freq), nWords)
+        return(paste(top_words, collapse = " "))
+    }
 }
 
 
+#' Calculate word positions to improve label ordering
+#'
+#' @param terms vector of terms
+#' @param candidate_words candidate words for the label
+#' @return ordered words based on position
+#' @noRd
+calculate_word_positions <- function(terms, candidate_words) {
+    if (length(terms) == 0 || length(candidate_words) == 0) {
+        return(NULL)
+    }
 
+    # Split all terms into words
+    all_term_words <- strsplit(tolower(terms), "\\s+")
 
+    # Calculate average position for each candidate word
+    word_ranks <- list()
 
+    for (word in candidate_words) {
+        positions <- c()
+        for (term_words in all_term_words) {
+            word_idx <- which(term_words == tolower(word))
+            if (length(word_idx) > 0) {
+                positions <- c(positions, word_idx)
+            }
+        }
+        if (length(positions) > 0) {
+            word_ranks[[word]] <- mean(positions)
+        } else {
+            word_ranks[[word]] <- Inf # Word not found in any term
+        }
+    }
 
+    # Order words by their average position
+    if (length(word_ranks) > 0) {
+        sorted_words <- names(sort(unlist(word_ranks)))
+        return(sorted_words)
+    }
 
-
-
-
-
-
-
+    return(NULL)
+}

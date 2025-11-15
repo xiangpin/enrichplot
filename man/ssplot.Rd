@@ -45,35 +45,37 @@ ssplot.compareClusterResult(
 
 additional parameters can refer the following parameters.
     \itemize{
-       \item \code{color} Variable that used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
-        the starting position of each text label.
-       \item \code{size_edge} Scale of line width.
-       \item \code{min_edge} The minimum similarity threshold for whether
+      \item \code{layout} igraph layout function for node positioning
+      \item \code{color} Variable that used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
+      \item \code{size_category} relative size of the categories
+      \item \code{min_edge} The minimum similarity threshold for whether
         two nodes are connected, should between 0 and 1, default value is 0.2.
-       \item \code{size_category} Number indicating the amount by which plotting category
-        nodes should be scaled relative to the default.
-       \item \code{label_style} style of group label, one of "shadowtext" and "ggforce".
-       \item \code{group} Logical, if TRUE, the grouping legend will be displayed.
-        The default is FALSE.
-       \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
-       \item \code{label_format} a numeric value sets wrap length, alternatively a
-        custom function to format axis labels.
-       \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
+      \item \code{color_edge} color of the network edge
+      \item \code{size_edge} relative size of edge width.
+      \item \code{node_label} Select which labels to be displayed,
+        one of 'category', 'group', 'all' and 'none'.
+      \item \code{pie} one of 'equal' or 'Count' to set the slice ratio of the pies (for `compareClusterResult` only).
+      \item \code{group} logical, if TRUE, group the category.
+      \item \code{group_style} style of ellipse, one of "ggforce" an "polygon"
+      \item \code{label_group_style} style of group label, one of "shadowtext" and "ggforce".
+      \item \code{label_format} a numeric value sets wrap length, alternatively a custom function to format axis labels.
+      \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
         cluster::clara, cluster::fanny or cluster::pam.
-       \item \code{nCluster} Numeric, the number of clusters,
+      \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
+      \item \code{nCluster} Numeric, the number of clusters,
         the default value is square root of the number of nodes.
     }
 
 additional parameters can refer the emapplot function: \link{emapplot}.}
 
-\item{showCategory}{A number or a vector of terms. If it is a number, 
-the first n terms will be displayed. If it is a vector of terms, 
+\item{showCategory}{A number or a vector of terms. If it is a number,
+the first n terms will be displayed. If it is a vector of terms,
 the selected terms will be displayed.}
 
 \item{drfun}{The function used for dimension reduction,
-e.g. stats::cmdscale (the default), vegan::metaMDS, or ape::pcoa.}
+e.g. `stats::cmdscale` (the default), `vegan::metaMDS`, or `ape::pcoa`.}
 
-\item{dr.params}{list, the parameters of tidydr::dr. one of 'category', 'group', 'all' and 'none'.}
+\item{dr.params}{list, the parameters of `tidydr::dr`.}
 
 \item{group}{logical, if TRUE, group the category.}
 
@@ -86,7 +88,11 @@ one of 'category', 'group', 'all' and 'none'.}
 ggplot object
 }
 \description{
-Similarity space plot of enrichment analysis results.
+Similarity Space Plot for enrichment analysis
+}
+\details{
+Creates 2D visualization of enrichment results using dimension reduction
+techniques to show relationships between terms based on similarity.
 }
 \examples{
 \dontrun{
@@ -107,7 +113,7 @@ Similarity space plot of enrichment analysis results.
         readable      = TRUE)
     d <- godata('org.Hs.eg.db', ont="BP")
     ego2 <- pairwise_termsim(ego, method = "Wang", semData = d)
-    ssplot(ego2)    
+    ssplot(ego2)
 }
 }
 \author{

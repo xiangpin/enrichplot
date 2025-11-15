@@ -5,8 +5,7 @@
 \alias{treeplot,enrichResult-method}
 \alias{treeplot,gseaResult-method}
 \alias{treeplot,compareClusterResult-method}
-\alias{treeplot.enrichResult}
-\alias{treeplot.compareClusterResult}
+\alias{treeplot_internal}
 \title{treeplot}
 \usage{
 treeplot(x, ...)
@@ -17,64 +16,22 @@ treeplot(x, ...)
 
 \S4method{treeplot}{compareClusterResult}(x, ...)
 
-treeplot.enrichResult(
+treeplot_internal(
   x,
   showCategory = 30,
   color = "p.adjust",
-  nWords = 4,
   nCluster = 5,
-  cex_category = 1,
-  label_format = NULL,
-  label_format_cladelab = 30,
-  label_format_tiplab = NULL,
-  leave_fontsize = 4,
-  clade_fontsize = 4,
-  offset = rel(1),
-  offset_tiplab = rel(1),
-  hclust_method = "ward.D",
+  cluster_method = "ward.D",
+  label_format = 30,
+  fontsize_tiplab = 4,
+  fontsize_cladelab = 4,
   group_color = NULL,
   extend = 0.3,
   hilight = TRUE,
-  hexpand = 0.1,
   align = "both",
-  hilight.params = list(hilight = TRUE, align = "both"),
-  offset.params = list(bar_tree = rel(1), tiplab = rel(1), extend = 0.3, hexpand = 0.1),
-  cluster.params = list(method = "ward.D", n = 5, color = NULL, label_words_n = 4,
-    label_format = 30),
-  ...
-)
-
-treeplot.compareClusterResult(
-  x,
-  showCategory = 5,
-  color = "p.adjust",
-  nWords = 4,
-  nCluster = 5,
-  cex_category = 1,
-  split = NULL,
-  label_format = NULL,
-  label_format_cladelab = 30,
-  label_format_tiplab = NULL,
-  leave_fontsize = 4,
-  clade_fontsize = 4,
-  offset = rel(1),
-  pie = "equal",
-  legend_n = 3,
-  offset_tiplab = rel(1),
-  hclust_method = "ward.D",
-  group_color = NULL,
-  extend = 0.3,
-  hilight = TRUE,
-  geneClusterPanel = "heatMap",
   hexpand = 0.1,
-  align = "both",
-  cluster.params = list(method = "ward.D", n = 5, color = NULL, label_words_n = 4,
-    label_format = 30),
-  hilight.params = list(hilight = TRUE, align = "both"),
-  clusterPanel.params = list(clusterPanel = "heatMap", pie = "equal", legend_n = 3,
-    colnames_angle = 0),
-  offset.params = list(bar_tree = rel(1), tiplab = rel(1), extend = 0.3, hexpand = 0.1),
-  ...
+  tiplab_offset = 0.2,
+  cladelab_offset = 1
 )
 }
 \arguments{
@@ -84,136 +41,42 @@ treeplot.compareClusterResult(
 
 \item{showCategory}{number of enriched terms to display}
 
-\item{color}{variable that used to color enriched terms, e.g. pvalue,
-p.adjust or qvalue}
+\item{color}{variable to color nodes, e.g. 'p.adjust', 'pvalue', or 'qvalue'}
 
-\item{nWords}{The number of words in the cluster tags.
-Will be removed in the next version.}
+\item{nCluster}{number of clusters for tree cutting}
 
-\item{nCluster}{The number of clusters, the default value is 5.
-Will be removed in the next version.}
+\item{cluster_method}{hierarchical clustering method}
 
-\item{cex_category}{Number indicating the amount by which plotting category.
-nodes should be scaled relative to the default.
-Will be removed in the next version.}
+\item{label_format}{wrap length for labels or custom formatting function}
 
-\item{label_format}{a numeric value sets wrap length, alternatively a
-custom function to format axis labels.}
+\item{fontsize_tiplab}{font size for tip labels}
 
-\item{label_format_cladelab}{label_format for group labels, a numeric value sets wrap length, 
-alternatively a custom function to format axis labels.
-Will be removed in the next version.}
+\item{fontsize_cladelab}{font size for clade labels}
 
-\item{label_format_tiplab}{label_format for tiplabs, a numeric value sets wrap length, 
-alternatively a custom function to format axis labels.
-Will be removed in the next version.}
+\item{group_color}{vector of colors for groups}
 
-\item{leave_fontsize}{The size of tiplabel, default is 4.}
+\item{extend}{extend length for clade labels}
 
-\item{clade_fontsize}{The size of cladelabel, default is 4.}
+\item{hilight}{whether to highlight clades}
 
-\item{offset}{rel object or numeric value, distance bar and tree,
-offset of bar and text from the clade, default is rel(1),
-meaning 1 * 1.2 * x_range_of_tree plus distance_between_tree_and_tiplab
-(1 * (1.2 * x_range_of_tree + distance_between_tree_and_tiplab)).
-Will be removed in the next version.}
+\item{align}{alignment for highlight rectangles}
 
-\item{offset_tiplab}{tiplab offset, rel object or numeric value, the bigger the number, 
-the farther the distance between the node and the branch. 
-The default is rel(1), when geneClusterPanel = "pie", meaning 1 *  max_radius_of_the_pies; 
-when geneClusterPanel = "heatMap", meaning 1 * 0.16 * column_number_of_heatMap * x_range_of_tree;
-when geneClusterPanel = "dotplot", meaning 1 * 0.09 * column_number_of_dotplot * x_range_of_tree.
-Will be removed in the next version.}
+\item{hexpand}{expand x limits by amount of xrange * hexpand}
 
-\item{hclust_method}{Method of hclust. This should be (an unambiguous abbreviation of) one of "ward.D", 
-"ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC).
-Will be removed in the next version.}
+\item{tiplab_offset}{offset for tip labels}
 
-\item{group_color}{A vector of group colors, the length of the vector should be the same as nCluster.
-Will be removed in the next version.}
-
-\item{extend}{Numeric, extend the length of bar, default is 0.3.
-Will be removed in the next version.}
-
-\item{hilight}{Logical value, if TRUE(default), add ggtree::geom_hilight() layer.
-Will be removed in the next version.}
-
-\item{hexpand}{expand x limits by amount of xrange * hexpand.
-Will be removed in the next version.}
-
-\item{align}{control the align direction of the edge of high light rectangular.
-Options is 'none', 'left', 'right', 'both (default)'.
-Will be removed in the next version.}
-
-\item{hilight.params}{list, the parameters to control the attributes of highlight layer.
-see the hilight.params in the following.
-hilight.params control the attributes of highlight layer, it can be referred to the following parameters:
-    \itemize{
-        \item \code{hilight} Logical value, if TRUE(default), add ggtree::geom_hilight() layer.
-        \item \code{align} control the align direction of the edge of high light rectangular.
-        Options is 'none', 'left', 'right', 'both (default)'.
-    }}
-
-\item{offset.params}{list, the parameters to control the offset.
-see the offset.params in the following.
-offset.params control the attributes of offset, it can be referred to the following parameters:
-    \itemize{
-        \item \code{bar_tree} rel object or numeric value, distance bar and tree,
-        offset of bar and text from the clade, default is rel(1),
-        meaning 1 * 1.2 * x_range_of_tree plus distance_between_tree_and_tiplab
-        (1 * (1.2 * x_range_of_tree + distance_between_tree_and_tiplab)).
-        \item \code{tiplab} tiplab offset, rel object or numeric value, the bigger the number, 
-        the farther the distance between the node and the branch. 
-        The default is rel(1), when clusterPanel = "pie", meaning 1 *  max_radius_of_the_pies; 
-        when clusterPanel = "heatMap", meaning 1 * 0.16 * column_number_of_heatMap * x_range_of_tree;
-        when clusterPanel = "dotplot", meaning 1 * 0.09 * column_number_of_dotplot * x_range_of_tree.
-        \item \code{extend} Numeric, extend the length of bar, default is 0.3.
-        \item \code{hexpand} expand x limits by amount of xrange * hexpand.
-    }}
-
-\item{cluster.params}{list, the parameters to control the attributes of highlighted nodes and edges.
-see the cluster.params in the following.
-cluster.params control the attributes of highlight, it can be referred to the following parameters:
-    \itemize{
-        \item \code{method} function of Clustering method, such as stats::kmeans(the default),
-        cluster::clara, cluster::fanny or cluster::pam.
-        \item \code{n} Numeric, the number of clusters, 
-        the default value is square root of the number of nodes.
-        \item \code{color} A vector of group colors, the length of the vector should be the same as nCluster.
-        \item \code{label_words_n} Numeric, the number of words in the cluster tags, the default value is 4.
-        \item \code{label_format} A numeric value sets wrap length, alternatively a
-        custom function to format axis labels.
-    }}
-
-\item{split}{Separate result by 'category' variable.}
-
-\item{pie}{Used only when geneClusterPanel = "pie", 
-proportion of clusters in the pie chart, one of 'equal' (default) and 'Count'.
-Will be removed in the next version.}
-
-\item{legend_n}{Number of circle in legend, the default value is 3.
-Will be removed in the next version.}
-
-\item{geneClusterPanel}{one of "heatMap"(default), "dotplot", "pie".
-Will be removed in the next version.}
-
-\item{clusterPanel.params}{list, the parameters to control the attributes of cluster panel.
-see the clusterPanel.params in the following.
-clusterPanel.params control the attributes of cluster panel, it can be referred to the following parameters:
-    \itemize{
-        \item \code{clusterPanel} one of "heatMap"(default), "dotplot", "pie".
-        \item \code{pie} pUsed only when ClusterPanel = "pie", 
-        proportion of clusters in the pie chart, one of 'equal' (default) and 'Count'.
-        \item \code{legend_n} number of circle in legend.
-        \item \code{colnames_angle} set the angle of colnames.
-    }}
+\item{cladelab_offset}{offset for clade labels}
 }
 \value{
 ggplot object
+
+ggplot2 object representing the tree plot
 }
 \description{
-Functional grouping tree diagram for enrichment result of 
+Functional grouping tree diagram for enrichment result of
 over-representation test or gene set enrichment analysis.
+
+Creates hierarchical tree visualization of enriched terms based on similarity
 }
 \details{
 This function visualizes gene sets as a tree.
@@ -250,18 +113,18 @@ for interpretation.
     keep <- rownames(ego2@termsim)[c(1:10, 16:20)]
     keep
     treeplot(ego2, showCategory = keep)
-    treeplot(ego2, showCategory = 20, 
+    treeplot(ego2, showCategory = 20,
         group_color = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442"))
     # It can also graph compareClusterResult
     data(gcSample)
     xx <- compareCluster(gcSample, fun="enrichKEGG",
                          organism="hsa", pvalueCutoff=0.05)
-    xx <- pairwise_termsim(xx)                     
-    treeplot(xx)                     
-    
+    xx <- pairwise_termsim(xx)
+    treeplot(xx)
+
     # use `geneClusterPanel` to change the gene cluster panel.
-    treeplot(xx, geneClusterPanel = "dotplot")  
-    
-    treeplot(xx, geneClusterPanel = "pie")  
+    treeplot(xx, geneClusterPanel = "dotplot")
+
+    treeplot(xx, geneClusterPanel = "pie")
    }
 }

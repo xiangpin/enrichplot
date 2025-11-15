@@ -1,5 +1,5 @@
-##' @rdname ssplot
-##' @exportMethod ssplot
+#' @rdname ssplot
+#' @exportMethod ssplot
 setMethod(
     "ssplot",
     signature(x = "enrichResult"),
@@ -8,8 +8,8 @@ setMethod(
     }
 )
 
-##' @rdname ssplot
-##' @exportMethod ssplot
+#' @rdname ssplot
+#' @exportMethod ssplot
 setMethod(
     "ssplot",
     signature(x = "gseaResult"),
@@ -18,8 +18,8 @@ setMethod(
     }
 )
 
-##' @rdname ssplot
-##' @exportMethod ssplot
+#' @rdname ssplot
+#' @exportMethod ssplot
 setMethod(
     "ssplot",
     signature(x = "compareClusterResult"),
@@ -29,39 +29,37 @@ setMethod(
 )
 
 
-##' @rdname ssplot
-##' @param drfun The function used for dimension reduction,
-##' e.g. stats::cmdscale (the default), vegan::metaMDS, or ape::pcoa.
-##' @param dr.params list, the parameters of tidydr::dr. one of 'category', 'group', 'all' and 'none'.
-##' @param ... additional parameters
-##'
-##' additional parameters can refer the following parameters.
-##'     \itemize{
-##        \item \code{coords} a data.frame with two columns: 'x' for X-axis coordinate and 'y' for Y-axis coordinate.
-##'        \item \code{color} Variable that used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
-##'         the starting position of each text label.
-##'        \item \code{size_edge} Scale of line width.
-##'        \item \code{min_edge} The minimum similarity threshold for whether
-##'         two nodes are connected, should between 0 and 1, default value is 0.2.
-##        \item \code{cex_label_category} Scale of category node label size.
-##'        \item \code{size_category} Number indicating the amount by which plotting category
-##'         nodes should be scaled relative to the default.
-##        \item \code{shadowtext} a logical value, whether to use shadow font.
-##'        \item \code{label_style} style of group label, one of "shadowtext" and "ggforce".
-##        \item \code{repel whether} to correct the position of the label. Defaults to FALSE.
-##'        \item \code{group} Logical, if TRUE, the grouping legend will be displayed.
-##'         The default is FALSE.
-##        \item \code{cex_label_group} Numeric, scale of group labels size, the default value is 1.
-##'        \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
-##'        \item \code{label_format} a numeric value sets wrap length, alternatively a
-##'         custom function to format axis labels.
-##'        \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
-##'         cluster::clara, cluster::fanny or cluster::pam.
-##'        \item \code{nCluster} Numeric, the number of clusters,
-##'         the default value is square root of the number of nodes.
-##'     }
-##'
-##' additional parameters can refer the emapplot function: \link{emapplot}.
+#' @rdname ssplot
+#' @param drfun The function used for dimension reduction,
+#' e.g. `stats::cmdscale` (the default), `vegan::metaMDS`, or `ape::pcoa`.
+#' @param dr.params list, the parameters of `tidydr::dr`.
+#' @param ... additional parameters
+#'
+#' additional parameters can refer the following parameters.
+#'     \itemize{
+#'       \item \code{layout} igraph layout function for node positioning
+#'       \item \code{color} Variable that used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
+#'       \item \code{size_category} relative size of the categories
+#'       \item \code{min_edge} The minimum similarity threshold for whether
+#'         two nodes are connected, should between 0 and 1, default value is 0.2.
+#'       \item \code{color_edge} color of the network edge
+#'       \item \code{size_edge} relative size of edge width.
+#'       \item \code{node_label} Select which labels to be displayed,
+#'         one of 'category', 'group', 'all' and 'none'.
+#'       \item \code{pie} one of 'equal' or 'Count' to set the slice ratio of the pies (for `compareClusterResult` only).
+#'       \item \code{group} logical, if TRUE, group the category.
+#'       \item \code{group_style} style of ellipse, one of "ggforce" an "polygon"
+#'       \item \code{label_group_style} style of group label, one of "shadowtext" and "ggforce".
+#'       \item \code{label_format} a numeric value sets wrap length, alternatively a custom function to format axis labels.
+#'       \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
+#'         cluster::clara, cluster::fanny or cluster::pam.
+#'       \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
+#'       \item \code{nCluster} Numeric, the number of clusters,
+#'         the default value is square root of the number of nodes.
+#'     }
+#'
+#' additional parameters can refer the emapplot function: \link{emapplot}.
+#' @importFrom tidydr theme_dr
 ssplot.enrichResult <- function(
     x,
     showCategory = 30,
@@ -98,7 +96,8 @@ ssplot.enrichResult <- function(
 
     ## Set axis label according to drfun
     p <- adj_axis(p = p, drResult = drResult)
-    return(p + theme_classic())
+
+    p + theme_dr()
 }
 
 
@@ -156,17 +155,18 @@ ssplot.compareClusterResult <- function(
     )
     ## Set axis label according to the method parameter
     p <- adj_axis(p = p, drResult = drResult)
-    return(p + theme_classic())
+
+    p + theme_dr()
 }
 
 
-##' Get a distance matrix
-##'
-##' @param x enrichment result.
-##' @param showCategory number of enriched terms to display.
-##' @param split separate result by 'category' variable.
-##' @param pie proportion of clusters in the pie chart.
-##' @noRd
+#' Get a distance matrix
+#'
+#' @param x enrichment result.
+#' @param showCategory number of enriched terms to display.
+#' @param split separate result by 'category' variable.
+#' @param pie proportion of clusters in the pie chart.
+#' @noRd
 build_dist <- function(x, showCategory, split = NULL, pie = NULL) {
     sim = get_pairwise_sim(
         x = x,
@@ -174,27 +174,35 @@ build_dist <- function(x, showCategory, split = NULL, pie = NULL) {
         split = split,
         pie = pie
     )
-    ## If the similarity between the two terms is 1,
-    ## an error will be reported in some method, so fine-tuning.
-    sim[which(sim == 1)] <- 0.99999
-    for (i in seq_len(nrow(sim))) {
-        sim[i, i] <- 1
+
+    # ensure symmetry
+    if (!isSymmetric(sim)) {
+        sim <- (sim + t(sim)) / 2
     }
+
+    # clamp to [0,1]
+    sim[is.na(sim)] <- 0
+    sim <- pmin(pmax(sim, 0), 1)
+
+    # avoid exact 1 for off-diagonal entries (some DR methods may fail)
+    eps <- .Machine$double.eps
+    diag(sim) <- 1
+    offdiag_idx <- row(sim) != col(sim)
+    sim[offdiag_idx & sim >= 1] <- 1 - eps
+
     stats::as.dist(1 - sim)
 }
 
 
-##' Get a similarity matrix
-##'
-##' @param x enrichment result.
-##' @param showCategory number of enriched terms to display.
-##' @param split separate result by 'category' variable.
-##' @param pie proportion of clusters in the pie chart.
-##' @noRd
+#' Get a similarity matrix
+#'
+#' @param x enrichment result.
+#' @param showCategory number of enriched terms to display.
+#' @param split separate result by 'category' variable.
+#' @param pie proportion of clusters in the pie chart.
+#' @noRd
 get_pairwise_sim <- function(x, showCategory, split = NULL, pie = NULL) {
-    # if (class(x) == "compareClusterResult") {
     if (inherits(x, "compareClusterResult")) {
-        # y <- get_selected_category(showCategory, enrichResult, split)
         y <- fortify(
             model = x,
             showCategory = showCategory,
@@ -212,54 +220,55 @@ get_pairwise_sim <- function(x, showCategory, split = NULL, pie = NULL) {
         }
     }
     if (length(keep) == 0) {
-        stop("no enriched term found...")
+        stop("no enriched term found (no rows selected by showCategory).")
     }
     fill_termsim(x, keep)
 }
 
 
-##' Adjust axis label according to the dimension reduction method
-##'
-##' @param p ggplot2 object
-##' @param drs dimension reduction result
-##' @noRd
+#' Adjust axis label according to the dimension reduction method
+#'
+#' @param p ggplot2 object
+#' @param drs dimension reduction result
+#' @noRd
 adj_axis <- function(p, drResult) {
     title = NULL
     eigenvalue <- drResult$eigenvalue
-    if (!is.null(eigenvalue)) {
-        xlab = paste(
+    if (!is.null(eigenvalue) && length(eigenvalue) >= 2) {
+        total <- sum(eigenvalue)
+        if (total == 0) {
+            total <- 1
+        }
+
+        xlab = paste0(
             "Dimension1 (",
-            format(100 * eigenvalue[1] / sum(eigenvalue), digits = 4),
-            "%)",
-            sep = ""
+            format(100 * eigenvalue[1] / total, digits = 4, "%)")
         )
-        ylab = paste(
+        ylab = paste0(
             "Dimension2 (",
-            format(100 * eigenvalue[2] / sum(eigenvalue), digits = 4),
-            "%)",
-            sep = ""
+            format(100 * eigenvalue[2] / sum(eigenvalue), digits = 4, "%)")
         )
     } else {
         xlab = "Dimension1"
         ylab = "Dimension2"
         if (!is.null(drResult$stress)) {
-            title = paste("stress = ", drResult$stress, sep = "")
+            title <- paste0("stress = ", drResult$stress)
         }
     }
     p <- p + labs(x = xlab, y = ylab, title = title)
     return(p)
 }
 
-##' Get the result of dimension reduction
-##'
-##' @param x enrichment result.
-##' @param showCategory number of enriched terms to display.
-##' @param split separate result by 'category' variable.
-##' @param pie proportion of clusters in the pie chart.
-##' @param drfun The function used for dimension reduction.
-##' @param dr.params list, the parameters of tidydr::dr.
-##' @importFrom rlang check_installed
-##' @noRd
+#' Get the result of dimension reduction
+#'
+#' @param x enrichment result.
+#' @param showCategory number of enriched terms to display.
+#' @param split separate result by 'category' variable.
+#' @param pie proportion of clusters in the pie chart.
+#' @param drfun The function used for dimension reduction.
+#' @param dr.params list, the parameters of tidydr::dr.
+#' @importFrom rlang check_installed
+#' @noRd
 get_drResult <- function(
     x,
     showCategory,
@@ -278,17 +287,34 @@ get_drResult <- function(
         'tidydr',
         'for `get_drResult()`, which is an internal function.'
     )
-    drResult <- do.call(
-        tidydr::dr,
-        c(list(data = distance_mat, fun = drfun), dr.params)
+    drResult <- tryCatch(
+        {
+            do.call(
+                tidydr::dr,
+                c(list(data = distance_mat, fun = drfun), dr.params)
+            )
+        },
+        error = function(e) {
+            message(
+                "dimensionality reduction failed with provided drfun; falling back to stats::cmdscale."
+            )
+            tryCatch(
+                {
+                    tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
+                },
+                error = function(e2) {
+                    stop(
+                        "dimensionality reduction failed (both provided method and fallback)."
+                    )
+                }
+            )
+        }
     )
-    wrongMessage <- paste(
-        "Wrong drfun parameter or unsupported",
-        "dimensionality reduction method;",
-        "set to default `drfun = 'stats::cmdscale'`"
-    )
+
     if (is.null(drResult$drdata)) {
-        message(wrongMessage)
+        message(
+            "Wrong drfun parameter or unsupported dimensionality reduction method; set to default `drfun = stats::cmdscale`"
+        )
         drResult <- tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
     }
     drResult

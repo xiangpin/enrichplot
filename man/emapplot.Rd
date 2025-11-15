@@ -41,8 +41,8 @@ emapplot_internal(
 
 \item{...}{Additional parameters}
 
-\item{showCategory}{A number or a vector of terms. If it is a number, 
-the first n terms will be displayed. If it is a vector of terms, 
+\item{showCategory}{A number or a vector of terms. If it is a number,
+the first n terms will be displayed. If it is a vector of terms,
 the selected terms will be displayed.}
 
 \item{layout}{igraph layout}
@@ -90,11 +90,11 @@ over-representation test or gene set enrichment analysis
 \details{
 This function visualizes gene sets as a network (i.e. enrichment map).
 Mutually overlapping gene sets tend to cluster together, making it
-easier for interpretation. When the similarity between terms meets 
+easier for interpretation. When the similarity between terms meets
 a certain threshold (default is 0.2, adjusted by parameter `min_edge`),
-there will be edges between terms. The stronger the similarity, 
-the shorter and thicker the edges. The similarity between terms is 
-obtained by function `pairwise_termsim`, the details of similarity 
+there will be edges between terms. The stronger the similarity,
+the shorter and thicker the edges. The similarity between terms is
+obtained by function `pairwise_termsim`, the details of similarity
 calculation can be found in its documentation: \link{pairwise_termsim}.
 }
 \examples{
