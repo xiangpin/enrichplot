@@ -1,5 +1,6 @@
-# enrichplot 1.31.0.005
+# enrichplot 1.31.0.006
 
++ import `ggfun::%<+%` (2025-11-18, Tue)
 + update `ssplot()`, `treeplot()` and `get_wordcloud()` (2025-11-15, Sat)
 + change `set_enrichplot_color(transform = 'identity')` as default behavior (2025-11-11, Tue)
   - now it only sets the color scale without changing the transform method

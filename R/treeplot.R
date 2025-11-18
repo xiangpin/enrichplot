@@ -368,6 +368,7 @@ add_cluster_panel <- function(
 #' @param cladelab_offset clade label offset
 #' @param add_tippoint whether to add tip points (default: TRUE)
 #' @noRd
+#' @importFrom ggfun %<+%
 create_tree_plot <- function(
     hc,
     clus,
