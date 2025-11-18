@@ -91,6 +91,7 @@ heatplot.enrichResult <- function(
 
         return(p)
     }
+
     # copy from https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2
     reverselog_trans <- function(base = exp(1)) {
         trans <- function(x) -log(x, base)
@@ -122,7 +123,7 @@ heatplot.enrichResult <- function(
 
     if (!is.null(foldChange)) {
         p <- p +
-            aes(fill = .data$foldChange) +
+            aes(fill = !!sym('foldChange')) +
             set_enrichplot_color(
                 colors = get_enrichplot_color(3),
                 type = "fill",

@@ -1,4 +1,3 @@
-
 ##' barplot of enrichResult
 ##'
 ##'
@@ -38,9 +37,16 @@
 ##' categorys <- c("urinary bladder cancer", "bronchiolitis obliterans",
 ##'                "aortic aneurysm", "esophageal cancer")
 ##' barplot(x, showCategory = categorys)
-barplot.enrichResult <- function(height, x="Count", color='p.adjust',
-                                 showCategory=8, font.size=12, title="",
-                                 label_format=30, ...) {
+barplot.enrichResult <- function(
+    height,
+    x = "Count",
+    color = 'p.adjust',
+    showCategory = 8,
+    font.size = 12,
+    title = "",
+    label_format = 30,
+    ...
+) {
     ## use *height* to satisy barplot generic definition
     ## actually here is an enrichResult object.
     object <- height
@@ -48,44 +54,99 @@ barplot.enrichResult <- function(height, x="Count", color='p.adjust',
     colorBy <- match.arg(color, c("pvalue", "p.adjust", "qvalue"))
     if (x == "geneRatio" || x == "GeneRatio") {
         x <- "GeneRatio"
-    }
-    else if (x == "count" || x == "Count") {
+    } else if (x == "count" || x == "Count") {
         x <- "Count"
     }
 
-    df <- fortify(object, showCategory=showCategory, by=x, ...)
+    #df <- fortify(object, showCategory = showCategory, by = x, ...)
+    dots <- list(...)
+    supported_params <- c("order", "drop", "split")
+    fortify_params <- dots[names(dots) %in% supported_params]
 
-    if(colorBy %in% colnames(df)) {
-        p <- ggplot(df, aes(x = .data[[x]], y = .data[["Description"]], fill = .data[[colorBy]])) +
+    # Create the call to fortify without passing ... directly
+    # This prevents ggplot2 from checking for unused parameters
+    fortify_args <- list(
+        model = object,
+        showCategory = showCategory,
+        by = x
+    )
+
+    # Add supported parameters explicitly
+    if ("order" %in% names(fortify_params)) {
+        fortify_args$order <- fortify_params$order
+    }
+    if ("drop" %in% names(fortify_params)) {
+        fortify_args$drop <- fortify_params$drop
+    }
+    if ("split" %in% names(fortify_params)) {
+        fortify_args$split <- fortify_params$split
+    }
+
+    # Use do.call to avoid passing ... through function calls
+    df <- do.call(fortify, fortify_args)
+
+    if (colorBy %in% colnames(df)) {
+        p <- ggplot(
+            df,
+            aes(
+                x = .data[[x]],
+                y = .data[["Description"]],
+                fill = .data[[colorBy]]
+            )
+        ) +
             theme_dose(font.size) +
             set_enrichplot_color(type = "fill", name = color)
     } else {
-        p <- ggplot(df, aes(x = .data[[x]], y = .data[["Description"]],
-                                   fill = .data[["Description"]])) +
+        p <- ggplot(
+            df,
+            aes(
+                x = .data[[x]],
+                y = .data[["Description"]],
+                fill = .data[["Description"]]
+            )
+        ) +
             theme_dose(font.size) +
-            theme(legend.position="none")
+            theme(legend.position = "none")
     }
 
     label_func <- default_labeller(label_format)
-    if(is.function(label_format)) {
+    if (is.function(label_format)) {
         label_func <- label_format
     }
 
-    p + geom_col() + # geom_bar(stat = "identity") + coord_flip() +
+    p +
+        geom_col() + # geom_bar(stat = "identity") + coord_flip() +
         scale_y_discrete(labels = label_func) +
-        ggtitle(title) + ylab(NULL) # + xlab(NULL)
+        ggtitle(title) +
+        ylab(NULL) # + xlab(NULL)
 }
 
 ##' @method barplot compareClusterResult
 ##' @export
-barplot.compareClusterResult <- function(height, color="p.adjust",
-                                         showCategory=5, by="geneRatio",
-                                         includeAll=TRUE, font.size=12,
-                                         title="", ...) {
+barplot.compareClusterResult <- function(
+    height,
+    color = "p.adjust",
+    showCategory = 5,
+    by = "geneRatio",
+    includeAll = TRUE,
+    font.size = 12,
+    title = "",
+    ...
+) {
     ## use *height* to satisy barplot generic definition
     ## actually here is an compareClusterResult object.
-    df <- fortify(height, showCategory=showCategory, by=by,
-                  includeAll=includeAll)
-    plotting.clusterProfile(df, type="bar", colorBy=color, by=by, title=title,
-                            font.size=font.size)
+    df <- fortify(
+        height,
+        showCategory = showCategory,
+        by = by,
+        includeAll = includeAll
+    )
+    plotting.clusterProfile(
+        df,
+        type = "bar",
+        colorBy = color,
+        by = by,
+        title = title,
+        font.size = font.size
+    )
 }

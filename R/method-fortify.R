@@ -1,5 +1,3 @@
-
-
 ##' convert compareClusterResult to a data.frame that ready for plot
 ##'
 ##'
@@ -11,12 +9,18 @@
 ##' @importFrom plyr ddply
 ##' @importFrom plyr mdply
 ##' @importFrom plyr .
-##' @method fortify compareClusterResult
+## @method fortify compareClusterResult
 ##' @export
 ##' @author Guangchuang Yu
-fortify.compareClusterResult <- function(model, data, showCategory=5,
-                                         by="geneRatio", split=NULL,
-                                         includeAll=TRUE, ...) {
+fortify.compareClusterResult <- function(
+    model,
+    data,
+    showCategory = 5,
+    by = "geneRatio",
+    split = NULL,
+    includeAll = TRUE,
+    ...
+) {
     clProf.df <- as.data.frame(model)
     .split <- split
     if ("core_enrichment" %in% colnames(clProf.df)) {
@@ -28,28 +32,28 @@ fortify.compareClusterResult <- function(model, data, showCategory=5,
     ## get top 5 (default) categories of each gene cluster.
     if (is.null(showCategory)) {
         result <- clProf.df
-    } else if(is.numeric(showCategory)){
+    } else if (is.numeric(showCategory)) {
         Cluster <- NULL # to satisfy codetools
 
         topN <- function(res, showCategory) {
-            ddply(.data = res,
-                  .variables = .(Cluster),
-                  .fun = function(df, N) {
-                      if (length(df$Count) > N) {
-                          if (any(colnames(df) == "pvalue")) {
-                              idx <- order(df$pvalue, decreasing=FALSE)[1:N]
-                          } else {
-                              ## for groupGO
-                              idx <- order(df$Count, decreasing=T)[1:N]
-                          }
-                          return(df[idx,])
-                      } else {
-                          return(df)
-                      }
-                  },
-                  N=showCategory
-                  )
-
+            ddply(
+                .data = res,
+                .variables = .(Cluster),
+                .fun = function(df, N) {
+                    if (length(df$Count) > N) {
+                        if (any(colnames(df) == "pvalue")) {
+                            idx <- order(df$pvalue, decreasing = FALSE)[1:N]
+                        } else {
+                            ## for groupGO
+                            idx <- order(df$Count, decreasing = T)[1:N]
+                        }
+                        return(df[idx, ])
+                    } else {
+                        return(df)
+                    }
+                },
+                N = showCategory
+            )
         }
 
         if (!is.null(.split) && .split %in% colnames(clProf.df)) {
@@ -59,7 +63,6 @@ fortify.compareClusterResult <- function(model, data, showCategory=5,
         } else {
             result <- topN(clProf.df, showCategory)
         }
-
     } else {
         result <- subset(clProf.df, Description %in% showCategory)
     }
@@ -71,57 +74,75 @@ fortify.compareClusterResult <- function(model, data, showCategory=5,
 
     ## remove zero count
     result$Description <- as.character(result$Description) ## un-factor
-    GOlevel <- result[,c("ID", "Description")] ## GO ID and Term
+    GOlevel <- result[, c("ID", "Description")] ## GO ID and Term
     GOlevel <- unique(GOlevel)
 
-
-
     result <- result[result$Count != 0, ]
-    result$Description <- factor(result$Description,
-                                 levels=unique(rev(GOlevel[,2])))
-    if (by=="rowPercentage") {
+    result$Description <- factor(
+        result$Description,
+        levels = unique(rev(GOlevel[, 2]))
+    )
+    if (by == "rowPercentage") {
         Description <- Count <- NULL # to satisfy codetools
-        result <- ddply(result,
-                        .(Description),
-                        transform,
-                        Percentage = Count/sum(Count),
-                        Total = sum(Count))
+        result <- ddply(
+            result,
+            .(Description),
+            transform,
+            Percentage = Count / sum(Count),
+            Total = sum(Count)
+        )
 
         ## label GO Description with gene counts.
-        x <- mdply(result[, c("Description", "Total")], paste, sep=" (")
-        y <- sapply(x[,3], paste, ")", sep="")
+        x <- mdply(result[, c("Description", "Total")], paste, sep = " (")
+        y <- sapply(x[, 3], paste, ")", sep = "")
         result$Description <- y
 
         ## restore the original order of GO Description
-        xx <- result[,c(2,3)]
+        xx <- result[, c(2, 3)]
         xx <- unique(xx)
-        rownames(xx) <- xx[,1]
-        Termlevel <- xx[as.character(GOlevel[,1]),2]
+        rownames(xx) <- xx[, 1]
+        Termlevel <- xx[as.character(GOlevel[, 1]), 2]
 
         ##drop the *Total* column
         result <- result[, colnames(result) != "Total"]
 
-        result$Description <- factor(result$Description,
-                                     levels=unique(rev(Termlevel)))
-
+        result$Description <- factor(
+            result$Description,
+            levels = unique(rev(Termlevel))
+        )
     } else if (by == "count") {
         result$GeneRatio <- DOSE::parse_ratio(result$GeneRatio)
     } else if (by == "geneRatio") {
         ## for result of ORA
         # if (class(result$GeneRatio) == "character" && grep("/", result$GeneRatio[1])) {
-        if (inherits(result$GeneRatio, "character") && grep("/", result$GeneRatio[1])) {
-            gcsize <- as.numeric(sub("^\\d+/", "", as.character(result$GeneRatio)))
+        if (
+            inherits(result$GeneRatio, "character") &&
+                grep("/", result$GeneRatio[1])
+        ) {
+            gcsize <- as.numeric(sub(
+                "^\\d+/",
+                "",
+                as.character(result$GeneRatio)
+            ))
             result$GeneRatio <- DOSE::parse_ratio(result$GeneRatio)
-            if (("ONTOLOGY" %in% colnames(result)) && (length(unique(result$ONTOLOGY)) > 1)){
+            if (
+                ("ONTOLOGY" %in% colnames(result)) &&
+                    (length(unique(result$ONTOLOGY)) > 1)
+            ) {
                 # do nothing
             } else {
-                cluster <- paste(as.character(result$Cluster),"\n", "(", gcsize, ")",
-                                 sep="")
+                cluster <- paste(
+                    as.character(result$Cluster),
+                    "\n",
+                    "(",
+                    gcsize,
+                    ")",
+                    sep = ""
+                )
                 lv <- unique(cluster)[order(as.numeric(unique(result$Cluster)))]
                 result$Cluster <- factor(cluster, levels = lv)
             }
         }
-
     } else {
         ## nothing
     }
@@ -144,23 +165,54 @@ fortify.compareClusterResult <- function(model, data, showCategory=5,
 ##' @param ... additional parameter
 ##' @return data.frame
 ##' @importFrom ggplot2 fortify
-##' @method fortify enrichResult
+## @method fortify enrichResult
 ##' @export
-fortify.enrichResult <- function(model, data, showCategory=5, by = "Count",
-                                 order=FALSE, drop=FALSE, split=NULL, ...) {
-    fortify_internal(model, data, showCategory, by, order, drop, split, ...)
+fortify.enrichResult <- function(
+    model,
+    data,
+    showCategory = 5,
+    by = "Count",
+    order = FALSE,
+    drop = FALSE,
+    split = NULL,
+    ...
+) {
+    fortify_internal(
+        model = model,
+        data = data,
+        showCategory = showCategory,
+        by = by,
+        order = order,
+        drop = drop,
+        split = split
+    )
 }
 
-##' @method fortify gseaResult
+## @method fortify gseaResult
 ##' @export
-fortify.gseaResult <- function(model, data, showCategory=5, by = "Count",
-                               order=FALSE, drop=FALSE, split=NULL, ...) {
-    fortify_internal(model, data, showCategory, by, order, drop, split, ...)
+fortify.gseaResult <- function(
+    model,
+    data,
+    showCategory = 5,
+    by = "Count",
+    order = FALSE,
+    drop = FALSE,
+    split = NULL,
+    ...
+) {
+    fortify_internal(model, data, showCategory, by, order, drop, split)
 }
 
 
-fortify_internal <- function(model, data, showCategory=5, by = "Count",
-                             order=FALSE, drop=FALSE, split=NULL, ...) {
+fortify_internal <- function(
+    model,
+    data,
+    showCategory = 5,
+    by = "Count",
+    order = FALSE,
+    drop = FALSE,
+    split = NULL
+) {
     res <- as.data.frame(model)
     res <- res[!is.na(res$Description), ]
     if (inherits(model, "gseaResult")) {
@@ -183,20 +235,21 @@ fortify_internal <- function(model, data, showCategory=5, by = "Count",
 
     if (order) {
         if (by == "Count") {
-            idx <- order(res$Count, decreasing=TRUE)
+            idx <- order(res$Count, decreasing = TRUE)
         } else {
-            idx <- order(res$GeneRatio, decreasing=TRUE)
+            idx <- order(res$GeneRatio, decreasing = TRUE)
         }
-        res <- res[idx,]
+        res <- res[idx, ]
     }
 
     topN <- function(res, showCategory) {
-        if ( is.numeric(showCategory) ) {
-            if ( showCategory <= nrow(res) ) {
-                res <- res[1:showCategory,]
+        if (is.numeric(showCategory)) {
+            if (showCategory <= nrow(res)) {
+                res <- res[1:showCategory, ]
             }
-        } else { ## selected categories
-            res <- res[res$Description %in% showCategory,]
+        } else {
+            ## selected categories
+            res <- res[res$Description %in% showCategory, ]
         }
         return(res)
     }
@@ -209,20 +262,22 @@ fortify_internal <- function(model, data, showCategory=5, by = "Count",
         res <- do.call('rbind', lres)
     }
 
-    res$Description <- factor(res$Description,
-                              levels=rev(unique(res$Description)))
+    res$Description <- factor(
+        res$Description,
+        levels = rev(unique(res$Description))
+    )
 
     return(res)
 }
 
-str_count <- function(string, pattern="") {
-    sapply(string, FUN = function(i) length(unlist(strsplit(i, split = pattern))))
+str_count <- function(string, pattern = "") {
+    sapply(string, FUN = function(i) {
+        length(unlist(strsplit(i, split = pattern)))
+    })
 }
 
 parse_ratio <- function(ratio) {
     gsize <- as.numeric(sub("/\\d+$", "", as.character(ratio)))
     gcsize <- as.numeric(sub("^\\d+/", "", as.character(ratio)))
-    return(gsize/gcsize)
+    return(gsize / gcsize)
 }
-
-
