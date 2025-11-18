@@ -519,7 +519,7 @@ add_clade_labels <- function(
             show.legend = FALSE,
             align = align
         ) +
-        scale_fill_manual(values = colors, guide = 'none')
+        scale_fill_manual(values = group_color, guide = 'none')
 
     return(p)
 }
