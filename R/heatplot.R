@@ -52,7 +52,9 @@ heatplot.enrichResult <- function(
     n <- update_n(x, showCategory)
     geneSets <- extract_geneSets(x, n)
     if(!is.null(showTop) && showTop > 0) {
-      topgenes <- head(names(sort(table(unlist(geneSets)),decreasing=TRUE)), showTop)
+      genes_freq <- table(unlist(geneSets))
+      nfc <- genes_freq * abs(foldChange[ names(genes_freq) ])
+      topgenes <- head(names(sort(nfc,decreasing=TRUE)), showTop)
       geneSets <- lapply(geneSets, function(s) intersect(s, topgenes))
     }
     foldChange <- fc_readable(x, foldChange)
