@@ -1,4 +1,4 @@
-# enrichplot 1.31.0.006
+# enrichplot 1.31.1
 
 + import `ggfun::%<+%` (2025-11-18, Tue)
 + update `ssplot()`, `treeplot()` and `get_wordcloud()` (2025-11-15, Sat)
