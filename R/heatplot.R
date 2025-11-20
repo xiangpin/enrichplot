@@ -37,6 +37,7 @@ setMethod(
 heatplot.enrichResult <- function(
     x,
     showCategory = 30,
+    showTop = NULL,
     symbol = "rect",
     foldChange = NULL,
     pvalue = NULL,
@@ -50,6 +51,10 @@ heatplot.enrichResult <- function(
 
     n <- update_n(x, showCategory)
     geneSets <- extract_geneSets(x, n)
+    if(!is.null(showTop) && showTop > 0) {
+      topgenes <- head(names(sort(table(unlist(geneSets)),decreasing=TRUE)), showTop)
+      geneSets <- lapply(geneSets, function(s) intersect(s, topgenes))
+    }
     foldChange <- fc_readable(x, foldChange)
     pvalue <- fc_readable(x, pvalue)
     d <- list2df(geneSets)
