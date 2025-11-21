@@ -134,6 +134,7 @@ heatplot.enrichResult <- function(
             set_enrichplot_color(
                 colors = get_enrichplot_color(3),
                 type = "fill",
+                reverse = FALSE,
                 transform = 'identity'
             )
     }
