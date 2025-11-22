@@ -37,6 +37,7 @@ setMethod(
 heatplot.enrichResult <- function(
     x,
     showCategory = 30,
+    showTop = NULL,
     symbol = "rect",
     foldChange = NULL,
     pvalue = NULL,
@@ -50,6 +51,12 @@ heatplot.enrichResult <- function(
 
     n <- update_n(x, showCategory)
     geneSets <- extract_geneSets(x, n)
+    if(!is.null(showTop) && showTop > 0) {
+      nfreq <- table(unlist(geneSets))
+      nfc <- nfreq * abs(foldChange[ names(nfreq) ])
+      topgenes <- head(names(sort(nfc,decreasing=TRUE)), showTop)
+      geneSets <- lapply(geneSets, function(s) intersect(s, topgenes))
+    }
     foldChange <- fc_readable(x, foldChange)
     pvalue <- fc_readable(x, pvalue)
     d <- list2df(geneSets)
@@ -127,6 +134,7 @@ heatplot.enrichResult <- function(
             set_enrichplot_color(
                 colors = get_enrichplot_color(3),
                 type = "fill",
+                reverse = FALSE,
                 transform = 'identity'
             )
     }
