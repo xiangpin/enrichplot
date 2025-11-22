@@ -16,6 +16,7 @@ heatplot(x, showCategory = 30, ...)
 heatplot.enrichResult(
   x,
   showCategory = 30,
+  showTop = NULL,
   symbol = "rect",
   foldChange = NULL,
   pvalue = NULL,
@@ -28,6 +29,9 @@ heatplot.enrichResult(
 \item{showCategory}{number of enriched terms to display}
 
 \item{...}{Additional parameters}
+
+\item{showTop}{number of top genes ranked by abs(foldChange) * frequency
+to be shown in the heatmap, default NULL means all genes are shown}
 
 \item{symbol}{symbol of the nodes, one of "rect"(the default) and "dot"
 by default wraps names longer that 30 characters}

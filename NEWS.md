@@ -1,3 +1,7 @@
+# enrichplot 1.31.1.001
+
++ add `showTop` parameter to limit number of genes shown in `heatplot()` and distinguish tip point size variable for `treeplot()` througth internal parameter `size_var` (2025-11-23, Sat, #335) 
+
 # enrichplot 1.31.1
 
 + import `ggfun::%<+%` (2025-11-18, Tue)

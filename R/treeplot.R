@@ -5,14 +5,14 @@
 #' @rdname treeplot
 #' @exportMethod treeplot
 setMethod("treeplot", signature(x = "enrichResult"), function(x, ...) {
-    treeplot_internal(x, ...)
+    treeplot_internal(x, size_var = "Count", ...)
 })
 
 
 #' @rdname treeplot
 #' @exportMethod treeplot
 setMethod("treeplot", signature(x = "gseaResult"), function(x, ...) {
-    treeplot_internal(x, ...)
+    treeplot_internal(x, size_var = "setSize", ...)
 })
 
 #' @rdname treeplot
@@ -25,6 +25,7 @@ setMethod("treeplot", signature(x = "compareClusterResult"), function(x, ...) {
 #' @rdname treeplot
 #' @param showCategory number of enriched terms to display
 #' @param color variable to color nodes, e.g. 'p.adjust', 'pvalue', or 'qvalue'
+#' @param size_var variable for node size, e.g. 'Count' (for enrichResult) or 'setSize' (for gseaResult)
 #' @param nCluster number of clusters for tree cutting
 #' @param cluster_method hierarchical clustering method
 #' @param label_format wrap length for labels or custom formatting function
@@ -45,7 +46,7 @@ treeplot_internal <- function(
     x,
     showCategory = 30,
     color = "p.adjust",
-    size_var = c("Count","setSize"),
+    size_var = c("Count", "setSize"),
     nCluster = 5,
     cluster_method = "ward.D",
     label_format = 30,
@@ -84,7 +85,7 @@ treeplot_internal <- function(
     # Hierarchical clustering
     hc <- hclust(as.dist(1 - termsim2), method = cluster_method)
     clus <- cutree(hc, nCluster)
-  
+
     # Prepare data for plotting
     size_var <- intersect(size_var, colnames(x[]))[1]
     d <- x[keep, c(color, size_var)]
@@ -433,13 +434,17 @@ create_tree_plot <- function(
     if (add_tippoint) {
         p <- p +
             ggnewscale::new_scale_colour() +
-          geom_tippoint(aes(color = .data[[color_var]], size = .data[['size']]))
-        if(color_var %in% c("pvalue","qvalue","p.adjust")) {
+            geom_tippoint(aes(
+                color = .data[[color_var]],
+                size = .data[['size']]
+            ))
+        if (color_var %in% c("pvalue", "qvalue", "p.adjust")) {
             p <- p + set_enrichplot_color(transform = 'log10')
         } else {
-            p <- p + set_enrichplot_color(
-                colors = rev(get_enrichplot_color(3)),
-            )
+            p <- p +
+                set_enrichplot_color(
+                    colors = rev(get_enrichplot_color(3)),
+                )
         }
     }
 
