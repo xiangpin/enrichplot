@@ -13,6 +13,7 @@
 #' @param size_edge relative size of edge
 #' @param node_label one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'
 #' @param foldChange numeric values to color the item (e.g, foldChange of gene expression values)
+#' @param fc_threshold threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1)
 #' @param hilight selected category to be highlighted
 #' @param hilight_alpha transparent value for not selected to be highlight
 #' @param ... additional parameters
@@ -33,12 +34,24 @@ cnetplot.enrichResult <- function(
     size_edge = .5,
     node_label = "all",
     foldChange = NULL,
+    fc_threshold = NULL,
     hilight = "none",
     hilight_alpha = .3,
     ...
 ) {
     geneSets <- extract_geneSets(x, showCategory)
     foldChange <- fc_readable(x, foldChange)
+
+    # Filter genes by absolute fold change threshold
+    if (!is.null(fc_threshold) && !is.null(foldChange)) {
+        keep_genes <- names(foldChange)[abs(foldChange) > fc_threshold]
+        foldChange <- foldChange[keep_genes]
+        geneSets <- lapply(geneSets, function(gs) {
+            intersect(gs, keep_genes)
+        })
+        # Remove empty gene sets
+        geneSets <- geneSets[sapply(geneSets, length) > 0]
+    }
 
     p <- cnetplot(
         geneSets,
