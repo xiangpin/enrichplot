@@ -18,6 +18,7 @@
   size_edge = 0.5,
   node_label = "all",
   foldChange = NULL,
+  fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
   ...
@@ -35,6 +36,7 @@
   size_edge = 0.5,
   node_label = "all",
   foldChange = NULL,
+  fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
   ...
@@ -80,6 +82,8 @@
 \item{node_label}{one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'}
 
 \item{foldChange}{numeric values to color the item (e.g, foldChange of gene expression values)}
+
+\item{fc_threshold}{threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1)}
 
 \item{hilight}{selected category to be highlighted}
 

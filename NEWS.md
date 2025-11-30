@@ -1,5 +1,6 @@
-# enrichplot 1.31.1.002
+# enrichplot 1.31.2
 
++ add 'fc_threshold' paramter to `cnetplot` (2025-11-30, Sun, #338)
 + update all line width aes mapping from 'size' to 'linewidth' (2025-11-30, Sun)
 + add 'node_label_size' paramter for `emapplot` (2025-11-30, Sun)
 + remove `emapplot` parameters, 'group', 'group_style' and 'label_group_style' (#339) 
