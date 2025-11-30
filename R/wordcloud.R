@@ -4,7 +4,7 @@
 ##' @param node_data the data section of the ggplot object,
 ##' which contains clustering information.
 ##' @param nWords the number of words in the cluster tags
-##' @importFrom magrittr %>%
+#' @importFrom utils head
 ##' @noRd
 get_wordcloud <- function(cluster, node_data, nWords = 4) {
     cluster_terms <- node_data$name[node_data$color2 == cluster]    
@@ -13,21 +13,21 @@ get_wordcloud <- function(cluster, node_data, nWords = 4) {
         return(cluster)
     }
 
-    words <- cluster_terms %>%
-        tolower() %>%
-        gsub(" in ", " ", .) %>%
-        gsub(" [0-9]+ ", " ", .) %>%
-        gsub("^[0-9]+ ", "", .) %>%
-        gsub(" [0-9]+$", "", .) %>%
-        gsub(" [a-z] ", " ", .) %>%
-        gsub("^[a-z] ", "", .) %>%
-        gsub(" [a-z]$", "", .) %>%
-        gsub(" / ", " ", .) %>%
-        gsub(" and ", " ", .) %>%
-        gsub(" of ", " ", .) %>%
-        gsub(",", " ", .) %>%
-        gsub(" - ", " ", .) %>%
-        gsub("\\s+", " ", .) %>% # multiple spaces to single space
+    words <- cluster_terms |>
+        tolower() |>
+        gsub(" in ", " ", x = _) |>
+        gsub(" [0-9]+ ", " ", x = _) |>
+        gsub("^[0-9]+ ", "", x = _) |>
+        gsub(" [0-9]+$", "", x = _) |>
+        gsub(" [a-z] ", " ", x = _) |>
+        gsub("^[a-z] ", "", x = _) |>
+        gsub(" [a-z]$", "", x = _) |>
+        gsub(" / ", " ", x = _) |>
+        gsub(" and ", " ", x = _) |>
+        gsub(" of ", " ", x = _) |>
+        gsub(",", " ", x = _) |>
+        gsub(" - ", " ", x = _) |>
+        gsub("\\s+", " ", x = _) |> # multiple spaces to single space
         trimws() # remove leading/trailing whitespace
 
     # Split into words and calculate frequencies

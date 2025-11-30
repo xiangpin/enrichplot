@@ -54,6 +54,7 @@
   size_edge = 0.5,
   node_label = "all",
   foldChange = NULL,
+  fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
   pie = "equal",

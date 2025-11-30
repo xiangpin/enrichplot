@@ -14,7 +14,7 @@ Imports:
     ggnewscale,
     ggplot2 (>= 3.5.0),
     ggrepel (>= 0.9.0),
-    ggtangle (>= 0.0.5),
+    ggtangle (>= 0.0.9),
     graphics,
     grid,
     igraph,
@@ -29,7 +29,6 @@ Imports:
     utils,
     scatterpie,
     GOSemSim (>= 2.31.2),
-    magrittr,
     ggtree,
     yulab.utils (>= 0.1.6)
 Suggests:

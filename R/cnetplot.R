@@ -42,22 +42,12 @@ cnetplot.enrichResult <- function(
     geneSets <- extract_geneSets(x, showCategory)
     foldChange <- fc_readable(x, foldChange)
 
-    # Filter genes by absolute fold change threshold
-    if (!is.null(fc_threshold) && !is.null(foldChange)) {
-        keep_genes <- names(foldChange)[abs(foldChange) > fc_threshold]
-        foldChange <- foldChange[keep_genes]
-        geneSets <- lapply(geneSets, function(gs) {
-            intersect(gs, keep_genes)
-        })
-        # Remove empty gene sets
-        geneSets <- geneSets[sapply(geneSets, length) > 0]
-    }
-
     p <- cnetplot(
         geneSets,
         layout = layout,
         showCategory = showCategory,
         foldChange = foldChange,
+        fc_threshold = fc_threshold,
         color_category = color_category,
         size_category = size_category,
         color_item = color_item,
@@ -108,6 +98,7 @@ cnetplot.compareClusterResult <- function(
     size_edge = .5,
     node_label = "all",
     foldChange = NULL,
+    fc_threshold = NULL,
     hilight = "none",
     hilight_alpha = .3,
     pie = "equal",
@@ -122,6 +113,7 @@ cnetplot.compareClusterResult <- function(
         layout = layout,
         showCategory = length(gs),
         foldChange = foldChange,
+        fc_threshold = fc_threshold,
         color_category = color_category,
         size_category = 0,
         color_item = color_item,

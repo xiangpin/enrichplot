@@ -115,7 +115,6 @@ ssplot.compareClusterResult <- function(
     drfun = NULL,
     #cex_pie2axis = 0.0125,
     dr.params = list(),
-    group = TRUE,
     node_label = "group",
     ...
 ) {

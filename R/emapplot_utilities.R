@@ -361,10 +361,10 @@ add_ellipse <- function(
             p <- ggforce::geom_mark_ellipse(
                 data = node_data,
                 aes(
-                    x = x,
-                    y = y,
-                    fill = color2,
-                    label = color2
+                    x = !!sym('x'),
+                    y = !!sym('y'),
+                    fill = !!sym('color2'),
+                    label = !!sym('color2')
                 ),
                 alpha = alpha,
                 color = NA,
@@ -373,7 +373,7 @@ add_ellipse <- function(
         } else {
             p <- ggforce::geom_mark_ellipse(
                 data = node_data,
-                aes(x = x, y = y, fill = color2),
+                aes(x = !!sym('x'), y = !!sym('y'), fill = !!sym('color2')),
                 alpha = alpha,
                 color = NA,
                 show.legend = show_legend
@@ -383,9 +383,10 @@ add_ellipse <- function(
 
     # not in used
     if (FALSE && ellipse_style == "polygon") {
+        ellipse_pro <- 0.95  # 定义默认的ellipse_pro值
         p <- ggplot2::stat_ellipse(
             data = node_data,
-            aes(x = x, y = y, fill = color2),
+            aes(x = !!sym('x'), y = !!sym('y'), fill = !!sym('color2')),
             geom = "polygon",
             level = ellipse_pro,
             alpha = alpha,

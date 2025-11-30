@@ -253,6 +253,7 @@ treeplot_compareCluster <- function(
 #' @param legend_n legend items count
 #' @param colnames_angle column names angle
 #' @param hexpand expand ratio
+#' @importFrom rlang sym
 #' @noRd
 add_cluster_panel <- function(
     p,
@@ -327,9 +328,10 @@ add_cluster_panel <- function(
         # Add dotplot panel
         dotdata <- as.data.frame(x)
         pData <- as.data.frame(p$data)
-        paths <- pData$label[order(pData$y, decreasing = TRUE)] %>% .[!is.na(.)]
+        paths <- pData$label[order(pData$y, decreasing = TRUE)]
+        paths <- paths[!is.na(paths)]
         dotdata <- dotdata[dotdata$Description %in% paths, ]
-        dotdata <- dplyr::select(dotdata, Description, dplyr::everything())
+        dotdata <- dplyr::select(dotdata, .data$Description, dplyr::everything())
 
         p <- p +
             ggnewscale::new_scale_colour() +
@@ -468,6 +470,7 @@ create_tree_plot <- function(
 #' @param group_color group colors
 #' @param extend extend length
 #' @param align highlight alignment
+#' @importFrom ggplot2 scale_fill_manual
 #' @noRd
 add_clade_labels <- function(
     p,

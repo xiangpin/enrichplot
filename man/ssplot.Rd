@@ -32,7 +32,6 @@ ssplot.compareClusterResult(
   pie = "equal",
   drfun = NULL,
   dr.params = list(),
-  group = TRUE,
   node_label = "group",
   ...
 )
