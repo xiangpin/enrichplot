@@ -201,78 +201,78 @@ merge_compareClusterResult <- function(yy) {
     yy_union
 }
 
-##' add alpha attribute to ggraph edges
-##'
-##' @param g ggraph object.
-##' @param hilight_category category nodes to be highlight.
-##' @param alpha_hilight alpha of highlighted nodes.
-##' @param alpha_nohilight alpha of unhighlighted nodes.
-##' @noRd
-edge_add_alpha <- function(
-    g,
-    hilight_category,
-    alpha_nohilight,
-    alpha_hilight
-) {
-    if (!is.null(hilight_category) && length(hilight_category) > 0) {
-        edges <- attr(E(g), "vnames")
-        E(g)$alpha <- rep(alpha_nohilight, length(E(g)))
-        hilight_edge <- grep(paste(hilight_category, collapse = "|"), edges)
-        E(g)$alpha[hilight_edge] <- min(0.8, alpha_hilight)
-        # E(g)$alpha[hilight_edge] <- alpha_hilight
-    } else {
-        E(g)$alpha <- rep(min(0.8, alpha_hilight), length(E(g)))
-    }
-    return(g)
-}
+# ##' add alpha attribute to edges
+# ##'
+# ##' @param g ggraph object.
+# ##' @param hilight_category category nodes to be highlight.
+# ##' @param alpha_hilight alpha of highlighted nodes.
+# ##' @param alpha_nohilight alpha of unhighlighted nodes.
+# ##' @noRd
+# edge_add_alpha <- function(
+#     g,
+#     hilight_category,
+#     alpha_nohilight,
+#     alpha_hilight
+# ) {
+#     if (!is.null(hilight_category) && length(hilight_category) > 0) {
+#         edges <- attr(E(g), "vnames")
+#         E(g)$alpha <- rep(alpha_nohilight, length(E(g)))
+#         hilight_edge <- grep(paste(hilight_category, collapse = "|"), edges)
+#         E(g)$alpha[hilight_edge] <- min(0.8, alpha_hilight)
+#         # E(g)$alpha[hilight_edge] <- alpha_hilight
+#     } else {
+#         E(g)$alpha <- rep(min(0.8, alpha_hilight), length(E(g)))
+#     }
+#     return(g)
+# }
 
-##' add alpha attribute to ggraph nodes
-##'
-##' @param p ggraph object.
-##' @param hilight_category category nodes to be highlight.
-##' @param hilight_gene gene nodes to be highlight.
-##' @param alpha_hilight alpha of highlighted nodes.
-##' @param alpha_nohilight alpha of unhighlighted nodes.
-##' @noRd
-node_add_alpha <- function(
-    p,
-    hilight_category,
-    hilight_gene,
-    alpha_nohilight,
-    alpha_hilight
-) {
-    alpha_node <- rep(1, nrow(p$data))
-    if (!is.null(hilight_category)) {
-        alpha_node <- rep(alpha_nohilight, nrow(p$data))
-        hilight_node <- c(hilight_category, hilight_gene)
-        alpha_node[match(hilight_node, p$data$name)] <- alpha_hilight
-    }
-    p$data$alpha <- alpha_node
-    return(p)
-}
+# ##' add alpha attribute to ggraph nodes
+# ##'
+# ##' @param p ggraph object.
+# ##' @param hilight_category category nodes to be highlight.
+# ##' @param hilight_gene gene nodes to be highlight.
+# ##' @param alpha_hilight alpha of highlighted nodes.
+# ##' @param alpha_nohilight alpha of unhighlighted nodes.
+# ##' @noRd
+# node_add_alpha <- function(
+#     p,
+#     hilight_category,
+#     hilight_gene,
+#     alpha_nohilight,
+#     alpha_hilight
+# ) {
+#     alpha_node <- rep(1, nrow(p$data))
+#     if (!is.null(hilight_category)) {
+#         alpha_node <- rep(alpha_nohilight, nrow(p$data))
+#         hilight_node <- c(hilight_category, hilight_gene)
+#         alpha_node[match(hilight_node, p$data$name)] <- alpha_hilight
+#     }
+#     p$data$alpha <- alpha_node
+#     return(p)
+# }
 
 
 ##' Get the location of group label
 ##'
-##' @param ggData data of a ggraph object
+##' @param node_data node information data frame
 ##' @param label_format A numeric value sets wrap length, alternatively a
 ##' custom function to format axis labels.
 ##' @return a data.frame object.
 ##' @noRd
-get_label_location <- function(ggData, label_format) {
+get_label_location <- function(node_data, label_format) {
     label_func <- default_labeller(label_format)
     if (is.function(label_format)) {
         label_func <- label_format
     }
-    label_x <- stats::aggregate(x ~ color2, ggData, mean)
-    label_y <- stats::aggregate(y ~ color2, ggData, mean)
+    label_x <- stats::aggregate(x ~ color2, node_data, mean)
+    label_y <- stats::aggregate(y ~ color2, node_data, mean)
     data.frame(x = label_x$x, y = label_y$y, label = label_func(label_x$color2))
 }
 
 
 ##' Cluster similar nodes together by k-means
 ##'
-##' @param p a ggraph object.
+##' @param node_data node information data frame.
 ##' @param enrichDf data.frame of enrichment result.
 ##' @param nWords Numeric, the number of words in the cluster tags.
 ##' @param clusterFunction function of Clustering method, such as stats::kmeans, cluster::clara,
@@ -281,13 +281,12 @@ get_label_location <- function(ggData, label_format) {
 ##' the default value is square root of the number of nodes.
 ##' @noRd
 groupNode <- function(
-    p,
+    node_data,
     enrichDf,
     nWords,
     clusterFunction = stats::kmeans,
     nCluster
 ) {
-    ggData <- p$data
     wrongMessage <- paste(
         "Wrong clusterFunction parameter or unsupported clustering method;",
         "set to default `clusterFunction = kmeans`"
@@ -295,55 +294,55 @@ groupNode <- function(
     if (is.character(clusterFunction)) {
         clusterFunction <- eval(parse(text = clusterFunction))
     }
-    if (!"color2" %in% colnames(ggData)) {
-        dat <- data.frame(x = ggData$x, y = ggData$y)
+    if (!"color2" %in% colnames(node_data)) {
+        dat <- data.frame(x = node_data$x, y = node_data$y)
         nCluster <- ifelse(
             is.null(nCluster),
             floor(sqrt(nrow(dat))),
             min(nCluster, nrow(dat))
         )
-        ggData$color2 <- tryCatch(
+        node_data$color2 <- tryCatch(
             expr = clusterFunction(dat, nCluster)$cluster,
             error = function(e) {
                 message(wrongMessage)
-                stats::kmeans(dat, nCluster)$cluster
+                clusterFunction(dat, nCluster)$cluster
             }
         )
-        if (is.null(ggData$color2)) {
+        if (is.null(node_data$color2)) {
             message(wrongMessage)
-            ggData$color2 <- stats::kmeans(dat, nCluster)$cluster
+            node_data$color2 <- clusterFunction(dat, nCluster)$cluster
         }
     }
     goid <- enrichDf$ID
-    cluster_color <- unique(ggData$color2)
+    cluster_color <- unique(node_data$color2)
     clusters <- lapply(cluster_color, function(i) {
-        goid[which(ggData$color2 == i)]
+        goid[which(node_data$color2 == i)]
     })
     cluster_label <- sapply(
         cluster_color,
         get_wordcloud,
-        ggData = ggData,
+        node_data = node_data,
         nWords = nWords
     )
     names(cluster_label) <- cluster_color
-    ggData$color2 <- cluster_label[as.character(ggData$color2)]
-    return(ggData)
+    node_data$color2 <- cluster_label[as.character(node_data$color2)]
+    return(node_data)   
 }
 
-#' add ellipse to group the node
-#'
-#' @param p ggplot2 object
-#' @param group_legend Logical, if TRUE, the grouping legend will be displayed.
-#' The default is FALSE.
-#' @param label logical, TRUE to label the ellipse (default)
-#' @param ellipse_style style of ellipse, one of "ggforce" an "polygon".
-#' @param ellipse_pro numeric indicating confidence value for the ellipses
-#' @param alpha the transparency of ellipse fill.
-#' @importFrom rlang check_installed
-#' @importFrom ggplot2 scale_fill_discrete
-#' @noRd
+##' add ellipse to group the node
+##'
+##' @param node_data node data frame
+##' @param group_legend Logical, if TRUE, the grouping legend will be displayed.
+##' The default is FALSE.
+##' @param label logical, TRUE to label the ellipse (default)
+##' @param ellipse_style style of ellipse, one of "ggforce" an "polygon".
+##' @param ellipse_pro numeric indicating confidence value for the ellipses
+##' @param alpha the transparency of ellipse fill.
+##' @importFrom rlang check_installed
+##' @importFrom ggplot2 scale_fill_discrete
+##' @noRd
 add_ellipse <- function(
-    p,
+    node_data,
     group_legend,
     label = TRUE,
     ellipse_style = "ggforce",
@@ -355,48 +354,48 @@ add_ellipse <- function(
     names(show_legend) <- c("fill", "color")
     ellipse_style <- match.arg(ellipse_style, c("ggforce", "polygon"))
 
-    check_installed('ggforce', 'for `add_ellipse()`.')
+    check_installed('ggforce', 'for `add_ellipse()`.');
 
     if (ellipse_style == "ggforce") {
         if (label) {
-            p <- p +
-                ggforce::geom_mark_ellipse(
-                    aes(
-                        x = .data$x,
-                        y = .data$y,
-                        fill = .data$color2,
-                        label = .data$color2
-                    ),
-                    alpha = alpha,
-                    color = NA,
-                    show.legend = show_legend
-                )
+            p <- ggforce::geom_mark_ellipse(
+                data = node_data,
+                aes(
+                    x = x,
+                    y = y,
+                    fill = color2,
+                    label = color2
+                ),
+                alpha = alpha,
+                color = NA,
+                show.legend = show_legend
+            )
         } else {
-            p <- p +
-                ggforce::geom_mark_ellipse(
-                    aes(x = .data$x, y = .data$y, fill = .data$color2),
-                    alpha = alpha,
-                    color = NA,
-                    show.legend = show_legend
-                )
+            p <- ggforce::geom_mark_ellipse(
+                data = node_data,
+                aes(x = x, y = y, fill = color2),
+                alpha = alpha,
+                color = NA,
+                show.legend = show_legend
+            )
         }
     }
 
     # not in used
     if (FALSE && ellipse_style == "polygon") {
-        p <- p +
-            ggplot2::stat_ellipse(
-                aes(x = .data$x, y = .data$y, fill = .data$color2),
-                geom = "polygon",
-                level = ellipse_pro,
-                alpha = alpha,
-                show.legend = group_legend,
-                ...
-            )
+        p <- ggplot2::stat_ellipse(
+            data = node_data,
+            aes(x = x, y = y, fill = color2),
+            geom = "polygon",
+            level = ellipse_pro,
+            alpha = alpha,
+            show.legend = group_legend,
+            ...
+        )
     }
 
     if (group_legend) {
-        p <- p + scale_fill_discrete(name = "groups")
+        p <- list(p, scale_fill_discrete(name = "groups"))
     }
 
     return(p)
@@ -404,3 +403,4 @@ add_ellipse <- function(
 
 
 list2df <- ggtangle:::list2df
+

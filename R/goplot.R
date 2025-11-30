@@ -81,7 +81,7 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
     p <- ggplot(g, layout = layout) +
         geom_edge(aes(linetype = .data$relationship),
             arrow = arrow(length = unit(2, 'mm')),
-            colour="darkgrey", position=position) 
+            colour="darkgrey", position=position, linewidth = 1) 
 
     if (ID == "Description" || ID == "ID") {
         ID <- sprintf("{%s}", ID)

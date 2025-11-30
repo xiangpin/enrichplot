@@ -1,13 +1,13 @@
 ##' Use wordcloud algorithm to get group tags
 ##'
 ##' @param cluster a cluster name
-##' @param ggData the data section of the ggraph object,
+##' @param node_data the data section of the ggplot object,
 ##' which contains clustering information.
 ##' @param nWords the number of words in the cluster tags
 ##' @importFrom magrittr %>%
 ##' @noRd
-get_wordcloud <- function(cluster, ggData, nWords = 4) {
-    cluster_terms <- ggData$name[ggData$color2 == cluster]
+get_wordcloud <- function(cluster, node_data, nWords = 4) {
+    cluster_terms <- node_data$name[node_data$color2 == cluster]    
 
     if (length(cluster_terms) == 0) {
         return(cluster)

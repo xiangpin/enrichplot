@@ -138,19 +138,20 @@ emapplot_internal <- function(
         } #else {
         # p <- p + ggnewscale::new_scale_color()
         #}
-        ggData <- groupNode(
-            p,
+        node_data <- groupNode(
+            p@data,
             as.data.frame(x),
             nWords,
             clusterFunction = clusterFunction,
             nCluster = nCluster
         )
-        p$data <- ggData
-        p <- add_ellipse(
-            p,
-            group_legend = TRUE,
-            label = group_label
-        )
+
+        p <- p +
+            add_ellipse(
+                node_data,
+                group_legend = TRUE,
+                label = group_label
+            )
     }
 
     ## add node label
@@ -166,7 +167,7 @@ emapplot_internal <- function(
     ## add group label
     if (node_label == "group") {
         label_location <- get_label_location(
-            ggData = ggData,
+            node_data = node_data,
             label_format = label_format
         )
         p <- p +
