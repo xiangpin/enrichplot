@@ -19,15 +19,24 @@ get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
     }
 
     if (y_id == "GO") {
-        if(is.null(semData)) {
-            stop("The semData parameter is missing,
-                and it can be obtained through godata function in GOSemSim package.")
+        if (is.null(semData)) {
+            stop(
+                "The semData parameter is missing,
+                and it can be obtained through godata function in GOSemSim package."
+            )
         }
-        w <- GOSemSim::mgoSim(id, id, semData=semData, measure=method,
-                              combine=NULL)
+        w <- GOSemSim::mgoSim(
+            id,
+            id,
+            semData = semData,
+            measure = method,
+            combine = NULL
+        )
     }
 
-    if (y_id == "DOID") w <- DOSE::doSim(id, id, measure=method)
+    if (y_id == "DOID") {
+        w <- DOSE::doSim(id, id, measure = method)
+    }
     rownames(y) <- y$ID
     rownames(w) <- colnames(w) <- y[colnames(w), "Description"]
     return(w)
@@ -41,12 +50,13 @@ get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
 ##' @noRd
 has_pairsim <- function(x) {
     if (length(x@termsim) == 0) {
-        error_message <- paste("Term similarity matrix not available.",
+        error_message <- paste(
+            "Term similarity matrix not available.",
             "Please use pairwise_termsim function to",
-            "deal with the results of enrichment analysis.")
+            "deal with the results of enrichment analysis."
+        )
         stop(error_message)
     }
-
 }
 
 
@@ -58,7 +68,7 @@ has_pairsim <- function(x) {
 #' @param geneSets A list gene sets with the names of enrichment IDs
 #' @param color a string, the column name of y for nodes colours
 #' @param cex_line Numeric, scale of line width
-#' @param min_edge The minimum similarity threshold for whether 
+#' @param min_edge The minimum similarity threshold for whether
 #' two nodes are connected, should between 0 and 1, default value is 0.2.
 #' @param pair_sim Semantic similarity matrix.
 #' @param method Method of calculating the similarity between nodes,
@@ -72,40 +82,51 @@ has_pairsim <- function(x) {
 #' @importFrom igraph add_vertices
 #' @importFrom igraph delete.edges
 #' @noRd
-build_emap_graph <- function(enrichDf, geneSets, color, cex_line, min_edge,
-                             pair_sim, method) {
-
+build_emap_graph <- function(
+    enrichDf,
+    geneSets,
+    color,
+    cex_line,
+    min_edge,
+    pair_sim,
+    method
+) {
     if (!is.numeric(min_edge) || min_edge < 0 || min_edge > 1) {
-    	stop('"min_edge" should be a number between 0 and 1.')
+        stop('"min_edge" should be a number between 0 and 1.')
     }
 
-    if (is.null(dim(enrichDf)) || nrow(enrichDf) == 1) {  # when just one node
-        g <- graph.empty(0, directed=FALSE)
+    if (is.null(dim(enrichDf)) || nrow(enrichDf) == 1) {
+        # when just one node
+        g <- graph.empty(0, directed = FALSE)
         g <- add_vertices(g, nv = 1)
         V(g)$name <- as.character(enrichDf$Description)
         V(g)$color <- "red"
         return(g)
     } else {
-        w <- pair_sim[as.character(enrichDf$Description), 
-            as.character(enrichDf$Description)]
+        w <- pair_sim[
+            as.character(enrichDf$Description),
+            as.character(enrichDf$Description)
+        ]
     }
 
     wd <- reshape2::melt(w)
-    wd <- wd[wd[,1] != wd[,2],]
+    wd <- wd[wd[, 1] != wd[, 2], ]
     # remove NA
-    wd <- wd[!is.na(wd[,3]),]
+    wd <- wd[!is.na(wd[, 3]), ]
     if (method != "JC") {
         # map id to names
         wd[, 1] <- enrichDf[wd[, 1], "Description"]
         wd[, 2] <- enrichDf[wd[, 2], "Description"]
     }
 
-    g <- graph_from_data_frame(wd[, -3], directed=FALSE)
+    g <- graph_from_data_frame(wd[, -3], directed = FALSE)
     E(g)$width <- sqrt(wd[, 3] * 5) * cex_line
     # Use similarity as the weight(length) of an edge
     E(g)$weight <- wd[, 3]
     g <- delete.edges(g, E(g)[wd[, 3] < min_edge])
-    idx <- unlist(sapply(V(g)$name, function(x) which(x == enrichDf$Description)))
+    idx <- unlist(sapply(V(g)$name, function(x) {
+        which(x == enrichDf$Description)
+    }))
     cnt <- sapply(geneSets[idx], length)
     V(g)$size <- cnt
     if (color %in% names(enrichDf)) {
@@ -113,11 +134,10 @@ build_emap_graph <- function(enrichDf, geneSets, color, cex_line, min_edge,
     } else {
         colVar <- color
     }
-    
+
     V(g)$color <- colVar
     return(g)
 }
-
 
 
 ##' Get an iGraph object
@@ -127,18 +147,18 @@ build_emap_graph <- function(enrichDf, geneSets, color, cex_line, min_edge,
 ##' @param color variable that used to color enriched terms, e.g. 'pvalue',
 ##' 'p.adjust' or 'qvalue'.
 ##' @param cex_line Scale of line width.
-##' @param min_edge The minimum similarity threshold for whether 
+##' @param min_edge The minimum similarity threshold for whether
 ##' two nodes are connected, should between 0 and 1, default value is 0.2.
 ##'
 ##' @return an iGraph object
 ##' @noRd
-get_igraph <- function(x, nCategory, color, cex_line, min_edge){
+get_igraph <- function(x, nCategory, color, cex_line, min_edge) {
     y <- as.data.frame(x)
     geneSets <- geneInCategory(x) ## use core gene for gsea result
     if (is.numeric(nCategory)) {
         y <- y[1:nCategory, ]
     } else {
-        y <- y[match(nCategory, y$Description),]
+        y <- y[match(nCategory, y$Description), ]
         nCategory <- length(nCategory)
     }
 
@@ -146,9 +166,15 @@ get_igraph <- function(x, nCategory, color, cex_line, min_edge){
         stop("no enriched term found...")
     }
 
-    build_emap_graph(enrichDf = y, geneSets = geneSets, color = color,
-             cex_line = cex_line, min_edge = min_edge,
-             pair_sim = x@termsim, method = x@method)
+    build_emap_graph(
+        enrichDf = y,
+        geneSets = geneSets,
+        color = color,
+        cex_line = cex_line,
+        min_edge = min_edge,
+        pair_sim = x@termsim,
+        method = x@method
+    )
 }
 
 
@@ -159,11 +185,11 @@ get_igraph <- function(x, nCategory, color, cex_line, min_edge){
 ##' @return a data.frame
 ##' @noRd
 merge_compareClusterResult <- function(yy) {
-    yy_union <- yy[!duplicated(yy$ID),]
+    yy_union <- yy[!duplicated(yy$ID), ]
     yy_ids <- lapply(split(yy, yy$ID), function(x) {
         ids <- unique(unlist(strsplit(x$geneID, "/")))
         cnt <- length(ids)
-        list(ID=paste0(ids, collapse="/"), cnt=cnt)
+        list(ID = paste0(ids, collapse = "/"), cnt = cnt)
     })
 
     ids <- vapply(yy_ids, function(x) x$ID, character(1))
@@ -182,15 +208,20 @@ merge_compareClusterResult <- function(yy) {
 ##' @param alpha_hilight alpha of highlighted nodes.
 ##' @param alpha_nohilight alpha of unhighlighted nodes.
 ##' @noRd
-edge_add_alpha <- function(g, hilight_category, alpha_nohilight, alpha_hilight) {
+edge_add_alpha <- function(
+    g,
+    hilight_category,
+    alpha_nohilight,
+    alpha_hilight
+) {
     if (!is.null(hilight_category) && length(hilight_category) > 0) {
         edges <- attr(E(g), "vnames")
         E(g)$alpha <- rep(alpha_nohilight, length(E(g)))
         hilight_edge <- grep(paste(hilight_category, collapse = "|"), edges)
         E(g)$alpha[hilight_edge] <- min(0.8, alpha_hilight)
         # E(g)$alpha[hilight_edge] <- alpha_hilight
-        } else {
-            E(g)$alpha <- rep(min(0.8, alpha_hilight), length(E(g)))
+    } else {
+        E(g)$alpha <- rep(min(0.8, alpha_hilight), length(E(g)))
     }
     return(g)
 }
@@ -203,21 +234,22 @@ edge_add_alpha <- function(g, hilight_category, alpha_nohilight, alpha_hilight) 
 ##' @param alpha_hilight alpha of highlighted nodes.
 ##' @param alpha_nohilight alpha of unhighlighted nodes.
 ##' @noRd
-node_add_alpha <- function(p, hilight_category, hilight_gene, alpha_nohilight, alpha_hilight) {
+node_add_alpha <- function(
+    p,
+    hilight_category,
+    hilight_gene,
+    alpha_nohilight,
+    alpha_hilight
+) {
     alpha_node <- rep(1, nrow(p$data))
     if (!is.null(hilight_category)) {
-        alpha_node <- rep(alpha_nohilight, nrow(p$data)) 
+        alpha_node <- rep(alpha_nohilight, nrow(p$data))
         hilight_node <- c(hilight_category, hilight_gene)
         alpha_node[match(hilight_node, p$data$name)] <- alpha_hilight
     }
     p$data$alpha <- alpha_node
     return(p)
 }
-
-
-
-
-
 
 
 ##' Get the location of group label
@@ -234,38 +266,49 @@ get_label_location <- function(ggData, label_format) {
     }
     label_x <- stats::aggregate(x ~ color2, ggData, mean)
     label_y <- stats::aggregate(y ~ color2, ggData, mean)
-    data.frame(x = label_x$x, y = label_y$y,
-        label = label_func(label_x$color2))
+    data.frame(x = label_x$x, y = label_y$y, label = label_func(label_x$color2))
 }
 
 
-
 ##' Cluster similar nodes together by k-means
-##' 
+##'
 ##' @param p a ggraph object.
 ##' @param enrichDf data.frame of enrichment result.
 ##' @param nWords Numeric, the number of words in the cluster tags.
 ##' @param clusterFunction function of Clustering method, such as stats::kmeans, cluster::clara,
 ##' cluster::fanny or cluster::pam.
-##' @param nCluster Numeric, the number of clusters, 
+##' @param nCluster Numeric, the number of clusters,
 ##' the default value is square root of the number of nodes.
 ##' @noRd
-groupNode <- function(p, enrichDf, nWords, clusterFunction =  stats::kmeans, nCluster) {
+groupNode <- function(
+    p,
+    enrichDf,
+    nWords,
+    clusterFunction = stats::kmeans,
+    nCluster
+) {
     ggData <- p$data
-    wrongMessage <- paste("Wrong clusterFunction parameter or unsupported clustering method;",
-         "set to default `clusterFunction = kmeans`")
+    wrongMessage <- paste(
+        "Wrong clusterFunction parameter or unsupported clustering method;",
+        "set to default `clusterFunction = kmeans`"
+    )
     if (is.character(clusterFunction)) {
-        clusterFunction <- eval(parse(text=clusterFunction))
-    }   
+        clusterFunction <- eval(parse(text = clusterFunction))
+    }
     if (!"color2" %in% colnames(ggData)) {
         dat <- data.frame(x = ggData$x, y = ggData$y)
-        nCluster <- ifelse(is.null(nCluster), floor(sqrt(nrow(dat))), 
-                           min(nCluster, nrow(dat)))
-        ggData$color2 <- tryCatch(expr  = clusterFunction(dat, nCluster)$cluster, 
-                                  error = function(e) {
-                                      message(wrongMessage)
-                                      stats::kmeans(dat, nCluster)$cluster
-                                  })
+        nCluster <- ifelse(
+            is.null(nCluster),
+            floor(sqrt(nrow(dat))),
+            min(nCluster, nrow(dat))
+        )
+        ggData$color2 <- tryCatch(
+            expr = clusterFunction(dat, nCluster)$cluster,
+            error = function(e) {
+                message(wrongMessage)
+                stats::kmeans(dat, nCluster)$cluster
+            }
+        )
         if (is.null(ggData$color2)) {
             message(wrongMessage)
             ggData$color2 <- stats::kmeans(dat, nCluster)$cluster
@@ -273,11 +316,17 @@ groupNode <- function(p, enrichDf, nWords, clusterFunction =  stats::kmeans, nCl
     }
     goid <- enrichDf$ID
     cluster_color <- unique(ggData$color2)
-    clusters <- lapply(cluster_color, function(i){goid[which(ggData$color2 == i)]})
-    cluster_label <- sapply(cluster_color, get_wordcloud, ggData = ggData,
-                            nWords=nWords)
+    clusters <- lapply(cluster_color, function(i) {
+        goid[which(ggData$color2 == i)]
+    })
+    cluster_label <- sapply(
+        cluster_color,
+        get_wordcloud,
+        ggData = ggData,
+        nWords = nWords
+    )
     names(cluster_label) <- cluster_color
-    ggData$color2 <- cluster_label[as.character(ggData$color2)] 
+    ggData$color2 <- cluster_label[as.character(ggData$color2)]
     return(ggData)
 }
 
@@ -286,44 +335,72 @@ groupNode <- function(p, enrichDf, nWords, clusterFunction =  stats::kmeans, nCl
 #' @param p ggplot2 object
 #' @param group_legend Logical, if TRUE, the grouping legend will be displayed.
 #' The default is FALSE.
-#' @param label_style style of group label, one of "shadowtext" and "ggforce".
+#' @param label logical, TRUE to label the ellipse (default)
 #' @param ellipse_style style of ellipse, one of "ggforce" an "polygon".
 #' @param ellipse_pro numeric indicating confidence value for the ellipses
 #' @param alpha the transparency of ellipse fill.
 #' @importFrom rlang check_installed
 #' @importFrom ggplot2 scale_fill_discrete
 #' @noRd
-add_ellipse <- function(p, group_legend, label_style, 
-    ellipse_style = "ggforce", ellipse_pro = 0.95, alpha = 0.3, ...) {
+add_ellipse <- function(
+    p,
+    group_legend,
+    label = TRUE,
+    ellipse_style = "ggforce",
+    # ellipse_pro = 0.95,
+    alpha = 0.3,
+    ...
+) {
     show_legend <- c(group_legend, FALSE)
-    names(show_legend) <- c("fill", "color") 
+    names(show_legend) <- c("fill", "color")
     ellipse_style <- match.arg(ellipse_style, c("ggforce", "polygon"))
-    
+
     check_installed('ggforce', 'for `add_ellipse()`.')
-    
+
     if (ellipse_style == "ggforce") {
-        if (label_style == "shadowtext") {
-            p <- p + ggforce::geom_mark_ellipse(
-                        aes(x = .data$x, y = .data$y, fill = .data$color2), 
-                        alpha = alpha, color = NA, show.legend = show_legend)
+        if (label) {
+            p <- p +
+                ggforce::geom_mark_ellipse(
+                    aes(
+                        x = .data$x,
+                        y = .data$y,
+                        fill = .data$color2,
+                        label = .data$color2
+                    ),
+                    alpha = alpha,
+                    color = NA,
+                    show.legend = show_legend
+                )
         } else {
-            p <- p + ggforce::geom_mark_ellipse(
-                        aes(x = .data$x, y = .data$y, fill = .data$color2, label = .data$color2), 
-                        alpha = alpha, color = NA, show.legend = show_legend)
+            p <- p +
+                ggforce::geom_mark_ellipse(
+                    aes(x = .data$x, y = .data$y, fill = .data$color2),
+                    alpha = alpha,
+                    color = NA,
+                    show.legend = show_legend
+                )
         }
-        if (group_legend) p <- p + scale_fill_discrete(name = "groups")
-     } 
-    
-    if (ellipse_style == "polygon") {
-    p <- p + ggplot2::stat_ellipse(aes(x = .data$x, y = .data$y, fill = .data$color2),
-                                       geom = "polygon", level = ellipse_pro,
-                                       alpha = alpha,
-                                       show.legend = group_legend, ...)
+    }
+
+    # not in used
+    if (FALSE && ellipse_style == "polygon") {
+        p <- p +
+            ggplot2::stat_ellipse(
+                aes(x = .data$x, y = .data$y, fill = .data$color2),
+                geom = "polygon",
+                level = ellipse_pro,
+                alpha = alpha,
+                show.legend = group_legend,
+                ...
+            )
+    }
+
+    if (group_legend) {
+        p <- p + scale_fill_discrete(name = "groups")
     }
 
     return(p)
 }
-
 
 
 list2df <- ggtangle:::list2df

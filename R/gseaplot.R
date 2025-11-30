@@ -43,7 +43,7 @@ gseaplot.gseaResult <- function (x, geneSetID, by = "all", title = "",
     if (by == "runningScore" || by == "all") {
     p.res <- p + geom_linerange(aes(ymin = .data$ymin, ymax = .data$ymax), color=color)
     p.res <- p.res + geom_line(aes(y = .data$runningScore), color=color.line,
-                                   size=1)
+                                   linewidth=1)
         enrichmentScore <- x@result[geneSetID, "enrichmentScore"]
         es.df <- data.frame(es = which.min(abs(p$data$runningScore - enrichmentScore)))
     p.res <- p.res + geom_vline(data = es.df, aes(xintercept = .data$es),

@@ -1,6 +1,9 @@
-# enrichplot 1.31.1.001
+# enrichplot 1.31.1.002
 
-+ add `showTop` parameter to limit number of genes shown in `heatplot()` and distinguish tip point size variable for `treeplot()` througth internal parameter `size_var` (2025-11-23, Sat, #335) 
++ update all line width aes mapping from 'size' to 'linewidth' (2025-11-30, Sun)
++ add 'node_label_size' paramter for `emapplot` (2025-11-30, Sun)
++ remove `emapplot` parameters, 'group', 'group_style' and 'label_group_style' (#339) 
++ add 'showTop' parameter to limit number of genes shown in `heatplot()` and distinguish tip point size variable for `treeplot()` througth internal parameter `size_var` (2025-11-23, Sat, #335) 
 
 # enrichplot 1.31.1
 

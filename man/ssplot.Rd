@@ -22,7 +22,6 @@ ssplot.enrichResult(
   showCategory = 30,
   drfun = NULL,
   dr.params = list(),
-  group = TRUE,
   node_label = "group",
   ...
 )
@@ -54,10 +53,8 @@ additional parameters can refer the following parameters.
       \item \code{size_edge} relative size of edge width.
       \item \code{node_label} Select which labels to be displayed,
         one of 'category', 'group', 'all' and 'none'.
+      \item \code{node_label_size} size of node label, default is 5.
       \item \code{pie} one of 'equal' or 'Count' to set the slice ratio of the pies (for `compareClusterResult` only).
-      \item \code{group} logical, if TRUE, group the category.
-      \item \code{group_style} style of ellipse, one of "ggforce" an "polygon"
-      \item \code{label_group_style} style of group label, one of "shadowtext" and "ggforce".
       \item \code{label_format} a numeric value sets wrap length, alternatively a custom function to format axis labels.
       \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
         cluster::clara, cluster::fanny or cluster::pam.
@@ -76,8 +73,6 @@ the selected terms will be displayed.}
 e.g. `stats::cmdscale` (the default), `vegan::metaMDS`, or `ape::pcoa`.}
 
 \item{dr.params}{list, the parameters of `tidydr::dr`.}
-
-\item{group}{logical, if TRUE, group the category.}
 
 \item{node_label}{Select which labels to be displayed,
 one of 'category', 'group', 'all' and 'none'.}
