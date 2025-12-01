@@ -1,22 +1,22 @@
-##' plot table
-##'
-##'
-##' @title ggtable
-##' @param d data frame
-##' @param p ggplot object to extract color to color rownames(d), optional
-##' @importFrom rlang check_installed
-##' @return ggplot object
-##' @export
-##' @author guangchuang yu
+#' plot table
+#'
+#'
+#' @title ggtable
+#' @param d data frame
+#' @param p ggplot object to extract color to color rownames(d), optional
+#' @importFrom rlang check_installed
+#' @return ggplot object
+#' @export
+#' @author guangchuang yu
 ggtable <- function(d, p = NULL) {
     # has_package("ggplotify")
     check_installed('ggplotify', 'for `ggtable()`.')
     ggplotify::as.ggplot(tableGrob2(d, p))
 }
 
-##' @importFrom grid gpar
-##' @importFrom ggplot2 ggplot_build
-##' @importFrom rlang check_installed
+#' @importFrom grid gpar
+#' @importFrom ggplot2 ggplot_build
+#' @importFrom rlang check_installed
 tableGrob2 <- function(d, p = NULL, rows=NULL) {
     # has_package("gridExtra")
     d <- d[order(rownames(d)),]

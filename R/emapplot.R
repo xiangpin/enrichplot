@@ -1,5 +1,5 @@
-##' @rdname emapplot
-##' @exportMethod emapplot
+#' @rdname emapplot
+#' @exportMethod emapplot
 setMethod(
     "emapplot",
     signature(x = "enrichResult"),
@@ -8,8 +8,8 @@ setMethod(
     }
 )
 
-##' @rdname emapplot
-##' @exportMethod emapplot
+#' @rdname emapplot
+#' @exportMethod emapplot
 setMethod(
     "emapplot",
     signature(x = "gseaResult"),
@@ -18,8 +18,8 @@ setMethod(
     }
 )
 
-##' @rdname emapplot
-##' @exportMethod emapplot
+#' @rdname emapplot
+#' @exportMethod emapplot
 setMethod(
     "emapplot",
     signature(x = "compareClusterResult"),
@@ -29,7 +29,7 @@ setMethod(
 )
 
 
-##' @rdname emapplot
+#' @rdname emapplot
 #' @param layout igraph layout
 #' @param color Variable that used to color enriched terms, e.g. 'pvalue',
 #' 'p.adjust' or 'qvalue'.

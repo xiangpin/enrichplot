@@ -1,11 +1,11 @@
-##' Use wordcloud algorithm to get group tags
-##'
-##' @param cluster a cluster name
-##' @param node_data the data section of the ggplot object,
-##' which contains clustering information.
-##' @param nWords the number of words in the cluster tags
+#' Use wordcloud algorithm to get group tags
+#'
+#' @param cluster a cluster name
+#' @param node_data the data section of the ggplot object,
+#' which contains clustering information.
+#' @param nWords the number of words in the cluster tags
 #' @importFrom utils head
-##' @noRd
+#' @noRd
 get_wordcloud <- function(cluster, node_data, nWords = 4) {
     cluster_terms <- node_data$name[node_data$color2 == cluster]    
 

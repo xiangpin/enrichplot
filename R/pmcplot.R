@@ -1,17 +1,17 @@
-##' PubMed Central Trend plot
-##'
-##'
-##' @title pmcplot
-##' @param query query terms
-##' @param period period of query in the unit of year
-##' @param proportion If TRUE, use query_hits/all_hits, otherwise use query_hits
-##' @return ggplot object
-##' @importFrom purrr map_df
-##' @importFrom rlang check_installed
+#' PubMed Central Trend plot
+#'
+#'
+#' @title pmcplot
+#' @param query query terms
+#' @param period period of query in the unit of year
+#' @param proportion If TRUE, use query_hits/all_hits, otherwise use query_hits
+#' @return ggplot object
+#' @importFrom purrr map_df
+#' @importFrom rlang check_installed
 ## @importFrom europepmc epmc_hits_trend
-##' @importFrom utils modifyList
-##' @export
-##' @author guangchuang yu
+#' @importFrom utils modifyList
+#' @export
+#' @author guangchuang yu
 pmcplot <- function(query, period, proportion = TRUE) {
     
     check_installed('europepmc', 'for `pmcplot()`.')

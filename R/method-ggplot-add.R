@@ -1,6 +1,6 @@
-##' @importFrom ggplot2 ggplot_add
-##' @method ggplot_add autofacet
-##' @export
+#' @importFrom ggplot2 ggplot_add
+#' @method ggplot_add autofacet
+#' @export
 ggplot_add.autofacet <- function(object, plot, ...) {
     d <- plot$data
     nn <- names(d)

@@ -1,17 +1,17 @@
-##' convert compareClusterResult to a data.frame that ready for plot
-##'
-##'
-##' @rdname fortify
-##' @title fortify
-##' @param includeAll logical
-##' @return data.frame
-##' @importFrom ggplot2 fortify
-##' @importFrom plyr ddply
-##' @importFrom plyr mdply
-##' @importFrom plyr .
+#' convert compareClusterResult to a data.frame that ready for plot
+#'
+#'
+#' @rdname fortify
+#' @title fortify
+#' @param includeAll logical
+#' @return data.frame
+#' @importFrom ggplot2 fortify
+#' @importFrom plyr ddply
+#' @importFrom plyr mdply
+#' @importFrom plyr .
 ## @method fortify compareClusterResult
-##' @export
-##' @author Guangchuang Yu
+#' @export
+#' @author Guangchuang Yu
 fortify.compareClusterResult <- function(
     model,
     data,
@@ -150,23 +150,23 @@ fortify.compareClusterResult <- function(
 }
 
 
-##' convert enrichResult object for ggplot2
-##'
-##'
-##' @title fortify
-##' @rdname fortify
-##' @param model 'enrichResult' or 'compareClusterResult' object
-##' @param data not use here
-##' @param showCategory Category numbers to show
-##' @param by one of Count and GeneRatio
-##' @param order logical
-##' @param drop logical
-##' @param split separate result by 'split' variable
-##' @param ... additional parameter
-##' @return data.frame
-##' @importFrom ggplot2 fortify
+#' convert enrichResult object for ggplot2
+#'
+#'
+#' @title fortify
+#' @rdname fortify
+#' @param model 'enrichResult' or 'compareClusterResult' object
+#' @param data not use here
+#' @param showCategory Category numbers to show
+#' @param by one of Count and GeneRatio
+#' @param order logical
+#' @param drop logical
+#' @param split separate result by 'split' variable
+#' @param ... additional parameter
+#' @return data.frame
+#' @importFrom ggplot2 fortify
 ## @method fortify enrichResult
-##' @export
+#' @export
 fortify.enrichResult <- function(
     model,
     data,
@@ -189,7 +189,7 @@ fortify.enrichResult <- function(
 }
 
 ## @method fortify gseaResult
-##' @export
+#' @export
 fortify.gseaResult <- function(
     model,
     data,

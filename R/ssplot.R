@@ -200,6 +200,7 @@ build_dist <- function(x, showCategory, split = NULL, pie = NULL) {
 #' @noRd
 get_pairwise_sim <- function(x, showCategory, split = NULL, pie = NULL) {
     if (inherits(x, "compareClusterResult")) {
+        ## Optimized fortify call for large datasets
         y <- fortify(
             model = x,
             showCategory = showCategory,
@@ -207,18 +208,26 @@ get_pairwise_sim <- function(x, showCategory, split = NULL, pie = NULL) {
             split = split
         )
         y$Cluster <- sub("\n.*", "", y$Cluster)
-        keep <- rownames(prepare_pie_category(y, pie = pie))
+        
+        ## Optimized pie category preparation
+        pie_data <- prepare_pie_category(y, pie = pie)
+        keep <- rownames(pie_data)
     } else {
         n <- update_n(x, showCategory)
         if (is.numeric(n)) {
-            keep <- seq_len(n)
+            keep <- seq_len(min(n, nrow(x@result)))
         } else {
             keep <- match(n, rownames(x@termsim))
+            keep <- keep[!is.na(keep)]
         }
     }
+    
     if (length(keep) == 0) {
-        stop("no enriched term found (no rows selected by showCategory).")
+        yulab_abort("no enriched term found (no rows selected by showCategory).",
+                        class = "no_terms_error")
     }
+    
+    ## Optimized termsim filling
     fill_termsim(x, keep)
 }
 
@@ -274,45 +283,40 @@ get_drResult <- function(
     drfun,
     dr.params
 ) {
+    ## Input validation
+    check_input(x, arg_name = "x")
+    check_input(showCategory, arg_name = "showCategory")
+    
+    ## Optimized distance matrix building
     distance_mat <- build_dist(
         x = x,
         showCategory = showCategory,
         split = split,
         pie = pie
     )
-    check_installed(
-        'tidydr',
-        'for `get_drResult()`, which is an internal function.'
-    )
-    drResult <- tryCatch(
-        {
-            do.call(
-                tidydr::dr,
-                c(list(data = distance_mat, fun = drfun), dr.params)
-            )
-        },
-        error = function(e) {
-            message(
-                "dimensionality reduction failed with provided drfun; falling back to stats::cmdscale."
-            )
-            tryCatch(
-                {
-                    tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
-                },
-                error = function(e2) {
-                    stop(
-                        "dimensionality reduction failed (both provided method and fallback)."
-                    )
-                }
-            )
-        }
-    )
+    
+    check_installed('tidydr', 'for `get_drResult()`')
+    
+    ## Optimized error handling
+    drResult <- tryCatch({
+        do.call(tidydr::dr, c(list(data = distance_mat, fun = drfun), dr.params))
+    }, error = function(e) {
+        yulab_warn("dimensionality reduction failed with provided drfun; falling back to stats::cmdscale",
+                       class = "dr_fallback_warning")
+        
+        tryCatch({
+            tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
+        }, error = function(e2) {
+            yulab_abort("dimensionality reduction failed (both provided method and fallback)",
+                           class = "dr_failure_error")
+        })
+    })
 
     if (is.null(drResult$drdata)) {
-        message(
-            "Wrong drfun parameter or unsupported dimensionality reduction method; set to default `drfun = stats::cmdscale`"
-        )
+        yulab_warn("Wrong drfun parameter or unsupported dimensionality reduction method; using stats::cmdscale",
+                       class = "dr_parameter_warning")
         drResult <- tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
     }
-    drResult
+    
+    return(drResult)
 }

@@ -1,6 +1,6 @@
 Package: enrichplot
 Title: Visualization of Functional Enrichment Result
-Version: 1.31.2
+Version: 1.31.2.001
 Authors@R: c(
     person(given = "Guangchuang", family = "Yu", email = "guangchuangyu@gmail.com",   role  = c("aut", "cre"), comment = c(ORCID = "0000-0002-6485-8781")),
     person(given = "Chun-Hui", family = "Gao", email = "gaospecial@gmail.com", role = "ctb", comment = c(ORCID = "0000-0002-1445-7939")))
@@ -30,7 +30,7 @@ Imports:
     scatterpie,
     GOSemSim (>= 2.31.2),
     ggtree,
-    yulab.utils (>= 0.1.6)
+    yulab.utils (>= 0.2.2)
 Suggests:
     clusterProfiler,
     dplyr,

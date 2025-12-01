@@ -1,5 +1,5 @@
-##' @rdname goplot
-##' @exportMethod goplot
+#' @rdname goplot
+#' @exportMethod goplot
 setMethod("goplot", signature(x = "enrichResult"),
           function(x, showCategory = 10, color = "p.adjust",
                    layout = igraph::layout_with_sugiyama, geom="text", ...) {
@@ -7,8 +7,8 @@ setMethod("goplot", signature(x = "enrichResult"),
                   color = color, layout = layout, geom = geom, ...)
           })
 
-##' @rdname goplot
-##' @exportMethod goplot
+#' @rdname goplot
+#' @exportMethod goplot
 setMethod("goplot", signature(x = "gseaResult"),
           function(x, showCategory = 10, color = "p.adjust",
                    layout = igraph::layout_with_sugiyama, geom="text", ...) {
@@ -18,12 +18,12 @@ setMethod("goplot", signature(x = "gseaResult"),
 
 
 
-##' @importFrom utils data
-##' @import GOSemSim
-##' @importFrom ggplot2 scale_fill_gradientn
-##' @importFrom grid arrow
-##' @importFrom grid unit
-##' @importFrom rlang check_installed
+#' @importFrom utils data
+#' @import GOSemSim
+#' @importFrom ggplot2 scale_fill_gradientn
+#' @importFrom grid arrow
+#' @importFrom grid unit
+#' @importFrom rlang check_installed
 goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
                                 layout = igraph::layout_with_sugiyama, geom = "text", 
                                 ID = "Description", ...) {
@@ -101,6 +101,6 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
     return(p)
 }
 
-##' @importFrom utils getFromNamespace
+#' @importFrom utils getFromNamespace
 GOSemSim_initial <- getFromNamespace(".initial", "GOSemSim")
 getAncestors <- getFromNamespace("getAncestors", "GOSemSim")

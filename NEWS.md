@@ -1,3 +1,7 @@
+# enrichplot 1.31.2.001
+
++ error handling functions imported from 'yulab.utils' (2025-12-31, Mon)
+
 # enrichplot 1.31.2
 
 + add 'fc_threshold' paramter to `cnetplot` (2025-11-30, Sun, #338)

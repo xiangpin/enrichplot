@@ -1,13 +1,13 @@
-##' Get the similarity matrix
-##'
-##' @param y A data.frame of enrichment result
-##' @param geneSets A list, the names of geneSets are term ids,
-##' and every object is a vertor of genes.
-##' @param method Method of calculating the similarity between nodes,
-##' one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
-##' "JC" (Jaccard similarity coefficient) methods
-##' @param semData GOSemSimDATA object
-##' @noRd
+#' Get the similarity matrix
+#'
+#' @param y A data.frame of enrichment result
+#' @param geneSets A list, the names of geneSets are term ids,
+#' and every object is a vertor of genes.
+#' @param method Method of calculating the similarity between nodes,
+#' one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
+#' "JC" (Jaccard similarity coefficient) methods
+#' @param semData GOSemSimDATA object
+#' @noRd
 get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
     id <- y[, "ID"]
     geneSets <- geneSets[id]
@@ -43,11 +43,11 @@ get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
 }
 
 
-##' Check whether the similarity matrix exists
-##'
-##' @param x result of enrichment analysis
-##'
-##' @noRd
+#' Check whether the similarity matrix exists
+#'
+#' @param x result of enrichment analysis
+#'
+#' @noRd
 has_pairsim <- function(x) {
     if (length(x@termsim) == 0) {
         error_message <- paste(
@@ -140,18 +140,18 @@ build_emap_graph <- function(
 }
 
 
-##' Get an iGraph object
-##'
-##' @param x Enrichment result.
-##' @param nCategory Number of enriched terms to display.
-##' @param color variable that used to color enriched terms, e.g. 'pvalue',
-##' 'p.adjust' or 'qvalue'.
-##' @param cex_line Scale of line width.
-##' @param min_edge The minimum similarity threshold for whether
-##' two nodes are connected, should between 0 and 1, default value is 0.2.
-##'
-##' @return an iGraph object
-##' @noRd
+#' Get an iGraph object
+#'
+#' @param x Enrichment result.
+#' @param nCategory Number of enriched terms to display.
+#' @param color variable that used to color enriched terms, e.g. 'pvalue',
+#' 'p.adjust' or 'qvalue'.
+#' @param cex_line Scale of line width.
+#' @param min_edge The minimum similarity threshold for whether
+#' two nodes are connected, should between 0 and 1, default value is 0.2.
+#'
+#' @return an iGraph object
+#' @noRd
 get_igraph <- function(x, nCategory, color, cex_line, min_edge) {
     y <- as.data.frame(x)
     geneSets <- geneInCategory(x) ## use core gene for gsea result
@@ -178,12 +178,12 @@ get_igraph <- function(x, nCategory, color, cex_line, min_edge) {
 }
 
 
-##' Merge the compareClusterResult file
-##'
-##' @param yy A data.frame of enrichment result.
-##'
-##' @return a data.frame
-##' @noRd
+#' Merge the compareClusterResult file
+#'
+#' @param yy A data.frame of enrichment result.
+#'
+#' @return a data.frame
+#' @noRd
 merge_compareClusterResult <- function(yy) {
     yy_union <- yy[!duplicated(yy$ID), ]
     yy_ids <- lapply(split(yy, yy$ID), function(x) {
@@ -201,64 +201,18 @@ merge_compareClusterResult <- function(yy) {
     yy_union
 }
 
-# ##' add alpha attribute to edges
-# ##'
-# ##' @param g ggraph object.
-# ##' @param hilight_category category nodes to be highlight.
-# ##' @param alpha_hilight alpha of highlighted nodes.
-# ##' @param alpha_nohilight alpha of unhighlighted nodes.
-# ##' @noRd
-# edge_add_alpha <- function(
-#     g,
-#     hilight_category,
-#     alpha_nohilight,
-#     alpha_hilight
-# ) {
-#     if (!is.null(hilight_category) && length(hilight_category) > 0) {
-#         edges <- attr(E(g), "vnames")
-#         E(g)$alpha <- rep(alpha_nohilight, length(E(g)))
-#         hilight_edge <- grep(paste(hilight_category, collapse = "|"), edges)
-#         E(g)$alpha[hilight_edge] <- min(0.8, alpha_hilight)
-#         # E(g)$alpha[hilight_edge] <- alpha_hilight
-#     } else {
-#         E(g)$alpha <- rep(min(0.8, alpha_hilight), length(E(g)))
-#     }
-#     return(g)
-# }
-
-# ##' add alpha attribute to ggraph nodes
-# ##'
-# ##' @param p ggraph object.
-# ##' @param hilight_category category nodes to be highlight.
-# ##' @param hilight_gene gene nodes to be highlight.
-# ##' @param alpha_hilight alpha of highlighted nodes.
-# ##' @param alpha_nohilight alpha of unhighlighted nodes.
-# ##' @noRd
-# node_add_alpha <- function(
-#     p,
-#     hilight_category,
-#     hilight_gene,
-#     alpha_nohilight,
-#     alpha_hilight
-# ) {
-#     alpha_node <- rep(1, nrow(p$data))
-#     if (!is.null(hilight_category)) {
-#         alpha_node <- rep(alpha_nohilight, nrow(p$data))
-#         hilight_node <- c(hilight_category, hilight_gene)
-#         alpha_node[match(hilight_node, p$data$name)] <- alpha_hilight
-#     }
-#     p$data$alpha <- alpha_node
-#     return(p)
-# }
 
 
-##' Get the location of group label
-##'
-##' @param node_data node information data frame
-##' @param label_format A numeric value sets wrap length, alternatively a
-##' custom function to format axis labels.
-##' @return a data.frame object.
-##' @noRd
+
+
+
+#' Get the location of group label
+#'
+#' @param node_data node information data frame
+#' @param label_format A numeric value sets wrap length, alternatively a
+#' custom function to format axis labels.
+#' @return a data.frame object.
+#' @noRd
 get_label_location <- function(node_data, label_format) {
     label_func <- default_labeller(label_format)
     if (is.function(label_format)) {
@@ -270,16 +224,16 @@ get_label_location <- function(node_data, label_format) {
 }
 
 
-##' Cluster similar nodes together by k-means
-##'
-##' @param node_data node information data frame.
-##' @param enrichDf data.frame of enrichment result.
-##' @param nWords Numeric, the number of words in the cluster tags.
-##' @param clusterFunction function of Clustering method, such as stats::kmeans, cluster::clara,
-##' cluster::fanny or cluster::pam.
-##' @param nCluster Numeric, the number of clusters,
-##' the default value is square root of the number of nodes.
-##' @noRd
+#' Cluster similar nodes together by k-means
+#'
+#' @param node_data node information data frame.
+#' @param enrichDf data.frame of enrichment result.
+#' @param nWords Numeric, the number of words in the cluster tags.
+#' @param clusterFunction function of Clustering method, such as stats::kmeans, cluster::clara,
+#' cluster::fanny or cluster::pam.
+#' @param nCluster Numeric, the number of clusters,
+#' the default value is square root of the number of nodes.
+#' @noRd
 groupNode <- function(
     node_data,
     enrichDf,
@@ -329,18 +283,18 @@ groupNode <- function(
     return(node_data)   
 }
 
-##' add ellipse to group the node
-##'
-##' @param node_data node data frame
-##' @param group_legend Logical, if TRUE, the grouping legend will be displayed.
-##' The default is FALSE.
-##' @param label logical, TRUE to label the ellipse (default)
-##' @param ellipse_style style of ellipse, one of "ggforce" an "polygon".
-##' @param ellipse_pro numeric indicating confidence value for the ellipses
-##' @param alpha the transparency of ellipse fill.
-##' @importFrom rlang check_installed
-##' @importFrom ggplot2 scale_fill_discrete
-##' @noRd
+#' add ellipse to group the node
+#'
+#' @param node_data node data frame
+#' @param group_legend Logical, if TRUE, the grouping legend will be displayed.
+#' The default is FALSE.
+#' @param label logical, TRUE to label the ellipse (default)
+#' @param ellipse_style style of ellipse, one of "ggforce" an "polygon".
+#' @param ellipse_pro numeric indicating confidence value for the ellipses
+#' @param alpha the transparency of ellipse fill.
+#' @importFrom rlang check_installed
+#' @importFrom ggplot2 scale_fill_discrete
+#' @noRd
 add_ellipse <- function(
     node_data,
     group_legend,
@@ -383,7 +337,7 @@ add_ellipse <- function(
 
     # not in used
     if (FALSE && ellipse_style == "polygon") {
-        ellipse_pro <- 0.95  # 定义默认的ellipse_pro值
+        ellipse_pro <- 0.95  # Define default ellipse_pro value
         p <- ggplot2::stat_ellipse(
             data = node_data,
             aes(x = !!sym('x'), y = !!sym('y'), fill = !!sym('color2')),

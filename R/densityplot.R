@@ -1,15 +1,15 @@
-##' plot logFC distribution of selected gene sets
-##'
-##' 
-##' @title gseadist 
-##' @param x GSEA result
-##' @param IDs gene set IDs
-##' @param type one of 'density' or 'boxplot'
-##' @return distribution plot
-##' @importFrom ggplot2 geom_density
-##' @importFrom ggplot2 geom_boxplot
-##' @export
-##' @author Guangchuang Yu
+#' plot logFC distribution of selected gene sets
+#'
+#' 
+#' @title gseadist 
+#' @param x GSEA result
+#' @param IDs gene set IDs
+#' @param type one of 'density' or 'boxplot'
+#' @return distribution plot
+#' @importFrom ggplot2 geom_density
+#' @importFrom ggplot2 geom_boxplot
+#' @export
+#' @author Guangchuang Yu
 gseadist <- function(x, IDs, type =  'density') {
     d <- data.frame(gene = names(x@geneList),
                     logFC = x@geneList,

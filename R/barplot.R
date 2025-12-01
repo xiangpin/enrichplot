@@ -1,42 +1,42 @@
-##' barplot of enrichResult
-##'
-##'
-##' @importFrom graphics barplot
-##' @importFrom ggplot2 %+%
-##' @importFrom ggplot2 scale_fill_continuous
-##' @importFrom ggplot2 aes
-##' @importFrom ggplot2 geom_col
+#' barplot of enrichResult
+#'
+#'
+#' @importFrom graphics barplot
+#' @importFrom ggplot2 %+%
+#' @importFrom ggplot2 scale_fill_continuous
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_col
 ##  @importFrom ggplot2 coord_flip
-##' @importFrom ggplot2 theme
-##' @importFrom ggplot2 ggtitle
-##' @importFrom ggplot2 xlab
-##' @importFrom ggplot2 ylab
-##' @importFrom ggplot2 scale_y_discrete
-##' @title barplot
-##' @param height enrichResult object
-##' @param x one of 'Count' and 'GeneRatio'
-##' @param color one of 'pvalue', 'p.adjust' and 'qvalue'
-##' @param showCategory number of categories to show
-##' @param font.size font size
-##' @param title plot title
-##' @param label_format a numeric value sets wrap length, alternatively a
-##' custom function to format axis labels.
-##' by default wraps names longer that 30 characters
-##' @param ... other parameter, ignored
-##' @method barplot enrichResult
-##' @export
-##' @return ggplot object
-##' @examples
-##' library(DOSE)
-##' data(geneList)
-##' de <- names(geneList)[1:100]
-##' x <- enrichDO(de)
-##' barplot(x)
-##' # use `showCategory` to select the displayed terms. It can be a number of a vector of terms.
-##' barplot(x, showCategory = 10)
-##' categorys <- c("urinary bladder cancer", "bronchiolitis obliterans",
-##'                "aortic aneurysm", "esophageal cancer")
-##' barplot(x, showCategory = categorys)
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 ggtitle
+#' @importFrom ggplot2 xlab
+#' @importFrom ggplot2 ylab
+#' @importFrom ggplot2 scale_y_discrete
+#' @title barplot
+#' @param height enrichResult object
+#' @param x one of 'Count' and 'GeneRatio'
+#' @param color one of 'pvalue', 'p.adjust' and 'qvalue'
+#' @param showCategory number of categories to show
+#' @param font.size font size
+#' @param title plot title
+#' @param label_format a numeric value sets wrap length, alternatively a
+#' custom function to format axis labels.
+#' by default wraps names longer that 30 characters
+#' @param ... other parameter, ignored
+#' @method barplot enrichResult
+#' @export
+#' @return ggplot object
+#' @examples
+#' library(DOSE)
+#' data(geneList)
+#' de <- names(geneList)[1:100]
+#' x <- enrichDO(de)
+#' barplot(x)
+#' # use `showCategory` to select the displayed terms. It can be a number of a vector of terms.
+#' barplot(x, showCategory = 10)
+#' categorys <- c("urinary bladder cancer", "bronchiolitis obliterans",
+#'                "aortic aneurysm", "esophageal cancer")
+#' barplot(x, showCategory = categorys)
 barplot.enrichResult <- function(
     height,
     x = "Count",
@@ -121,8 +121,8 @@ barplot.enrichResult <- function(
         ylab(NULL) # + xlab(NULL)
 }
 
-##' @method barplot compareClusterResult
-##' @export
+#' @method barplot compareClusterResult
+#' @export
 barplot.compareClusterResult <- function(
     height,
     color = "p.adjust",

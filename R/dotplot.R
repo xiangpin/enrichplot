@@ -1,6 +1,6 @@
-##' @rdname dotplot
-##' @exportMethod dotplot
-##' @author Guangchuang Yu
+#' @rdname dotplot
+#' @exportMethod dotplot
+#' @author Guangchuang Yu
 setMethod(
     "dotplot",
     signature(object = "enrichResult"),
@@ -33,8 +33,8 @@ setMethod(
     }
 )
 
-##' @rdname dotplot
-##' @exportMethod dotplot
+#' @rdname dotplot
+#' @exportMethod dotplot
 setMethod(
     "dotplot",
     signature(object = "gseaResult"),
@@ -85,9 +85,9 @@ setMethod(
     }
 )
 
-##' @rdname dotplot
-##' @aliases dotplot,compareClusterResult,ANY-method
-##' @exportMethod dotplot
+#' @rdname dotplot
+#' @aliases dotplot,compareClusterResult,ANY-method
+#' @exportMethod dotplot
 setMethod(
     "dotplot",
     signature(object = "compareClusterResult"),
@@ -122,10 +122,10 @@ setMethod(
     }
 )
 
-##' @rdname dotplot
-##' @exportMethod dotplot
-##' @aliases dotplot,enrichResultList,ANY-method
-##' @author Guangchuang Yu
+#' @rdname dotplot
+#' @exportMethod dotplot
+#' @aliases dotplot,enrichResultList,ANY-method
+#' @author Guangchuang Yu
 setMethod(
     "dotplot",
     signature(object = "enrichResultList"),
@@ -158,9 +158,9 @@ setMethod(
     }
 )
 
-##' @rdname dotplot
-##' @exportMethod dotplot
-##' @aliases dotplot,gseaResultList,ANY-method
+#' @rdname dotplot
+#' @exportMethod dotplot
+#' @aliases dotplot,gseaResultList,ANY-method
 setMethod(
     "dotplot",
     signature(object = "gseaResultList"),

@@ -1,32 +1,32 @@
-##' upsetplot
-##'
-##'
-##' @rdname upsetplot-methods
-##' @aliases upsetplot,enrichResult,ANY-method
-##' @param n number of categories to be plotted
-##' @author Guangchuang Yu
-##' @exportMethod upsetplot
-##' @examples
-##' require(DOSE)
-##' data(geneList)
-##' de=names(geneList)[1:100]
-##' x <- enrichDO(de)
-##' upsetplot(x, 8)
+#' upsetplot
+#'
+#'
+#' @rdname upsetplot-methods
+#' @aliases upsetplot,enrichResult,ANY-method
+#' @param n number of categories to be plotted
+#' @author Guangchuang Yu
+#' @exportMethod upsetplot
+#' @examples
+#' require(DOSE)
+#' data(geneList)
+#' de=names(geneList)[1:100]
+#' x <- enrichDO(de)
+#' upsetplot(x, 8)
 setMethod("upsetplot", signature(x="enrichResult"),
           function(x, n=10, ...) {
               upsetplot.enrichResult(x, n, ...)
           })
 
-##' @rdname upsetplot-methods
-##' @aliases upsetplot,gseaResult
-##' @exportMethod upsetplot
+#' @rdname upsetplot-methods
+#' @aliases upsetplot,gseaResult
+#' @exportMethod upsetplot
 setMethod("upsetplot", signature(x="gseaResult"),
           function(x, n=10, ...) {
               upsetplot.gseaResult(x, n, ...)
           })
 
 
-##' @importFrom rlang check_installed
+#' @importFrom rlang check_installed
 upsetplot.enrichResult <- function(x, n=10, ...) {
     df <- as.data.frame(x)
     id <- df$ID[1:n]
@@ -64,9 +64,9 @@ upsetplot.enrichResult <- function(x, n=10, ...) {
 	ggupset::scale_x_upset(order_by = "freq")
 }
 
-##' @importFrom ggplot2 geom_violin
-##' @importFrom ggplot2 geom_jitter
-##' @importFrom rlang check_installed
+#' @importFrom ggplot2 geom_violin
+#' @importFrom ggplot2 geom_jitter
+#' @importFrom rlang check_installed
 upsetplot.gseaResult <- function(x, n = 10, type = "boxplot", ...) {
     n <- update_n(x, n)
     geneSets <- extract_geneSets(x, n)

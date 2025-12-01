@@ -1,6 +1,6 @@
-##' @rdname volplot
-##' @exportMethod volplot
-##' @author Guangchuang Yu
+#' @rdname volplot
+#' @exportMethod volplot
+#' @author Guangchuang Yu
 setMethod("volplot", signature(x = "enrichResult"),
         function(x, color = "zScore", 
                 xintercept = 1, yintercept = 2,  
@@ -12,9 +12,9 @@ setMethod("volplot", signature(x = "enrichResult"),
                 ...)
         })
 
-##' @rdname volplot
-##' @param font.size font size for `theme_dose()`
-##' @param size font size to label selected categories specified by showCategory
+#' @rdname volplot
+#' @param font.size font size for `theme_dose()`
+#' @param size font size to label selected categories specified by showCategory
 volplot.enrichResult <- function(x, color = "zScore", 
                 xintercept = 1, yintercept = 2, 
                 showCategory=5, label_format = 30, 

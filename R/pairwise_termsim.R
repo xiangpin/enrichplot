@@ -1,21 +1,21 @@
-##' @rdname pairwise_termsim
-##' @exportMethod pairwise_termsim
+#' @rdname pairwise_termsim
+#' @exportMethod pairwise_termsim
 setMethod("pairwise_termsim", signature(x = "enrichResult"),
     function(x, method = "JC", semData = NULL, showCategory = 200) {
         pairwise_termsim.enrichResult(x, method = method,
             semData = semData, showCategory = showCategory)
     })
 
-##' @rdname pairwise_termsim
-##' @exportMethod pairwise_termsim
+#' @rdname pairwise_termsim
+#' @exportMethod pairwise_termsim
 setMethod("pairwise_termsim", signature(x = "gseaResult"),
     function(x, method = "JC", semData = NULL, showCategory = 200) {
         pairwise_termsim.enrichResult(x, method = method,
             semData = semData, showCategory = showCategory)
     })
 
-##' @rdname pairwise_termsim
-##' @exportMethod pairwise_termsim
+#' @rdname pairwise_termsim
+#' @exportMethod pairwise_termsim
 setMethod("pairwise_termsim", signature(x = "compareClusterResult"),
     function(x, method = "JC", semData = NULL, showCategory = 200) {
         pairwise_termsim.compareClusterResult(x, method = method,
@@ -23,7 +23,7 @@ setMethod("pairwise_termsim", signature(x = "compareClusterResult"),
     })
 
 
-##' @rdname pairwise_termsim
+#' @rdname pairwise_termsim
 pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, showCategory = 200) {
     y <- as.data.frame(x)
     geneSets <- geneInCategory(x)
@@ -43,7 +43,7 @@ pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, show
 }
 
 
-##' @rdname pairwise_termsim
+#' @rdname pairwise_termsim
 pairwise_termsim.compareClusterResult <- function(x, method = "JC", semData = NULL, 
                                                   showCategory = 200) {
     y <- fortify(x, showCategory=showCategory, includeAll=TRUE, split=NULL)
