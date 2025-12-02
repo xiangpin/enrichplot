@@ -83,12 +83,13 @@ get_label_diss <- function(dimension, label_location) {
     nn <- nrow(label_location)
     label_dis <- matrix(NA, nrow = nn, ncol = nn)
     colnames(label_dis) <- rownames(label_dis) <- label_location$label
-    for (i in seq_len(nn - 1)) {
-        for (j in (i + 1):nn) {
-            label_dis[i, j] <- label_location[i, dimension] -
-                label_location[j, dimension]
-        }
-    }
+    
+    # Vectorized computation using outer
+    vals <- label_location[[dimension]]
+    label_dis <- outer(vals, vals, `-`)
+    colnames(label_dis) <- rownames(label_dis) <- label_location$label
+    
+    # Convert to long format
     label_diss <- reshape2::melt(label_dis)
     label_diss <- label_diss[label_diss[, 1] != label_diss[, 2], ]
     label_diss <- label_diss[!is.na(label_diss[, 3]), ]

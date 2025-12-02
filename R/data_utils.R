@@ -196,22 +196,30 @@ prepare_pie_data <- function(pie_data, pie = "equal", type = "category") {
     ID_Cluster_mat <- as.data.frame(ID_Cluster_mat, stringAsFactors = FALSE)
     
     if (pie == "Count") {
-        for (i in seq_len(nrow(pie_data))) {
-            ID_Cluster_mat[pie_data[i, 2], pie_data[i, 1]] <- pie_data[i, 3]
-        }
-        for (kk in seq_len(ncol(ID_Cluster_mat))) {
-            ID_Cluster_mat[, kk] <- as.numeric(ID_Cluster_mat[, kk])
-        }
+        # Vectorized matrix indexing
+        idx <- cbind(
+            match(pie_data[, 2], rownames(ID_Cluster_mat)),
+            match(pie_data[, 1], colnames(ID_Cluster_mat))
+        )
+        ID_Cluster_mat[idx] <- pie_data[, 3]
+        # Convert all columns to numeric at once
+        ID_Cluster_mat[] <- lapply(ID_Cluster_mat, as.numeric)
         return(ID_Cluster_mat)
     }
     
-    for (i in seq_len(nrow(pie_data))) {
-        if (type == "category") {
-            ID_Cluster_mat[pie_data[i, 2], pie_data[i, 1]] <- 1
-        } else {
-            ID_Cluster_mat[pie_data[i, 3], pie_data[i, 1]] <- 1
-        }
+    # Vectorized matrix indexing for equal pie
+    if (type == "category") {
+        idx <- cbind(
+            match(pie_data[, 2], rownames(ID_Cluster_mat)),
+            match(pie_data[, 1], colnames(ID_Cluster_mat))
+        )
+    } else {
+        idx <- cbind(
+            match(pie_data[, 3], rownames(ID_Cluster_mat)),
+            match(pie_data[, 1], colnames(ID_Cluster_mat))
+        )
     }
+    ID_Cluster_mat[idx] <- 1
     return(ID_Cluster_mat)
 }
 

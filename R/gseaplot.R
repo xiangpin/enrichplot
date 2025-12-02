@@ -229,13 +229,12 @@ gseaplot2 <- function(x, geneSetID, title = "", color="green", base_size = 11,
               axis.line.x=element_blank(),
               plot.margin=margin(t=.2, r = .2, b=0, l=.2, unit="cm"))
 
-    i <- 0
-    for (term in unique(gsdata$Description)) {
-        idx <- which(gsdata$ymin != 0 & gsdata$Description == term)
-        gsdata[idx, "ymin"] <- i
-        gsdata[idx, "ymax"] <- i + 1
-        i <- i + 1
-    }
+    # Vectorized ymin/ymax assignment
+    terms <- unique(gsdata$Description)
+    term_indices <- match(gsdata$Description, terms) - 1
+    idx <- which(gsdata$ymin != 0)
+    gsdata[idx, "ymin"] <- term_indices[idx]
+    gsdata[idx, "ymax"] <- term_indices[idx] + 1
     p2 <- ggplot(gsdata, aes(x = .data$x)) +
         geom_linerange(aes(ymin = .data$ymin, ymax = .data$ymax, color = .data$Description)) +
         xlab(NULL) + ylab(NULL) + theme_classic(base_size) +

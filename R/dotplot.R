@@ -298,7 +298,7 @@ dotplot.enrichResult <- function(
     }
 
     if (orderBy == "x") {
-        df <- dplyr::mutate(df, x = eval(parse(text = x)))
+        df <- dplyr::mutate(df, x = .data[[x]])
     }
 
     label_func <- .label_format(label_format)
