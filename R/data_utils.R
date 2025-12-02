@@ -12,13 +12,16 @@ update_n <- function(x, showCategory) {
     ## Input validation
     check_input(x, arg_name = "x")
     check_input(showCategory, arg_name = "showCategory")
-    
+
     if (!is.numeric(showCategory)) {
         if (inherits(x, 'list')) {
             showCategory <- showCategory[showCategory %in% names(x)]
         } else {
             if (!"Description" %in% colnames(x)) {
-                yulab_abort("Input data must have 'Description' column", class = "missing_column_error")
+                yulab_abort(
+                    "Input data must have 'Description' column",
+                    class = "missing_column_error"
+                )
             }
             showCategory <- intersect(showCategory, x$Description)
         }
@@ -33,7 +36,14 @@ update_n <- function(x, showCategory) {
     }
     if (nn < n) {
         yulab_warn(
-            paste0("showCategory (", n, ") is larger than available items (", nn, "). Using ", nn),
+            paste0(
+                "showCategory (",
+                n,
+                ") is larger than available items (",
+                nn,
+                "). Using ",
+                nn
+            ),
             class = "showCategory_warning"
         )
         n <- nn
@@ -118,20 +128,21 @@ overlap_ratio <- function(x, y) {
         name <- id
     }
     colnames(w) <- rownames(w) <- name
-    
+
     # Vectorized computation: precompute all gene sets
     gsets <- lapply(gsetlist[id], unique)
-    
+
     # Use outer function for vectorized computation
-    jc_matrix <- outer(seq_len(n), seq_len(n), 
-                      function(i, j) {
-                          if (i == j) return(1)
-                          overlap_ratio(gsets[[i]], gsets[[j]])
-                      })
-    
+    jc_matrix <- outer(seq_len(n), seq_len(n), function(i, j) {
+        if (i == j) {
+            return(1)
+        }
+        overlap_ratio(gsets[[i]], gsets[[j]])
+    })
+
     # Ensure symmetry
     jc_matrix[lower.tri(jc_matrix)] <- t(jc_matrix)[lower.tri(t(jc_matrix))]
-    
+
     return(jc_matrix)
 }
 
@@ -145,7 +156,7 @@ overlap_ratio <- function(x, y) {
 prepare_pie_gene <- function(y) {
     ## Input validation
     check_input(y, type = "data.frame", arg_name = "y")
-    
+
     check_installed('tibble', 'for `prepare_pie_gene()`.')
     gene_pie <- tibble::as_tibble(y[, c("Cluster", "Description", "geneID")])
     gene_pie$geneID <- strsplit(gene_pie$geneID, '/')
@@ -194,7 +205,7 @@ prepare_pie_data <- function(pie_data, pie = "equal", type = "category") {
     rownames(ID_Cluster_mat) <- ID_unique
     colnames(ID_Cluster_mat) <- Cluster_unique
     ID_Cluster_mat <- as.data.frame(ID_Cluster_mat, stringAsFactors = FALSE)
-    
+
     if (pie == "Count") {
         # Vectorized matrix indexing
         idx <- cbind(
@@ -206,7 +217,7 @@ prepare_pie_data <- function(pie_data, pie = "equal", type = "category") {
         ID_Cluster_mat[] <- lapply(ID_Cluster_mat, as.numeric)
         return(ID_Cluster_mat)
     }
-    
+
     # Vectorized matrix indexing for equal pie
     if (type == "category") {
         idx <- cbind(

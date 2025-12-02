@@ -310,6 +310,43 @@ dotplot.enrichResult <- function(
         levels = rev(unique(df$Description[idx]))
     )
 
+    # Use internal helper function for common plotting logic
+    p <- .dotplot_internal(
+        df = df,
+        x = x,
+        size = size,
+        colorBy = colorBy,
+        color = color,
+        label_func = label_func,
+        font.size = font.size,
+        title = title
+    )
+    
+    return(p)
+}
+
+.label_format <- function(label_format = 30) {
+    label_func <- default_labeller(label_format)
+    if (is.function(label_format)) {
+        label_func <- label_format
+    }
+    return(label_func)
+}
+
+#' Internal helper function for dotplot construction
+#' @param df data frame containing the plot data
+#' @param x x-axis variable name
+#' @param size size variable name
+#' @param colorBy color variable name
+#' @param color color parameter name for legend
+#' @param label_func function for formatting labels
+#' @param font.size font size for theme
+#' @param title plot title
+#' @param size_range range for size scaling, default c(3, 8)
+#' @param shape_point whether to use enrichplot_point_shape, default TRUE
+#' @return ggplot object with enrichplotDot class
+#' @noRd
+.dotplot_internal <- function(df, x, size, colorBy, color, label_func, font.size, title, size_range = c(3, 8), shape_point = TRUE) {
     p <- ggplot(
         df,
         aes(
@@ -320,33 +357,27 @@ dotplot.enrichResult <- function(
         )
     ) +
         geom_point() +
-        aes(shape = I(enrichplot_point_shape)) +
-        # scale_fill_continuous(name = color) +
         set_enrichplot_color(type = "fill", name = color, transform = 'log10') +
         scale_y_discrete(labels = label_func) +
         ylab(NULL) +
         ggtitle(title) +
         theme_dose(font.size)
-
-    if (size == "Count") {
-        # integer
-        #size_n <- ceiling(sqrt(length(unique(df[[size]]))))
-        size_break <- pretty(df[[size]], n = 4)
-        p <- p + scale_size(range = c(3, 8), breaks = size_break)
-    } else {
-        p <- p + scale_size(range = c(3, 8))
+    
+    if (shape_point) {
+        p <- p + aes(shape = I(enrichplot_point_shape))
     }
-
+    
+    # Apply size scaling
+    if (size == "Count") {
+        # For Count, use pretty breaks
+        size_break <- pretty(df[[size]], n = 4)
+        p <- p + scale_size(range = size_range, breaks = size_break)
+    } else {
+        p <- p + scale_size(range = size_range)
+    }
+    
     class(p) <- c("enrichplotDot", class(p))
     return(p)
-}
-
-.label_format <- function(label_format = 30) {
-    label_func <- default_labeller(label_format)
-    if (is.function(label_format)) {
-        label_func <- label_format
-    }
-    return(label_func)
 }
 
 
@@ -420,12 +451,20 @@ dotplot.compareClusterResult <- function(
         by2 <- size
     }
 
-    p <- ggplot(
-        df,
-        aes(x = .data[[x]], y = .data[["Description"]], size = .data[[by2]])
-    ) +
-        scale_y_discrete(labels = label_func)
-
+    # Use internal helper function for base plot, but without shape_point for flexibility
+    p <- .dotplot_internal(
+        df = df,
+        x = x,
+        size = by2,
+        colorBy = colorBy,
+        color = colorBy,
+        label_func = label_func,
+        font.size = font.size,
+        title = title,
+        shape_point = FALSE  # We'll handle shape manually
+    )
+    
+    # Add group connections if requested
     if (group) {
         p <- p +
             geom_line(
@@ -434,12 +473,14 @@ dotplot.compareClusterResult <- function(
             ) +
             ggnewscale::new_scale_colour()
     }
-
+    
+    # Handle shape variations
     if (shape) {
         check_installed('ggstar', 'for `dotplot()` with `shape = TRUE`.')
         ggstar <- "ggstar"
         require(ggstar, character.only = TRUE)
-        # p <- p + ggsymbol::geom_symbol(aes(symbol = .data$Cluster, fill = .data[[colorBy]])) +
+        # Replace the base geom_point with ggstar
+        p$layers <- p$layers[-1]  # Remove the first geom_point layer
         p <- p +
             ggstar::geom_star(aes(
                 starshape = .data$Cluster,
@@ -447,18 +488,11 @@ dotplot.compareClusterResult <- function(
             )) +
             set_enrichplot_color(type = "fill", transform = 'log10')
     } else {
-        p <- p +
-            geom_point(aes(fill = .data[[colorBy]])) +
-            aes(shape = I(enrichplot_point_shape))
+        # Add standard point with shape
+        p <- p + aes(shape = I(enrichplot_point_shape))
     }
-
-    p <- p +
-        set_enrichplot_color(type = "fill", transform = 'log10') +
-        ylab(NULL) +
-        ggtitle(title) +
-        DOSE::theme_dose(font.size) +
-        scale_size_continuous(range = c(3, 8))
-
+    
+    # Add facet if requested
     if (!is.null(facet)) {
         p <- p +
             facet_grid(
@@ -470,9 +504,7 @@ dotplot.compareClusterResult <- function(
             ) +
             theme(strip.text = element_text(size = 14))
     }
-
-    class(p) <- c("enrichplotDot", class(p))
-
+    
     return(p)
 }
 

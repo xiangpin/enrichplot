@@ -1,6 +1,7 @@
-# enrichplot 1.31.2.001
+# enrichplot 1.31.2.002
 
-+ error handling functions imported from 'yulab.utils' (2025-12-31, Mon)
++ optimize source code (2025-12-02, Tue)
++ error handling functions imported from 'yulab.utils' (2025-12-01, Mon)
 
 # enrichplot 1.31.2
 

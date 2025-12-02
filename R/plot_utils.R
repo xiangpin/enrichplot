@@ -51,17 +51,24 @@ plotting.clusterProfile <- function(
     title = "",
     font.size = 12
 ) {
-    Description <- Percentage <- Count <- Cluster <- GeneRatio <- p.adjust <- pvalue <- NULL
     if (type == "bar") {
         if (by == "percentage") {
             p <- ggplot(
                 clProf.reshape.df,
-                aes(x = Description, y = Percentage, fill = Cluster)
+                aes(
+                    x = !!sym("Description"),
+                    y = !!sym("Percentage"),
+                    fill = !!sym("Cluster")
+                )
             )
         } else if (by == "count") {
             p <- ggplot(
                 clProf.reshape.df,
-                aes(x = Description, y = Count, fill = Cluster)
+                aes(
+                    x = !!sym("Description"),
+                    y = !!sym("Count"),
+                    fill = !!sym("Cluster")
+                )
             )
         } else {}
         p <- p +
@@ -83,12 +90,12 @@ get_label_diss <- function(dimension, label_location) {
     nn <- nrow(label_location)
     label_dis <- matrix(NA, nrow = nn, ncol = nn)
     colnames(label_dis) <- rownames(label_dis) <- label_location$label
-    
+
     # Vectorized computation using outer
     vals <- label_location[[dimension]]
     label_dis <- outer(vals, vals, `-`)
     colnames(label_dis) <- rownames(label_dis) <- label_location$label
-    
+
     # Convert to long format
     label_diss <- reshape2::melt(label_dis)
     label_diss <- label_diss[label_diss[, 1] != label_diss[, 2], ]
@@ -123,7 +130,6 @@ get_ggrepel_segsize <- function(default = 0.2) {
 }
 
 
-
 #' Get parameter change message
 #'
 #' @param parameter parameter name
@@ -132,8 +138,12 @@ get_ggrepel_segsize <- function(default = 0.2) {
 #' @noRd
 get_param_change_message <- function(parameter, params_df) {
     paste0(
-        "Use '", params_df[parameter, "listname"], 
-        " = list(", params_df[parameter, "present"], 
-        " = your_value)' instead of '", params_df[parameter, "original"], "'"
+        "Use '",
+        params_df[parameter, "listname"],
+        " = list(",
+        params_df[parameter, "present"],
+        " = your_value)' instead of '",
+        params_df[parameter, "original"],
+        "'"
     )
 }

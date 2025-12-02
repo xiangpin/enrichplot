@@ -7,7 +7,7 @@
 #' @importFrom utils head
 #' @noRd
 get_wordcloud <- function(cluster, node_data, nWords = 4) {
-    cluster_terms <- node_data$name[node_data$color2 == cluster]    
+    cluster_terms <- node_data$name[node_data$color2 == cluster]
 
     if (length(cluster_terms) == 0) {
         return(cluster)
