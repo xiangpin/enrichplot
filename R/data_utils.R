@@ -150,7 +150,6 @@ overlap_ratio <- function(x, y) {
 #'
 #' @param y data frame from compareClusterResult
 #' @return pie data
-#' @importFrom DOSE geneID
 #' @importFrom rlang check_installed
 #' @noRd
 prepare_pie_gene <- function(y) {
@@ -244,3 +243,6 @@ prepare_pie_data <- function(pie_data, pie = "equal", type = "category") {
 as.data.frame.compareClusterResult <- function(x, ...) {
     as.data.frame(x@compareClusterResult, ...)
 }
+
+
+

@@ -420,3 +420,6 @@ setGeneric("treeplot", function(x, ...) {
 setGeneric("ssplot", function(x, ...) {
     standardGeneric("ssplot")
 })
+
+
+

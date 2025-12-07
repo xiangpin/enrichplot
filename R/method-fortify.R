@@ -111,7 +111,7 @@ fortify.compareClusterResult <- function(
             levels = unique(rev(Termlevel))
         )
     } else if (by == "count") {
-        result$GeneRatio <- DOSE::parse_ratio(result$GeneRatio)
+        result$GeneRatio <- yulab.utils::parse_ratio(result$GeneRatio)
     } else if (by == "geneRatio") {
         ## for result of ORA
         # if (class(result$GeneRatio) == "character" && grep("/", result$GeneRatio[1])) {
@@ -124,7 +124,7 @@ fortify.compareClusterResult <- function(
                 "",
                 as.character(result$GeneRatio)
             ))
-            result$GeneRatio <- DOSE::parse_ratio(result$GeneRatio)
+            result$GeneRatio <- yulab.utils::parse_ratio(result$GeneRatio)
             if (
                 ("ONTOLOGY" %in% colnames(result)) &&
                     (length(unique(result$ONTOLOGY)) > 1)

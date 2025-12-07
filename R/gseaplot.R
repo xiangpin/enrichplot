@@ -159,8 +159,6 @@ gsInfo <- function(object, geneSetID) {
     return(df)
 }
 
-gseaScores <- getFromNamespace("gseaScores", "DOSE")
-
 
 get_gsdata <- function(x, geneSetID) {
     if (length(geneSetID) == 1) {

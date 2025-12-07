@@ -7,7 +7,11 @@
 \alias{facet_grid}
 \alias{plot_list}
 \alias{cnetplot}
+\alias{theme_dose}
 \alias{geom_cnet_label}
+\alias{gseaScores}
+\alias{geneID}
+\alias{geneInCategory}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -16,6 +20,10 @@ below to see their documentation.
 
 \describe{
   \item{aplot}{\code{\link[aplot]{plot_list}}}
+
+  \item{DOSE}{\code{\link[DOSE]{theme_dose}}}
+
+  \item{enrichit}{\code{\link[enrichit]{geneID}}, \code{\link[enrichit]{geneInCategory}}, \code{\link[enrichit]{gseaScores}}}
 
   \item{ggplot2}{\code{\link[ggplot2]{facet_grid}}, \code{\link[ggplot2:labs]{ggtitle}}}
 

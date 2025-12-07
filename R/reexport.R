@@ -14,8 +14,25 @@ aplot::plot_list
 #' @export
 ggtangle::cnetplot
 
+#' @importFrom DOSE theme_dose
+#' @export 
+DOSE::theme_dose
 
 #' @importFrom ggtangle geom_cnet_label
 #' @export 
 ggtangle::geom_cnet_label
 
+#' @importFrom enrichit gseaScores
+#' @export
+enrichit::gseaScores
+
+#' @importFrom enrichit geneID
+#' @export
+enrichit::geneID
+
+#' @importFrom enrichit geneInCategory
+#' @export
+enrichit::geneInCategory
+
+#' @importClassesFrom enrichit compareClusterResult
+NULL

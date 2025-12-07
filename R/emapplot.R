@@ -55,7 +55,6 @@ setMethod(
 #' @importFrom ggtangle geom_edge
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom ggrepel geom_label_repel
-#' @importFrom DOSE geneInCategory
 #' @author Guangchuang Yu
 emapplot_internal <- function(
     x,

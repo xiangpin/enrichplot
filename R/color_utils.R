@@ -124,15 +124,16 @@ which_scale_fun <- function(.fun) {
 #' @param colors colors of length >=2
 #' @return color vector
 #' @importFrom rlang check_installed
+#' @importFrom yulab.utils check_input
 #' @export
 #' @examples
 #' color_palette(c("red", "yellow", "green"))
 #' @author guangchuang yu
 color_palette <- function(colors) {
     ## Check input validity
-    check_input(colors, type = "character", min_length = 2, arg_name = "colors")
+    yulab.utils::check_input(colors, type = "character", min_length = 2, arg_name = "colors")
     
-    check_installed('grDevices', 'for `color_palette()`.')
+    rlang::check_installed('grDevices', 'for `color_palette()`.')
     grDevices::colorRampPalette(colors)(n = 299)
 }
 

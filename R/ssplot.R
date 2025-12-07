@@ -103,7 +103,6 @@ ssplot.enrichResult <- function(
 #' @param pie one of 'equal' or 'Count' to set the slice ratio of the pies
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 coord_equal
-#' @importClassesFrom DOSE compareClusterResult
 # @param cex_pie2axis It is used to adjust the relative size of the pie chart on the coordinate axis,
 # the default value is 0.0125.
 #' @importFrom stats setNames
