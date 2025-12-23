@@ -1,4 +1,4 @@
-# enrichplot 1.31.2.003
+# enrichplot 1.31.3
 
 + use 'enrichit' package (2025-12-07, Sun)
 + optimize source code (2025-12-02, Tue)
