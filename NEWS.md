@@ -1,5 +1,6 @@
-# enrichplot 1.31.3.001
+# enrichplot 1.31.3.002
 
++ bug fixed in `update_n()` if `showCategory` is a vector of term names (2026-01-08, Thu)
 + avoid the "condition has length > 1" error in `outer()` by using `Vectorize()` (2026-01-08, Thu)
 
 # enrichplot 1.31.3

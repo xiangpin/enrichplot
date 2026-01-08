@@ -17,7 +17,7 @@ update_n <- function(x, showCategory) {
         if (inherits(x, 'list')) {
             showCategory <- showCategory[showCategory %in% names(x)]
         } else {
-            if (!"Description" %in% colnames(x)) {
+            if (!"Description" %in% colnames(as.data.frame(x))) {
                 yulab_abort(
                     "Input data must have 'Description' column",
                     class = "missing_column_error"
