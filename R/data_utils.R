@@ -133,12 +133,12 @@ overlap_ratio <- function(x, y) {
     gsets <- lapply(gsetlist[id], unique)
 
     # Use outer function for vectorized computation
-    jc_matrix <- outer(seq_len(n), seq_len(n), function(i, j) {
+    jc_matrix <- outer(seq_len(n), seq_len(n), Vectorize(function(i, j) {
         if (i == j) {
             return(1)
         }
         overlap_ratio(gsets[[i]], gsets[[j]])
-    })
+    }))
 
     # Ensure symmetry
     jc_matrix[lower.tri(jc_matrix)] <- t(jc_matrix)[lower.tri(t(jc_matrix))]
