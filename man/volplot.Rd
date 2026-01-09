@@ -42,14 +42,14 @@ volplot.enrichResult(
 
 \item{color}{selected variable to color the dots}
 
-\item{xintercept}{value to set x intercept}
+\item{xintercept}{value to set x-intercept}
 
-\item{yintercept}{value to set y intercept}
+\item{yintercept}{value to set y-intercept}
 
 \item{showCategory}{number of most significant enriched terms or selected terms to
 display determined by the variable selected to color the dots}
 
-\item{label_format}{a numeric value sets wrap length, alternatively a
+\item{label_format}{a numeric value setting the wrap length, alternatively a
 custom function to format axis labels.}
 
 \item{...}{Additional parameters}
@@ -62,7 +62,7 @@ custom function to format axis labels.}
 ggplot object
 }
 \description{
-volcano plot for enrichment result
+Volcano plot for enrichment result
 }
 \examples{
 library(DOSE)

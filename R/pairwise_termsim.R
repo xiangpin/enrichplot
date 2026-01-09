@@ -1,7 +1,7 @@
 #' @rdname pairwise_termsim
 #' @exportMethod pairwise_termsim
 setMethod("pairwise_termsim", signature(x = "enrichResult"),
-    function(x, method = "JC", semData = NULL, showCategory = 200) {
+    function(x, method = "JC", semData = NULL, showCategory = NULL) {
         pairwise_termsim.enrichResult(x, method = method,
             semData = semData, showCategory = showCategory)
     })
@@ -9,7 +9,7 @@ setMethod("pairwise_termsim", signature(x = "enrichResult"),
 #' @rdname pairwise_termsim
 #' @exportMethod pairwise_termsim
 setMethod("pairwise_termsim", signature(x = "gseaResult"),
-    function(x, method = "JC", semData = NULL, showCategory = 200) {
+    function(x, method = "JC", semData = NULL, showCategory = NULL) {
         pairwise_termsim.enrichResult(x, method = method,
             semData = semData, showCategory = showCategory)
     })
@@ -17,14 +17,18 @@ setMethod("pairwise_termsim", signature(x = "gseaResult"),
 #' @rdname pairwise_termsim
 #' @exportMethod pairwise_termsim
 setMethod("pairwise_termsim", signature(x = "compareClusterResult"),
-    function(x, method = "JC", semData = NULL, showCategory = 200) {
+    function(x, method = "JC", semData = NULL, showCategory = NULL) {
         pairwise_termsim.compareClusterResult(x, method = method,
             semData = semData, showCategory = showCategory)
     })
 
 
 #' @rdname pairwise_termsim
-pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, showCategory = 200) {
+pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, showCategory = NULL) {
+    if (is.null(showCategory)) {
+        showCategory <- .default_pairwise_termsim_category(x)
+    }
+
     y <- as.data.frame(x)
     geneSets <- geneInCategory(x)
     n <- update_n(x, showCategory)
@@ -45,7 +49,11 @@ pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, show
 
 #' @rdname pairwise_termsim
 pairwise_termsim.compareClusterResult <- function(x, method = "JC", semData = NULL, 
-                                                  showCategory = 200) {
+                                                  showCategory = NULL) {
+    if (is.null(showCategory)) {
+        showCategory <- .default_pairwise_termsim_category(x)
+    }
+
     y <- fortify(x, showCategory=showCategory, includeAll=TRUE, split=NULL)
     y$Cluster <- sub("\n.*", "", y$Cluster)
     ## y_union <- get_y_union(y = y, showCategory = showCategory)
@@ -60,4 +68,9 @@ pairwise_termsim.compareClusterResult <- function(x, method = "JC", semData = NU
                 semData = semData)                              
     x@method <- method
     return(x)    
+}
+
+
+.default_pairwise_termsim_category <- function(x, min_default = 200) {
+    min(nrow(x), min_default)
 }

@@ -38,20 +38,20 @@ goplot(
 
 \item{showCategory}{number of enriched terms to display}
 
-\item{color}{variable that used to color enriched terms, e.g. pvalue,
+\item{color}{variable used to color enriched terms, e.g. pvalue,
 p.adjust or qvalue}
 
 \item{layout}{layout of the map}
 
 \item{geom}{label geom, one of 'label' or 'text'}
 
-\item{...}{additional parameter}
+\item{...}{additional parameters.}
 }
 \value{
 ggplot object
 }
 \description{
-plot induced GO DAG of significant terms
+Plot induced GO DAG of significant terms
 }
 \examples{
 \dontrun{

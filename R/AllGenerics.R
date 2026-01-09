@@ -1,11 +1,11 @@
-#' dotplot for enrichment result
+#' Dot plot for enrichment result
 #'
 #'
 #' @title dotplot
 #' @rdname dotplot
-#' @param object input object
-#' @param ... additional parameters
-#' @return plot
+#' @param object input object.
+#' @param ... additional parameters.
+#' @return plot.
 #' @importFrom methods setGeneric
 #' @export
 #' @examples
@@ -49,7 +49,7 @@ setGeneric("dotplot", function(object, ...) {
 #' a certain threshold (default is 0.2, adjusted by parameter `min_edge`),
 #' there will be edges between terms. The stronger the similarity,
 #' the shorter and thicker the edges. The similarity between terms is
-#' obtained by function `pairwise_termsim`, the details of similarity
+#' obtained by the function `pairwise_termsim`. Details of the similarity
 #' calculation can be found in its documentation: \link{pairwise_termsim}.
 #' @title emapplot
 #' @rdname emapplot
@@ -94,22 +94,22 @@ setGeneric("emapplot", function(x, ...) {
 #' Get the similarity matrix
 #'
 #'
-#' This function add similarity matrix to the termsim slot of enrichment result.
-#' Users can use the `method` parameter to select the method of calculating similarity.
-#' The Jaccard correlation coefficient(JC) is used by default, and it applies to all situations.
+#' This function adds a similarity matrix to the termsim slot of the enrichment result.
+#' Users can use the `method` parameter to select the method of calculating the similarity.
+#' The Jaccard correlation coefficient (JC) is used by default, and it applies to all situations.
 #' When users want to calculate the correlation between GO terms or DO terms, they can also choose
-#' "Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from GOSemSim packages),
-#' and at this time, the user needs to provide `semData` parameter, which can be obtained through
+#' "Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from the 'GOSemSim' package),
+#' and at this time, the user needs to provide the `semData` parameter, which can be obtained through
 #' \code{\link[GOSemSim]{godata}}.
 #' @title pairwise_termsim
 #' @rdname pairwise_termsim
 #' @param x enrichment result.
 #' @param method method of calculating the similarity between nodes,
-#' one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
-#' "JC"(Jaccard similarity coefficient) methods.
+#' one of "Resnik", "Lin", "Rel", "Jiang", "Wang", and
+#' "JC" (Jaccard similarity coefficient) methods.
 #' @param semData GOSemSimDATA object, can be obtained through
 #' \code{\link[GOSemSim]{godata}}.
-#' @param showCategory number of enriched terms to display, default value is 200.
+#' @param showCategory number of enriched terms to be calculated. The default value is the number of enriched terms, or 200 if the number of enriched terms exceeds 200.
 #' @examples
 #' \dontrun{
 #'     library(clusterProfiler)
@@ -134,23 +134,23 @@ setGeneric("emapplot", function(x, ...) {
 #'    }
 setGeneric(
     "pairwise_termsim",
-    function(x, method = "JC", semData = NULL, showCategory = 200) {
+    function(x, method = "JC", semData = NULL, showCategory = NULL) {
         standardGeneric("pairwise_termsim")
     }
 )
 
-#' plot induced GO DAG of significant terms
+#' Plot induced GO DAG of significant terms
 #'
 #'
 #' @title goplot
 #' @rdname goplot
 #' @param x enrichment result.
 #' @param showCategory number of enriched terms to display
-#' @param color variable that used to color enriched terms, e.g. pvalue,
+#' @param color variable used to color enriched terms, e.g. pvalue,
 #' p.adjust or qvalue
 #' @param layout layout of the map
 #' @param geom label geom, one of 'label' or 'text'
-#' @param ... additional parameter
+#' @param ... additional parameters.
 #' @return ggplot object
 #' @export
 #' @examples
@@ -177,12 +177,12 @@ setGeneric(
     }
 )
 
-#' visualize analyzing result of GSEA
+#' Visualize GSEA analysis results
 #'
-#' plotting function for gseaResult
+#' Plotting function for gseaResult
 #' @title gseaplot
 #' @rdname gseaplot
-#' @param x object of gsea result
+#' @param x gseaResult object
 #' @param geneSetID geneSet ID
 #' @param by one of "runningScore" or "position"
 #' @param title plot title
@@ -202,15 +202,15 @@ setGeneric("gseaplot", function(x, geneSetID, by = "all", title = "", ...) {
 })
 
 
-#' heatmap like plot for functional classification
+#' Heatmap-like plot for functional classification
 #'
 #'
 #' @title heatplot
 #' @rdname heatplot
 #' @param x enrichment result.
 #' @param showCategory number of enriched terms to display
-#' @param foldChange fold Change.
-#' @param label_format a numeric value sets wrap length, alternatively a
+#' @param foldChange fold change.
+#' @param label_format a numeric value setting the wrap length, alternatively a
 #' custom function to format axis labels.
 #' @param ... Additional parameters
 #' @export
@@ -226,18 +226,18 @@ setGeneric("heatplot", function(x, showCategory = 30, ...) {
     standardGeneric("heatplot")
 })
 
-#' volcano plot for enrichment result
+#' Volcano plot for enrichment result
 #'
 #'
 #' @title volplot
 #' @rdname volplot
 #' @param x enrichment result.
 #' @param color selected variable to color the dots
-#' @param xintercept value to set x intercept
-#' @param yintercept value to set y intercept
+#' @param xintercept value to set x-intercept
+#' @param yintercept value to set y-intercept
 #' @param showCategory number of most significant enriched terms or selected terms to
 #'     display determined by the variable selected to color the dots
-#' @param label_format a numeric value sets wrap length, alternatively a
+#' @param label_format a numeric value setting the wrap length, alternatively a
 #'     custom function to format axis labels.
 #' @param ... Additional parameters
 #' @export
@@ -264,7 +264,7 @@ setGeneric(
     }
 )
 
-#' ridgeline plot for GSEA result
+#' Ridgeline plot for GSEA result
 #'
 #'
 #' @title ridgeplot
@@ -274,11 +274,10 @@ setGeneric(
 #' the first n terms will be displayed. If it is a vector of terms,
 #' the selected terms will be displayed.
 #' @param fill one of "pvalue", "p.adjust", "qvalue"
-#' @param core_enrichment whether only using core_enriched genes
-#' @param label_format a numeric value sets wrap length, alternatively a
+#' @param core_enrichment whether to use only core_enriched genes
+#' @param label_format a numeric value setting the wrap length, alternatively a
 #' custom function to format axis labels.
-#' @param ... additional parameters
-#' by default wraps names longer that 30 characters
+#' @param ... additional parameters.
 #' @return ggplot object
 #' @export
 #' @examples
@@ -330,9 +329,9 @@ setGeneric("upsetplot", function(x, ...) standardGeneric("upsetplot"))
 #' @rdname treeplot
 #' @param x enrichment result.
 #' @param showCategory number of enriched terms to display
-#' @param color variable that used to color enriched terms, e.g. pvalue,
+#' @param color variable used to color enriched terms, e.g. pvalue,
 #' p.adjust or qvalue
-#' @param label_format a numeric value sets wrap length, alternatively a
+#' @param label_format a numeric value setting the wrap length, alternatively a
 #' custom function to format axis labels.
 #' @param ... additional parameters
 #' @return ggplot object

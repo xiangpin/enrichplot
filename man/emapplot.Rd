@@ -88,7 +88,7 @@ easier for interpretation. When the similarity between terms meets
 a certain threshold (default is 0.2, adjusted by parameter `min_edge`),
 there will be edges between terms. The stronger the similarity,
 the shorter and thicker the edges. The similarity between terms is
-obtained by function `pairwise_termsim`, the details of similarity
+obtained by the function `pairwise_termsim`. Details of the similarity
 calculation can be found in its documentation: \link{pairwise_termsim}.
 }
 \examples{

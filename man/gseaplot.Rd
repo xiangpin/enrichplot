@@ -31,7 +31,7 @@ gseaplot.gseaResult(
 )
 }
 \arguments{
-\item{x}{object of gsea result}
+\item{x}{gseaResult object}
 
 \item{geneSetID}{geneSet ID}
 
@@ -54,10 +54,10 @@ ggplot2 object
 ggplot2 object
 }
 \description{
-visualize analyzing result of GSEA
+Visualize GSEA analysis results
 }
 \details{
-plotting function for gseaResult
+Plotting function for gseaResult
 }
 \examples{
 \donttest{

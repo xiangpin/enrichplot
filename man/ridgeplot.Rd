@@ -43,13 +43,12 @@ the selected terms will be displayed.}
 
 \item{fill}{one of "pvalue", "p.adjust", "qvalue"}
 
-\item{core_enrichment}{whether only using core_enriched genes}
+\item{core_enrichment}{whether to use only core_enriched genes}
 
-\item{label_format}{a numeric value sets wrap length, alternatively a
+\item{label_format}{a numeric value setting the wrap length, alternatively a
 custom function to format axis labels.}
 
-\item{...}{additional parameters
-by default wraps names longer that 30 characters}
+\item{...}{additional parameters.}
 
 \item{orderBy}{The order of the Y-axis}
 
@@ -59,7 +58,7 @@ by default wraps names longer that 30 characters}
 ggplot object
 }
 \description{
-ridgeline plot for GSEA result
+Ridgeline plot for GSEA result
 }
 \examples{
 \donttest{

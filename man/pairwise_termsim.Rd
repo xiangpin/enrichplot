@@ -9,50 +9,50 @@
 \alias{pairwise_termsim.compareClusterResult}
 \title{pairwise_termsim}
 \usage{
-pairwise_termsim(x, method = "JC", semData = NULL, showCategory = 200)
+pairwise_termsim(x, method = "JC", semData = NULL, showCategory = NULL)
 
-\S4method{pairwise_termsim}{enrichResult}(x, method = "JC", semData = NULL, showCategory = 200)
+\S4method{pairwise_termsim}{enrichResult}(x, method = "JC", semData = NULL, showCategory = NULL)
 
-\S4method{pairwise_termsim}{gseaResult}(x, method = "JC", semData = NULL, showCategory = 200)
+\S4method{pairwise_termsim}{gseaResult}(x, method = "JC", semData = NULL, showCategory = NULL)
 
-\S4method{pairwise_termsim}{compareClusterResult}(x, method = "JC", semData = NULL, showCategory = 200)
+\S4method{pairwise_termsim}{compareClusterResult}(x, method = "JC", semData = NULL, showCategory = NULL)
 
 pairwise_termsim.enrichResult(
   x,
   method = "JC",
   semData = NULL,
-  showCategory = 200
+  showCategory = NULL
 )
 
 pairwise_termsim.compareClusterResult(
   x,
   method = "JC",
   semData = NULL,
-  showCategory = 200
+  showCategory = NULL
 )
 }
 \arguments{
 \item{x}{enrichment result.}
 
 \item{method}{method of calculating the similarity between nodes,
-one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
-"JC"(Jaccard similarity coefficient) methods.}
+one of "Resnik", "Lin", "Rel", "Jiang", "Wang", and
+"JC" (Jaccard similarity coefficient) methods.}
 
 \item{semData}{GOSemSimDATA object, can be obtained through
 \code{\link[GOSemSim]{godata}}.}
 
-\item{showCategory}{number of enriched terms to display, default value is 200.}
+\item{showCategory}{number of enriched terms to be calculated. The default value is the number of enriched terms, or 200 if the number of enriched terms exceeds 200.}
 }
 \description{
 Get the similarity matrix
 }
 \details{
-This function add similarity matrix to the termsim slot of enrichment result.
-Users can use the `method` parameter to select the method of calculating similarity.
-The Jaccard correlation coefficient(JC) is used by default, and it applies to all situations.
+This function adds a similarity matrix to the termsim slot of the enrichment result.
+Users can use the `method` parameter to select the method of calculating the similarity.
+The Jaccard correlation coefficient (JC) is used by default, and it applies to all situations.
 When users want to calculate the correlation between GO terms or DO terms, they can also choose
-"Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from GOSemSim packages),
-and at this time, the user needs to provide `semData` parameter, which can be obtained through
+"Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from the 'GOSemSim' package),
+and at this time, the user needs to provide the `semData` parameter, which can be obtained through
 \code{\link[GOSemSim]{godata}}.
 }
 \examples{

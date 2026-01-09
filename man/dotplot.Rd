@@ -122,7 +122,7 @@ dotplot.compareClusterResult(
 \arguments{
 \item{object}{compareClusterResult object}
 
-\item{...}{additional parameters}
+\item{...}{additional parameters.}
 
 \item{x}{variable for x-axis, one of 'GeneRatio' and 'Count'}
 
@@ -168,10 +168,10 @@ different shapes to distinguish the group it belongs to}
 \item{strip_width}{width of strip text, a.k.a facet label.}
 }
 \value{
-plot
+plot.
 }
 \description{
-dotplot for enrichment result
+Dot plot for enrichment result
 }
 \examples{
 \dontrun{

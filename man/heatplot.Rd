@@ -36,7 +36,7 @@ to be shown in the heatmap, default NULL means all genes are shown}
 \item{symbol}{symbol of the nodes, one of "rect"(the default) and "dot"
 by default wraps names longer that 30 characters}
 
-\item{foldChange}{fold Change.}
+\item{foldChange}{fold change.}
 
 \item{pvalue}{pvalue of genes}
 
@@ -47,7 +47,7 @@ custom function to format axis labels.}
 ggplot object
 }
 \description{
-heatmap like plot for functional classification
+Heatmap-like plot for functional classification
 }
 \examples{
 library(DOSE)
