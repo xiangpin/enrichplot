@@ -1,12 +1,12 @@
-#' barplot of enrichResult
+#' Barplot of enrichResult
 #'
+#' Barplot of enrichResult
 #'
 #' @importFrom graphics barplot
 #' @importFrom ggplot2 %+%
 #' @importFrom ggplot2 scale_fill_continuous
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 geom_col
-##  @importFrom ggplot2 coord_flip
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 ggtitle
 #' @importFrom ggplot2 xlab
@@ -16,13 +16,13 @@
 #' @param height enrichResult object
 #' @param x one of 'Count' and 'GeneRatio'
 #' @param color one of 'pvalue', 'p.adjust' and 'qvalue'
-#' @param showCategory number of categories to show
+#' @param showCategory number of categories to display or a vector of terms.
 #' @param font.size font size
 #' @param title plot title
 #' @param label_format a numeric value sets wrap length, alternatively a
 #' custom function to format axis labels.
-#' by default wraps names longer that 30 characters
-#' @param ... other parameter, ignored
+#' by default wraps names longer than 30 characters
+#' @param ... additional parameters
 #' @method barplot enrichResult
 #' @export
 #' @return ggplot object
@@ -34,9 +34,9 @@
 #' barplot(x)
 #' # use `showCategory` to select the displayed terms. It can be a number of a vector of terms.
 #' barplot(x, showCategory = 10)
-#' categorys <- c("urinary bladder cancer", "bronchiolitis obliterans",
+#' categories <- c("urinary bladder cancer", "bronchiolitis obliterans",
 #'                "aortic aneurysm", "esophageal cancer")
-#' barplot(x, showCategory = categorys)
+#' barplot(x, showCategory = categories)
 barplot.enrichResult <- function(
     height,
     x = "Count",

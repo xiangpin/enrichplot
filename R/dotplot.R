@@ -210,19 +210,17 @@ setMethod(
 
 #' @rdname dotplot
 #' @param x variable for x-axis, one of 'GeneRatio' and 'Count'
-#' @param color variable that used to color enriched terms,
+#' @param color variable used to color enriched terms,
 #'              e.g. 'pvalue', 'p.adjust' or 'qvalue'
-#' @param showCategory A number or a list of terms. If it is a number,
-#' the first n terms will be displayed. If it is a list of terms,
-#' the selected terms will be displayed.
-#' @param size variable that used to scale the sizes of categories,
+#' @param showCategory number of categories to display or a vector of terms.
+#' @param size variable used to scale the sizes of categories,
 #' one of "geneRatio", "Percentage" and "count"
 #' @param split separate result by 'category' variable
 #' @param font.size font size
 #' @param title plot title
 #' @param label_format a numeric value sets wrap length, alternatively a
 #' custom function to format axis labels.
-#' by default wraps names longer that 30 characters
+#' by default wraps names longer than 30 characters
 #' @param orderBy The order of the Y-axis
 #' @param decreasing logical. Should the orderBy order be increasing or decreasing?
 #' @importFrom ggplot2 fortify
@@ -385,7 +383,7 @@ dotplot.enrichResult <- function(
 #' @param object compareClusterResult object
 #' @param by one of "geneRatio", "Percentage" and "count"
 #' @param split apply `showCategory` to each category specified by the 'split', e.g., "ONTOLOGY", "category" and "intersect".  Default is NULL and do nothing
-#' @param includeAll logical
+#' @param includeAll logical value
 #' @param font.size font size
 #' @param title figure title
 #' @param group a logical value, whether to connect the
@@ -393,8 +391,8 @@ dotplot.enrichResult <- function(
 #' @param shape a logical value, whether to use nodes of
 #' different shapes to distinguish the group it belongs to
 #' @param facet apply `facet_grid` to the plot by specified variable, e.g., "ONTOLOGY", "category" and "intersect".
-#' @param strip_width width of strip text, a.k.a facet label.
-#' @param colorBy variable that used to color enriched terms,
+#' @param strip_width width of strip text (facet label).
+#' @param colorBy variable used to color enriched terms,
 #' e.g. 'pvalue', 'p.adjust' or 'qvalue'
 #' @importFrom ggplot2 facet_grid
 #' @importFrom ggplot2 scale_size_continuous

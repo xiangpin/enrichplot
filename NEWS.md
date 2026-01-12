@@ -1,5 +1,7 @@
-# enrichplot 1.31.3.002
+# enrichplot 1.31.3.003
 
++ re-export `geneID`, `geneInCategory` and `gseaScores` from 'enrichit' (2026-01-12, Mon)
++ update documentation: fix typos, grammar errors and use modern markdown syntax (2026-01-12, Mon)
 + bug fixed in `update_n()` if `showCategory` is a vector of term names (2026-01-08, Thu)
 + avoid the "condition has length > 1" error in `outer()` by using `Vectorize()` (2026-01-08, Thu)
 
@@ -11,12 +13,12 @@
 
 # enrichplot 1.31.2
 
-+ add 'fc_threshold' paramter to `cnetplot` (2025-11-30, Sun, #338)
++ add 'fc_threshold' parameter to `cnetplot` (2025-11-30, Sun, #338)
   - requires 'ggtangle' v>= 0.0.9
 + update all line width aes mapping from 'size' to 'linewidth' (2025-11-30, Sun)
-+ add 'node_label_size' paramter for `emapplot` (2025-11-30, Sun)
++ add 'node_label_size' parameter for `emapplot` (2025-11-30, Sun)
 + remove `emapplot` parameters, 'group', 'group_style' and 'label_group_style' (#339) 
-+ add 'showTop' parameter to limit number of genes shown in `heatplot()` and distinguish tip point size variable for `treeplot()` througth internal parameter `size_var` (2025-11-23, Sat, #335) 
++ add 'showTop' parameter to limit number of genes shown in `heatplot()` and distinguish tip point size variable for `treeplot()` through internal parameter `size_var` (2025-11-23, Sat, #335) 
 
 # enrichplot 1.31.1
 
@@ -55,7 +57,7 @@
   
 # enrichplot 1.29.1
 
-+ throw error in `goplot()` if ontology is not one of the 'MF', 'CC' or 'BF' (2025-04-28, Mon, clusterProfiler#768)
++ throw error in `goplot()` if ontology is not one of the 'MF', 'CC' or 'BP' (2025-04-28, Mon, clusterProfiler#768)
 
 # enrichplot 1.28.0
 

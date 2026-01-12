@@ -28,12 +28,12 @@ setMethod(
 #' @importFrom ggplot2 scale_y_discrete
 #' @importFrom ggplot2 scale_fill_gradient2
 #' @importFrom rlang check_installed
-#' @param showTop number of top genes ranked by abs(foldChange) * frequency
+#' @param showTop number of top genes ranked by `abs(foldChange) * frequency`
 #' to be shown in the heatmap, default NULL means all genes are shown
 #' @param label_format a numeric value sets wrap length, alternatively a
 #' custom function to format axis labels.
-#' @param symbol symbol of the nodes, one of "rect"(the default) and "dot"
-#' by default wraps names longer that 30 characters
+#' by default wraps names longer than 30 characters
+#' @param symbol symbol of the nodes, one of "rect" (the default) or "dot"
 #' @param pvalue pvalue of genes
 #' @author Guangchuang Yu
 heatplot.enrichResult <- function(

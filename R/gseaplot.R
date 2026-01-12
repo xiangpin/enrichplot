@@ -29,7 +29,7 @@ setMethod(
 #' @rdname gseaplot
 #' @param color color of line segments
 #' @param color.line color of running enrichment score line
-#' @param color.vline color of vertical line which indicating the
+#' @param color.vline color of vertical line indicating the
 #' maximum/minimal running enrichment score
 #' @return ggplot2 object
 #' @importFrom ggplot2 ggplot

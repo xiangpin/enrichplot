@@ -31,14 +31,14 @@ setMethod(
 
 #' @rdname emapplot
 #' @param layout igraph layout
-#' @param color Variable that used to color enriched terms, e.g. 'pvalue',
+#' @param color Variable used to color enriched terms, e.g. 'pvalue',
 #' 'p.adjust' or 'qvalue'.
 #' @param size_category relative size of the categories
 #' @param min_edge The minimum similarity threshold for whether
-#' two nodes are connected, should between 0 and 1, default value is 0.2.
+#' two nodes are connected, should be between 0 and 1, default value is 0.2.
 #' @param color_edge color of the network edge
 #' @param size_edge relative size of edge width
-#' @param node_label Select which labels to be displayed,
+#' @param node_label Select which labels to display,
 #' one of 'category', 'group', 'all' and 'none'.
 #' @param node_label_size size of node label, default is 5.
 #' @param pie one of 'equal' or 'Count' to set the slice ratio of the pies
@@ -46,8 +46,8 @@ setMethod(
 # @param group_style style of ellipse, one of "ggforce" an "polygon".
 # @param label_group_style style of group label, one of "shadowtext" and "ggforce".
 #' @param label_format a numeric value sets wrap length, alternatively a custom function to format axis labels.
-#' @param clusterFunction function of Clustering method, such as stats::kmeans(the default),
-#' cluster::clara, cluster::fanny or cluster::pam.
+#' @param clusterFunction function of Clustering method, such as `stats::kmeans` (the default),
+#' `cluster::clara`, `cluster::fanny` or `cluster::pam`.
 #' @param nWords Numeric, the number of words in the cluster tags, the default value is 4.
 #' @param nCluster Numeric, the number of clusters,
 #' the default value is square root of the number of nodes.

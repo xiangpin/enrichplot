@@ -1,15 +1,17 @@
-#' upsetplot
+#' Upsetplot
 #'
+#' Upsetplot
 #'
 #' @rdname upsetplot-methods
 #' @aliases upsetplot,enrichResult,ANY-method
 #' @param n number of categories to be plotted
+#' @param ... additional parameters
 #' @author Guangchuang Yu
 #' @exportMethod upsetplot
 #' @examples
-#' require(DOSE)
+#' library(DOSE)
 #' data(geneList)
-#' de=names(geneList)[1:100]
+#' de <- names(geneList)[1:100]
 #' x <- enrichDO(de)
 #' upsetplot(x, 8)
 setMethod("upsetplot", signature(x="enrichResult"),

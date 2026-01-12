@@ -1,21 +1,22 @@
-#' cnetplot
+#' Category-Gene-Network Plot
 #'
-#' category-gene-network plot
+#' Category-gene-network plot
 #' @rdname cnetplot
 #' @param x input object
 #' @param layout network layout
-#' @param showCategory selected category to be displayed
-#' @param color_category color of category node
-#' @param size_category relative size of the category
-#' @param color_item color of item node
-#' @param size_item relative size of the item (e.g., genes)
+#' @param showCategory number of categories to display or a vector of terms.
+#' @param color_category color of category nodes
+#' @param size_category relative size of the category nodes
+#' @param color_item color of item nodes
+#' @param size_item relative size of the item nodes (e.g., genes)
 #' @param color_edge color of edge
 #' @param size_edge relative size of edge
-#' @param node_label one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'
-#' @param foldChange numeric values to color the item (e.g, foldChange of gene expression values)
-#' @param fc_threshold threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1)
-#' @param hilight selected category to be highlighted
-#' @param hilight_alpha transparent value for not selected to be highlight
+#' @param node_label one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'.
+#' 'exclusive' labels genes that uniquely belong to categories; 'share' labels genes that are shared between categories.
+#' @param foldChange numeric values to color the item (e.g., fold change of gene expression values)
+#' @param fc_threshold threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1).
+#' @param hilight selected categories to be highlighted
+#' @param hilight_alpha transparency value for non-highlighted items
 #' @param ... additional parameters
 #' @importFrom ggtangle cnetplot
 #' @method cnetplot enrichResult

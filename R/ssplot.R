@@ -35,28 +35,28 @@ setMethod(
 #' @param dr.params list, the parameters of `tidydr::dr`.
 #' @param ... additional parameters
 #'
-#' additional parameters can refer the following parameters.
+#' Additional parameters can refer to the following parameters:
 #'     \itemize{
 #'       \item \code{layout} igraph layout function for node positioning
-#'       \item \code{color} Variable that used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
+#'       \item \code{color} Variable used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
 #'       \item \code{size_category} relative size of the categories
 #'       \item \code{min_edge} The minimum similarity threshold for whether
-#'         two nodes are connected, should between 0 and 1, default value is 0.2.
+#'         two nodes are connected, should be between 0 and 1, default value is 0.2.
 #'       \item \code{color_edge} color of the network edge
 #'       \item \code{size_edge} relative size of edge width.
-#'       \item \code{node_label} Select which labels to be displayed,
+#'       \item \code{node_label} Select which labels to display,
 #'         one of 'category', 'group', 'all' and 'none'.
 #'       \item \code{node_label_size} size of node label, default is 5.
 #'       \item \code{pie} one of 'equal' or 'Count' to set the slice ratio of the pies (for `compareClusterResult` only).
 #'       \item \code{label_format} a numeric value sets wrap length, alternatively a custom function to format axis labels.
-#'       \item \code{clusterFunction} function of Clustering method, such as stats::kmeans(the default),
-#'         cluster::clara, cluster::fanny or cluster::pam.
+#'       \item \code{clusterFunction} function of Clustering method, such as `stats::kmeans` (the default),
+#'         `cluster::clara`, `cluster::fanny` or `cluster::pam`.
 #'       \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
 #'       \item \code{nCluster} Numeric, the number of clusters,
 #'         the default value is square root of the number of nodes.
 #'     }
 #'
-#' additional parameters can refer the emapplot function: \link{emapplot}.
+#' Additional parameters can refer to the `emapplot` function: \link{emapplot}.
 #' @importFrom tidydr theme_dr
 ssplot.enrichResult <- function(
     x,

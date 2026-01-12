@@ -17,9 +17,9 @@
 #'     dotplot(x)
 #'     # use `showCategory` to select the displayed terms. It can be a number of a vector of terms.
 #'     dotplot(x, showCategory = 10)
-#'     categorys <- c("pre-malignant neoplasm", "intestinal disease",
+#'     categories <- c("pre-malignant neoplasm", "intestinal disease",
 #'                    "breast ductal carcinoma", "non-small cell lung carcinoma")
-#'     dotplot(x, showCategory = categorys)
+#'     dotplot(x, showCategory = categories)
 #'     # It can also graph compareClusterResult
 #'     data(gcSample)
 #'     library(clusterProfiler)
@@ -54,9 +54,7 @@ setGeneric("dotplot", function(object, ...) {
 #' @title emapplot
 #' @rdname emapplot
 #' @param x Enrichment result.
-#' @param showCategory A number or a vector of terms. If it is a number,
-#' the first n terms will be displayed. If it is a vector of terms,
-#' the selected terms will be displayed.
+#' @param showCategory number of categories to display or a vector of terms.
 #' @param ... Additional parameters
 #' @return ggplot object
 #' @export
@@ -72,9 +70,9 @@ setGeneric("dotplot", function(object, ...) {
 #'     emapplot(x2, layout = "star")
 #'     # use `showCategory` to  select the displayed terms. It can be a number of a vector of terms.
 #'     emapplot(x2, showCategory = 10)
-#'     categorys <- c("pre-malignant neoplasm", "intestinal disease",
+#'     categories <- c("pre-malignant neoplasm", "intestinal disease",
 #'                    "breast ductal carcinoma")
-#'     emapplot(x2, showCategory = categorys)
+#'     emapplot(x2, showCategory = categories)
 #'
 #'     # It can also graph compareClusterResult
 #'     library(clusterProfiler)
@@ -107,8 +105,8 @@ setGeneric("emapplot", function(x, ...) {
 #' @param method method of calculating the similarity between nodes,
 #' one of "Resnik", "Lin", "Rel", "Jiang", "Wang", and
 #' "JC" (Jaccard similarity coefficient) methods.
-#' @param semData GOSemSimDATA object, can be obtained through
-#' \code{\link[GOSemSim]{godata}}.
+#' @param semData `GOSemSimDATA` object, can be obtained through
+#' `GOSemSim::godata`.
 #' @param showCategory number of enriched terms to be calculated. The default value is the number of enriched terms, or 200 if the number of enriched terms exceeds 200.
 #' @examples
 #' \dontrun{
@@ -270,9 +268,7 @@ setGeneric(
 #' @title ridgeplot
 #' @rdname ridgeplot
 #' @param x gseaResult object
-#' @param showCategory A number or a vector of terms. If it is a number,
-#' the first n terms will be displayed. If it is a vector of terms,
-#' the selected terms will be displayed.
+#' @param showCategory number of categories to display or a vector of terms.
 #' @param fill one of "pvalue", "p.adjust", "qvalue"
 #' @param core_enrichment whether to use only core_enriched genes
 #' @param label_format a numeric value setting the wrap length, alternatively a
