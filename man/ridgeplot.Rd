@@ -37,9 +37,7 @@ ridgeplot.gseaResult(
 \arguments{
 \item{x}{gseaResult object}
 
-\item{showCategory}{A number or a vector of terms. If it is a number,
-the first n terms will be displayed. If it is a vector of terms,
-the selected terms will be displayed.}
+\item{showCategory}{number of categories to display or a vector of terms.}
 
 \item{fill}{one of "pvalue", "p.adjust", "qvalue"}
 

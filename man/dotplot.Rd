@@ -126,14 +126,12 @@ dotplot.compareClusterResult(
 
 \item{x}{variable for x-axis, one of 'GeneRatio' and 'Count'}
 
-\item{color}{variable that used to color enriched terms,
+\item{color}{variable used to color enriched terms,
 e.g. 'pvalue', 'p.adjust' or 'qvalue'}
 
-\item{showCategory}{A number or a list of terms. If it is a number,
-the first n terms will be displayed. If it is a list of terms,
-the selected terms will be displayed.}
+\item{showCategory}{number of categories to display or a vector of terms.}
 
-\item{size}{variable that used to scale the sizes of categories,
+\item{size}{variable used to scale the sizes of categories,
 one of "geneRatio", "Percentage" and "count"}
 
 \item{split}{apply `showCategory` to each category specified by the 'split', e.g., "ONTOLOGY", "category" and "intersect".  Default is NULL and do nothing}
@@ -146,15 +144,15 @@ one of "geneRatio", "Percentage" and "count"}
 
 \item{label_format}{a numeric value sets wrap length, alternatively a
 custom function to format axis labels.
-by default wraps names longer that 30 characters}
+by default wraps names longer than 30 characters}
 
 \item{by}{one of "geneRatio", "Percentage" and "count"}
 
-\item{includeAll}{logical}
+\item{includeAll}{logical value}
 
 \item{decreasing}{logical. Should the orderBy order be increasing or decreasing?}
 
-\item{colorBy}{variable that used to color enriched terms,
+\item{colorBy}{variable used to color enriched terms,
 e.g. 'pvalue', 'p.adjust' or 'qvalue'}
 
 \item{group}{a logical value, whether to connect the
@@ -165,7 +163,7 @@ different shapes to distinguish the group it belongs to}
 
 \item{facet}{apply `facet_grid` to the plot by specified variable, e.g., "ONTOLOGY", "category" and "intersect".}
 
-\item{strip_width}{width of strip text, a.k.a facet label.}
+\item{strip_width}{width of strip text (facet label).}
 }
 \value{
 plot.
@@ -182,9 +180,9 @@ Dot plot for enrichment result
     dotplot(x)
     # use `showCategory` to select the displayed terms. It can be a number of a vector of terms.
     dotplot(x, showCategory = 10)
-    categorys <- c("pre-malignant neoplasm", "intestinal disease",
+    categories <- c("pre-malignant neoplasm", "intestinal disease",
                    "breast ductal carcinoma", "non-small cell lung carcinoma")
-    dotplot(x, showCategory = categorys)
+    dotplot(x, showCategory = categories)
     # It can also graph compareClusterResult
     data(gcSample)
     library(clusterProfiler)

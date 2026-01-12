@@ -22,7 +22,7 @@
 
 \item{color}{one of 'pvalue', 'p.adjust' and 'qvalue'}
 
-\item{showCategory}{number of categories to show}
+\item{showCategory}{number of categories to display or a vector of terms.}
 
 \item{font.size}{font size}
 
@@ -30,15 +30,18 @@
 
 \item{label_format}{a numeric value sets wrap length, alternatively a
 custom function to format axis labels.
-by default wraps names longer that 30 characters}
+by default wraps names longer than 30 characters}
 
-\item{...}{other parameter, ignored}
+\item{...}{additional parameters}
 }
 \value{
 ggplot object
 }
 \description{
-barplot of enrichResult
+Barplot of enrichResult
+}
+\details{
+Barplot of enrichResult
 }
 \examples{
 library(DOSE)
@@ -48,7 +51,7 @@ x <- enrichDO(de)
 barplot(x)
 # use `showCategory` to select the displayed terms. It can be a number of a vector of terms.
 barplot(x, showCategory = 10)
-categorys <- c("urinary bladder cancer", "bronchiolitis obliterans",
+categories <- c("urinary bladder cancer", "bronchiolitis obliterans",
                "aortic aneurysm", "esophageal cancer")
-barplot(x, showCategory = categorys)
+barplot(x, showCategory = categories)
 }

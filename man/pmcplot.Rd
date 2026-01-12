@@ -11,7 +11,7 @@ pmcplot(query, period, proportion = TRUE)
 
 \item{period}{period of query in the unit of year}
 
-\item{proportion}{If TRUE, use query_hits/all_hits, otherwise use query_hits}
+\item{proportion}{If TRUE, use query_hits/all_hits, otherwise use query_hits.}
 }
 \value{
 ggplot object
@@ -20,5 +20,5 @@ ggplot object
 PubMed Central Trend plot
 }
 \author{
-guangchuang yu
+Guangchuang Yu
 }

@@ -30,18 +30,18 @@ heatplot.enrichResult(
 
 \item{...}{Additional parameters}
 
-\item{showTop}{number of top genes ranked by abs(foldChange) * frequency
+\item{showTop}{number of top genes ranked by `abs(foldChange) * frequency`
 to be shown in the heatmap, default NULL means all genes are shown}
 
-\item{symbol}{symbol of the nodes, one of "rect"(the default) and "dot"
-by default wraps names longer that 30 characters}
+\item{symbol}{symbol of the nodes, one of "rect" (the default) or "dot"}
 
 \item{foldChange}{fold change.}
 
 \item{pvalue}{pvalue of genes}
 
 \item{label_format}{a numeric value sets wrap length, alternatively a
-custom function to format axis labels.}
+custom function to format axis labels.
+by default wraps names longer than 30 characters}
 }
 \value{
 ggplot object

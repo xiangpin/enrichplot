@@ -39,25 +39,23 @@ emapplot_internal(
 
 \item{...}{Additional parameters}
 
-\item{showCategory}{A number or a vector of terms. If it is a number,
-the first n terms will be displayed. If it is a vector of terms,
-the selected terms will be displayed.}
+\item{showCategory}{number of categories to display or a vector of terms.}
 
 \item{layout}{igraph layout}
 
-\item{color}{Variable that used to color enriched terms, e.g. 'pvalue',
+\item{color}{Variable used to color enriched terms, e.g. 'pvalue',
 'p.adjust' or 'qvalue'.}
 
 \item{size_category}{relative size of the categories}
 
 \item{min_edge}{The minimum similarity threshold for whether
-two nodes are connected, should between 0 and 1, default value is 0.2.}
+two nodes are connected, should be between 0 and 1, default value is 0.2.}
 
 \item{color_edge}{color of the network edge}
 
 \item{size_edge}{relative size of edge width}
 
-\item{node_label}{Select which labels to be displayed,
+\item{node_label}{Select which labels to display,
 one of 'category', 'group', 'all' and 'none'.}
 
 \item{node_label_size}{size of node label, default is 5.}
@@ -66,8 +64,8 @@ one of 'category', 'group', 'all' and 'none'.}
 
 \item{label_format}{a numeric value sets wrap length, alternatively a custom function to format axis labels.}
 
-\item{clusterFunction}{function of Clustering method, such as stats::kmeans(the default),
-cluster::clara, cluster::fanny or cluster::pam.}
+\item{clusterFunction}{function of Clustering method, such as `stats::kmeans` (the default),
+`cluster::clara`, `cluster::fanny` or `cluster::pam`.}
 
 \item{nWords}{Numeric, the number of words in the cluster tags, the default value is 4.}
 
@@ -103,9 +101,9 @@ calculation can be found in its documentation: \link{pairwise_termsim}.
     emapplot(x2, layout = "star")
     # use `showCategory` to  select the displayed terms. It can be a number of a vector of terms.
     emapplot(x2, showCategory = 10)
-    categorys <- c("pre-malignant neoplasm", "intestinal disease",
+    categories <- c("pre-malignant neoplasm", "intestinal disease",
                    "breast ductal carcinoma")
-    emapplot(x2, showCategory = categorys)
+    emapplot(x2, showCategory = categories)
 
     # It can also graph compareClusterResult
     library(clusterProfiler)

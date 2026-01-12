@@ -27,11 +27,13 @@ plot
 }
 \description{
 upsetplot method generics
+
+Upsetplot
 }
 \examples{
-require(DOSE)
+library(DOSE)
 data(geneList)
-de=names(geneList)[1:100]
+de <- names(geneList)[1:100]
 x <- enrichDO(de)
 upsetplot(x, 8)
 }

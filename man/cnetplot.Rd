@@ -4,7 +4,7 @@
 \alias{cnetplot.enrichResult}
 \alias{cnetplot.gseaResult}
 \alias{cnetplot.compareClusterResult}
-\title{cnetplot}
+\title{Category-Gene-Network Plot}
 \usage{
 \method{cnetplot}{enrichResult}(
   x,
@@ -66,36 +66,37 @@
 
 \item{layout}{network layout}
 
-\item{showCategory}{selected category to be displayed}
+\item{showCategory}{number of categories to display or a vector of terms.}
 
-\item{color_category}{color of category node}
+\item{color_category}{color of category nodes}
 
-\item{size_category}{relative size of the category}
+\item{size_category}{relative size of the category nodes}
 
-\item{color_item}{color of item node}
+\item{color_item}{color of item nodes}
 
-\item{size_item}{relative size of the item (e.g., genes)}
+\item{size_item}{relative size of the item nodes (e.g., genes)}
 
 \item{color_edge}{color of edge}
 
 \item{size_edge}{relative size of edge}
 
-\item{node_label}{one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'}
+\item{node_label}{one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'.
+'exclusive' labels genes that uniquely belong to categories; 'share' labels genes that are shared between categories.}
 
-\item{foldChange}{numeric values to color the item (e.g, foldChange of gene expression values)}
+\item{foldChange}{numeric values to color the item (e.g., fold change of gene expression values)}
 
-\item{fc_threshold}{threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1)}
+\item{fc_threshold}{threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1).}
 
-\item{hilight}{selected category to be highlighted}
+\item{hilight}{selected categories to be highlighted}
 
-\item{hilight_alpha}{transparent value for not selected to be highlight}
+\item{hilight_alpha}{transparency value for non-highlighted items}
 
 \item{...}{additional parameters}
 
 \item{pie}{one of 'equal' or 'Count' to set the slice ratio of the pies}
 }
 \description{
-category-gene-network plot
+Category-gene-network plot
 }
 \seealso{
 [cnetplot][ggtangle::cnetplot]

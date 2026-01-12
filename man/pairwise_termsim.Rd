@@ -38,8 +38,8 @@ pairwise_termsim.compareClusterResult(
 one of "Resnik", "Lin", "Rel", "Jiang", "Wang", and
 "JC" (Jaccard similarity coefficient) methods.}
 
-\item{semData}{GOSemSimDATA object, can be obtained through
-\code{\link[GOSemSim]{godata}}.}
+\item{semData}{`GOSemSimDATA` object, can be obtained through
+`GOSemSim::godata`.}
 
 \item{showCategory}{number of enriched terms to be calculated. The default value is the number of enriched terms, or 200 if the number of enriched terms exceeds 200.}
 }
