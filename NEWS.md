@@ -1,6 +1,7 @@
 # enrichplot 1.31.3.003
 
 + bug fixed in `goplot()` as `GOSemSim` uses cache (2026-01-13, Tue)
+  - also fix `gotbl` object not found issue (2026-01-13, Tue)
 + re-export `geneID`, `geneInCategory` and `gseaScores` from 'enrichit' (2026-01-12, Sun)
 + update documentation: fix typos, grammar errors and use modern markdown syntax (2026-01-12, Sun)
 + bug fixed in `update_n()` if `showCategory` is a vector of term names (2026-01-08, Thu)

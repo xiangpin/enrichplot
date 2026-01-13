@@ -41,6 +41,11 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
     .GOSemSimEnv <- get_cache_item(".GOSemSimEnv")
     gotbl <- .GOSemSimEnv$gotbl
 
+    if (inherits(gotbl, "character")) {
+        utils::data("gotbl", package = "GOSemSim", envir = environment())
+        gotbl <- get("gotbl")
+    }
+
     if (inherits(x, "gseaResult")) {
         onto <- x@setType
     } else {
