@@ -1,7 +1,8 @@
 # enrichplot 1.31.3.003
 
-+ re-export `geneID`, `geneInCategory` and `gseaScores` from 'enrichit' (2026-01-12, Mon)
-+ update documentation: fix typos, grammar errors and use modern markdown syntax (2026-01-12, Mon)
++ bug fixed in `goplot()` as `GOSemSim` uses cache (2026-01-13, Tue)
++ re-export `geneID`, `geneInCategory` and `gseaScores` from 'enrichit' (2026-01-12, Sun)
++ update documentation: fix typos, grammar errors and use modern markdown syntax (2026-01-12, Sun)
 + bug fixed in `update_n()` if `showCategory` is a vector of term names (2026-01-08, Thu)
 + avoid the "condition has length > 1" error in `outer()` by using `Vectorize()` (2026-01-08, Thu)
 

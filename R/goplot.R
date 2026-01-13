@@ -24,6 +24,7 @@ setMethod("goplot", signature(x = "gseaResult"),
 #' @importFrom grid arrow
 #' @importFrom grid unit
 #' @importFrom rlang check_installed
+#' @importFrom yulab.utils get_cache_item
 goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
                                 layout = igraph::layout_with_sugiyama, geom = "text", 
                                 ID = "Description", ...) {
@@ -36,9 +37,9 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
 
     id <- y$ID[1:n]
 
-    if (!exists(".GOSemSimEnv")) GOSemSim_initial()
-    .GOSemSimEnv <- get(".GOSemSimEnv", envir=.GlobalEnv)
-    gotbl <- get("gotbl", envir=.GOSemSimEnv)
+    GOSemSim_initial()
+    .GOSemSimEnv <- get_cache_item(".GOSemSimEnv")
+    gotbl <- .GOSemSimEnv$gotbl
 
     if (inherits(x, "gseaResult")) {
         onto <- x@setType
