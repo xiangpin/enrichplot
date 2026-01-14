@@ -21,6 +21,7 @@
   fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
+  categorySizeBy = ~itemNum,
   ...
 )
 
@@ -39,6 +40,7 @@
   fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
+  categorySizeBy = ~itemNum,
   ...
 )
 

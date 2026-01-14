@@ -38,13 +38,30 @@ cnetplot.enrichResult <- function(
     fc_threshold = NULL,
     hilight = "none",
     hilight_alpha = .3,
+    categorySizeBy = ~itemNum,
     ...
 ) {
     geneSets <- extract_geneSets(x, showCategory)
     foldChange <- fc_readable(x, foldChange)
 
-    p <- cnetplot(
-        geneSets,
+    # Attach enrichment results to geneSets attributes
+    y <- as.data.frame(x)
+    # Filter y to match geneSets (names are Descriptions)
+    # We match by Description.
+    # Note: If duplicate Descriptions exist, this might be ambiguous,
+    # but extract_geneSets assumes Descriptions are valid keys.
+    idx <- match(names(geneSets), y$Description)
+    y_subset <- y[idx, ]
+    
+    for (col in colnames(y_subset)) {
+        if (is.numeric(y_subset[[col]])) {
+            attr(geneSets, col) <- y_subset[[col]]
+        }
+    }
+
+    args <- list(...)
+    plot_args <- list(
+        x = geneSets,
         layout = layout,
         showCategory = showCategory,
         foldChange = foldChange,
@@ -58,8 +75,12 @@ cnetplot.enrichResult <- function(
         node_label = node_label,
         hilight = hilight,
         hilight_alpha = hilight_alpha,
-        ...
+        categorySizeBy = categorySizeBy
     )
+    
+    final_args <- c(plot_args, args)
+    
+    p <- do.call(cnetplot, final_args)
 
     p <- p +
         set_enrichplot_color(
@@ -112,7 +133,7 @@ cnetplot.compareClusterResult <- function(
     p <- cnetplot(
         gs,
         layout = layout,
-        showCategory = length(gs),
+        showCategory = showCategory, 
         foldChange = foldChange,
         fc_threshold = fc_threshold,
         color_category = color_category,
