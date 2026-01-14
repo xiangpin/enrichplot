@@ -1,6 +1,7 @@
 # enrichplot 1.31.3.004
 
-+ supports passing `categorySizeBy` to `cnetplot()` (2026-01-14, Wed)
++ bug fixed in `barplot()` as `fortify()` generic in `ggplot2` checks for unused arguments in `...` (2026-01-14, Wed)
++ remove `categorySize` parameter in `cnetplot()` (2026-01-14, Wed)
 + bug fixed in `goplot()` as `GOSemSim` uses cache (2026-01-13, Tue)
   - also fix `gotbl` object not found issue (2026-01-13, Tue)
 + re-export `geneID`, `geneInCategory` and `gseaScores` from 'enrichit' (2026-01-12, Mon)

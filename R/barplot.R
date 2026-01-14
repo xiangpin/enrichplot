@@ -83,7 +83,7 @@ barplot.enrichResult <- function(
     }
 
     # Use do.call to avoid passing ... through function calls
-    df <- do.call(fortify, fortify_args)
+    df <- do.call(fortify.enrichResult, fortify_args)
 
     if (colorBy %in% colnames(df)) {
         p <- ggplot(
