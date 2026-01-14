@@ -11,6 +11,7 @@
 #' @param size_item relative size of the item nodes (e.g., genes)
 #' @param color_edge color of edge
 #' @param size_edge relative size of edge
+#' @param categorySizeBy method of category size, one of "itemNum" (default), "pvalue", "p.adjust", "qvalue" or a numeric vector
 #' @param node_label one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'.
 #' 'exclusive' labels genes that uniquely belong to categories; 'share' labels genes that are shared between categories.
 #' @param foldChange numeric values to color the item (e.g., fold change of gene expression values)
@@ -33,12 +34,12 @@ cnetplot.enrichResult <- function(
     size_item = 1,
     color_edge = "grey",
     size_edge = .5,
+    categorySizeBy = ~itemNum,
     node_label = "all",
     foldChange = NULL,
     fc_threshold = NULL,
     hilight = "none",
     hilight_alpha = .3,
-    categorySizeBy = ~itemNum,
     ...
 ) {
     geneSets <- extract_geneSets(x, showCategory)
@@ -118,6 +119,7 @@ cnetplot.compareClusterResult <- function(
     size_item = 1,
     color_edge = "grey",
     size_edge = .5,
+    categorySizeBy = NULL,
     node_label = "all",
     foldChange = NULL,
     fc_threshold = NULL,

@@ -143,6 +143,8 @@ overlap_ratio <- function(x, y) {
     # Ensure symmetry
     jc_matrix[lower.tri(jc_matrix)] <- t(jc_matrix)[lower.tri(t(jc_matrix))]
 
+    colnames(jc_matrix) <- rownames(jc_matrix) <- name
+
     return(jc_matrix)
 }
 

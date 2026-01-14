@@ -88,10 +88,33 @@ treeplot_internal <- function(
 
     # Prepare data for plotting
     size_var <- intersect(size_var, colnames(x[]))[1]
+    if (is.na(size_var)) {
+        stop("size_var not found in enrichment result")
+    }
+    
+    # Extract columns and ensure they exist
     d <- x[keep, c(color, size_var)]
-    colnames(d) <- c(color, "size")
+    
+    # Handle case where columns are collapsed (e.g. tibble with duplicate columns)
+    if (ncol(d) == 1 && color == size_var) {
+        d <- data.frame(d, d)
+        names(d) <- c(color, size_var)
+    }
+
+    # Determine safe size column name
+    size_col <- "size"
+    if (color == "size") {
+        size_col <- "size_value"
+    }
+
+    # Rename size column
+    names(d)[2] <- size_col
+    
+    # Add label column from cluster names
     d$label <- names(clus)
-    d <- d[, c("label", color, "size")]
+    
+    # Select columns safely
+    d <- d[, c("label", color, size_col)]
 
     # Create tree plot
     p <- create_tree_plot(
@@ -106,7 +129,7 @@ treeplot_internal <- function(
         hilight = hilight,
         align = align,
         color_var = color,
-        size_var = "size",
+        size_var = size_col,
         tiplab_offset = tiplab_offset,
         cladelab_offset = cladelab_offset
     )
@@ -438,7 +461,7 @@ create_tree_plot <- function(
             ggnewscale::new_scale_colour() +
             geom_tippoint(aes(
                 color = .data[[color_var]],
-                size = .data[['size']]
+                size = .data[[size_var]]
             ))
         if (color_var %in% c("pvalue", "qvalue", "p.adjust")) {
             p <- p + set_enrichplot_color(transform = 'log10')

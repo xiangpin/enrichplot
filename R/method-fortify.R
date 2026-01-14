@@ -6,10 +6,14 @@
 #' @param includeAll logical
 #' @return data.frame
 #' @importFrom ggplot2 fortify
-#' @importFrom plyr ddply
-#' @importFrom plyr mdply
-#' @importFrom plyr .
-## @method fortify compareClusterResult
+#' @importFrom dplyr arrange
+#' @importFrom dplyr desc
+#' @importFrom dplyr group_by
+#' @importFrom dplyr slice_head
+#' @importFrom dplyr ungroup
+#' @importFrom dplyr bind_rows
+#' @importFrom dplyr mutate
+#' @importFrom dplyr %>%
 #' @export
 #' @author Guangchuang Yu
 fortify.compareClusterResult <- function(
@@ -33,33 +37,25 @@ fortify.compareClusterResult <- function(
     if (is.null(showCategory)) {
         result <- clProf.df
     } else if (is.numeric(showCategory)) {
-        Cluster <- NULL # to satisfy codetools
-
         topN <- function(res, showCategory) {
-            ddply(
-                .data = res,
-                .variables = .(Cluster),
-                .fun = function(df, N) {
-                    if (length(df$Count) > N) {
-                        if (any(colnames(df) == "pvalue")) {
-                            idx <- order(df$pvalue, decreasing = FALSE)[1:N]
-                        } else {
-                            ## for groupGO
-                            idx <- order(df$Count, decreasing = T)[1:N]
-                        }
-                        return(df[idx, ])
-                    } else {
-                        return(df)
-                    }
-                },
-                N = showCategory
-            )
+            if ("pvalue" %in% colnames(res)) {
+                res <- arrange(res, .data$pvalue)
+            } else {
+                ## for groupGO
+                res <- arrange(res, desc(.data$Count))
+            }
+
+            res %>% 
+                group_by(.data$Cluster) %>% 
+                slice_head(n = showCategory) %>% 
+                ungroup() %>%
+                as.data.frame()
         }
 
         if (!is.null(.split) && .split %in% colnames(clProf.df)) {
             lres <- split(clProf.df, as.character(clProf.df[, .split]))
             lres <- lapply(lres, topN, showCategory = showCategory)
-            result <- do.call('rbind', lres)
+            result <- as.data.frame(bind_rows(lres))
         } else {
             result <- topN(clProf.df, showCategory)
         }
@@ -84,18 +80,17 @@ fortify.compareClusterResult <- function(
     )
     if (by == "rowPercentage") {
         Description <- Count <- NULL # to satisfy codetools
-        result <- ddply(
-            result,
-            .(Description),
-            transform,
-            Percentage = Count / sum(Count),
-            Total = sum(Count)
-        )
+        result <- result %>%
+            group_by(.data$Description) %>%
+            mutate(
+                Percentage = .data$Count / sum(.data$Count),
+                Total = sum(.data$Count)
+            ) %>%
+            ungroup() %>%
+            as.data.frame()
 
         ## label GO Description with gene counts.
-        x <- mdply(result[, c("Description", "Total")], paste, sep = " (")
-        y <- sapply(x[, 3], paste, ")", sep = "")
-        result$Description <- y
+        result$Description <- paste0(result$Description, " (", result$Total, ")")
 
         ## restore the original order of GO Description
         xx <- result[, c(2, 3)]
@@ -139,7 +134,16 @@ fortify.compareClusterResult <- function(
                     ")",
                     sep = ""
                 )
-                lv <- unique(cluster)[order(as.numeric(unique(result$Cluster)))]
+                orig_cls <- unique(result$Cluster)
+                num_cls <- suppressWarnings(as.numeric(as.character(orig_cls)))
+                
+                if (any(is.na(num_cls))) {
+                    idx <- order(orig_cls)
+                } else {
+                    idx <- order(num_cls)
+                }
+                
+                lv <- unique(cluster)[idx]
                 result$Cluster <- factor(cluster, levels = lv)
             }
         }

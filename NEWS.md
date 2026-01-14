@@ -1,5 +1,11 @@
-# enrichplot 1.31.3.004
+# enrichplot 1.31.3.007
 
++ fix `cnetplot()` S3 generic/method consistency warnings (2026-01-14, Wed)
++ fix `treeplot()` column selection bug when color variable equals size variable (2026-01-14, Wed)
++ fix `fortify.compareClusterResult()` warnings about missing imports and global variables (2026-01-14, Wed)
++ remove `plyr` and use `dplyr` in `method-fortify.R` (2026-01-14, Wed)
++ fixed `treeplot()` issue where `pairwise_termsim()` with method="JC" produced unnamed similarity matrix, causing "undefined column selected" error (2025-01-14)
++ fixed `fortify.compareClusterResult()` warning "NAs introduced by coercion" when Cluster names are not numeric (2025-01-14)
 + bug fixed in `barplot()` as `fortify()` generic in `ggplot2` checks for unused arguments in `...` (2026-01-14, Wed)
 + remove `categorySize` parameter in `cnetplot()` (2026-01-14, Wed)
 + bug fixed in `goplot()` as `GOSemSim` uses cache (2026-01-13, Tue)

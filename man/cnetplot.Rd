@@ -16,12 +16,12 @@
   size_item = 1,
   color_edge = "grey",
   size_edge = 0.5,
+  categorySizeBy = ~itemNum,
   node_label = "all",
   foldChange = NULL,
   fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
-  categorySizeBy = ~itemNum,
   ...
 )
 
@@ -35,12 +35,12 @@
   size_item = 1,
   color_edge = "grey",
   size_edge = 0.5,
+  categorySizeBy = ~itemNum,
   node_label = "all",
   foldChange = NULL,
   fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
-  categorySizeBy = ~itemNum,
   ...
 )
 
@@ -54,6 +54,7 @@
   size_item = 1,
   color_edge = "grey",
   size_edge = 0.5,
+  categorySizeBy = NULL,
   node_label = "all",
   foldChange = NULL,
   fc_threshold = NULL,
@@ -81,6 +82,8 @@
 \item{color_edge}{color of edge}
 
 \item{size_edge}{relative size of edge}
+
+\item{categorySizeBy}{method of category size, one of "itemNum" (default), "pvalue", "p.adjust", "qvalue" or a numeric vector}
 
 \item{node_label}{one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'.
 'exclusive' labels genes that uniquely belong to categories; 'share' labels genes that are shared between categories.}

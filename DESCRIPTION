@@ -1,6 +1,6 @@
 Package: enrichplot
 Title: Visualization of Functional Enrichment Result
-Version: 1.31.3.005
+Version: 1.31.3.007
 Authors@R: c(
     person(given = "Guangchuang", family = "Yu", email = "guangchuangyu@gmail.com",   role  = c("aut", "cre"), comment = c(ORCID = "0000-0002-6485-8781")),
     person(given = "Chun-Hui", family = "Gao", email = "gaospecial@gmail.com", role = "ctb", comment = c(ORCID = "0000-0002-1445-7939")))
@@ -10,42 +10,41 @@ Depends: R (>= 4.2.0)
 Imports:
     aplot (>= 0.2.1),
     DOSE,
+    dplyr,
     enrichit,
     ggfun (>= 0.1.7),
     ggnewscale,
     ggplot2 (>= 3.5.0),
     ggrepel (>= 0.9.0),
     ggtangle (>= 0.0.9),
+    ggtree,
+    GOSemSim (> 2.37.1),
     graphics,
     grid,
     igraph,
     methods,
-    plyr,
     purrr,
     RColorBrewer,
     reshape2,
     rlang,
+    scatterpie,
     stats,
     tidydr,
     utils,
-    scatterpie,
-    GOSemSim (>= 2.31.2),
-    ggtree,
     yulab.utils (>= 0.2.2)
 Suggests:
     AnnotationDbi,
     clusterProfiler,
-    dplyr,
     europepmc,
     ggarchery,
-    glue,
     ggforce,
     ggHoriPlot,
-    ggtreeExtra,
-    ggupset,
     ggplotify,
     ggridges,
     ggstar,
+    ggtreeExtra,
+    ggupset,
+    glue,
     grDevices,
     gridExtra,
     gson,
