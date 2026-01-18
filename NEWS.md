@@ -1,4 +1,4 @@
-# enrichplot 1.31.3.007
+# enrichplot 1.31.4
 
 + fix `cnetplot()` S3 generic/method consistency warnings (2026-01-14, Wed)
 + fix `treeplot()` column selection bug when color variable equals size variable (2026-01-14, Wed)
