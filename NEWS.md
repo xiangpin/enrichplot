@@ -1,3 +1,7 @@
+# enrichplot 1.31.4.001
+
++ bug fixed in formula supports in `dotplot()` (2026-02-26, Thu)
+
 # enrichplot 1.31.4
 
 + fix `cnetplot()` S3 generic/method consistency warnings (2026-01-14, Wed)

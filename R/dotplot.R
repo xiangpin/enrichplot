@@ -251,6 +251,8 @@ dotplot.enrichResult <- function(
     decreasing = TRUE
 ) {
     colorBy <- match.arg(color, c("pvalue", "p.adjust", "qvalue"))
+    .formula_expr <- NULL
+    .orig_x <- x
     if (x == "geneRatio" || x == "GeneRatio") {
         x <- "GeneRatio"
         if (is.null(size)) {
@@ -262,7 +264,8 @@ dotplot.enrichResult <- function(
             size <- "GeneRatio"
         }
     } else if (is(x, "formula")) {
-        x <- as.character(x)[2]
+        .formula_expr <- rlang::f_rhs(x)
+        x <- "x"
         if (is.null(size)) {
             size <- "Count"
         }
@@ -288,6 +291,10 @@ dotplot.enrichResult <- function(
         df <- fortify(object, showCategory = showCategory, split = split)
         ## already parsed in fortify
         ## df$GeneRatio <- parse_ratio(df$GeneRatio)
+    }
+
+    if (!is.null(.formula_expr)) {
+        df$x <- rlang::eval_tidy(.formula_expr, data = df)
     }
 
     if (orderBy != 'x' && !orderBy %in% colnames(df)) {
