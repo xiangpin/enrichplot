@@ -247,11 +247,13 @@ adj_axis <- function(p, drResult) {
 
         xlab = paste0(
             "Dimension1 (",
-            format(100 * eigenvalue[1] / total, digits = 4), "%)"
+            format(100 * eigenvalue[1] / total, digits = 4), 
+            "%)"
         )
         ylab = paste0(
             "Dimension2 (",
-            format(100 * eigenvalue[2] / total, digits = 4), "%)"
+            format(100 * eigenvalue[2] / total, digits = 4), 
+            "%)"
         )
     } else {
         xlab = "Dimension1"
