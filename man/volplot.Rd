@@ -54,7 +54,7 @@ custom function to format axis labels.}
 
 \item{...}{Additional parameters}
 
-\item{font.size}{font size for `theme_dose()`}
+\item{font.size}{font size for \code{theme_dose()}}
 
 \item{size}{font size to label selected categories specified by showCategory}
 }

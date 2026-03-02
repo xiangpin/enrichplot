@@ -46,8 +46,8 @@ setMethod(
 # @param group_style style of ellipse, one of "ggforce" an "polygon".
 # @param label_group_style style of group label, one of "shadowtext" and "ggforce".
 #' @param label_format a numeric value sets wrap length, alternatively a custom function to format axis labels.
-#' @param clusterFunction function of Clustering method, such as `stats::kmeans` (the default),
-#' `cluster::clara`, `cluster::fanny` or `cluster::pam`.
+#' @param clusterFunction clustering method function, such as `stats::kmeans` (default),
+#' `cluster::clara`, `cluster::fanny`, or `cluster::pam`.
 #' @param nWords Numeric, the number of words in the cluster tags, the default value is 4.
 #' @param nCluster Numeric, the number of clusters,
 #' the default value is square root of the number of nodes.

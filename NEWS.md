@@ -1,5 +1,6 @@
-# enrichplot 1.31.4.002
+# enrichplot 1.31.4.003
 
++ update roxygen document to use markdown syntax (2026-03-02, Mon)
 + bug fixed in xy-lab format in `ssplot()` (2026-03-02, Mon)
 + bug fixed in formula supports in `dotplot()` (2026-02-26, Thu)
 

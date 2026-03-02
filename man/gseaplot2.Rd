@@ -35,9 +35,9 @@ gseaplot2(
 
 \item{pvalue_table}{whether add pvalue table}
 
-\item{pvalue_table_columns}{selected columns to be plotted in the `pvalue_table`}
+\item{pvalue_table_columns}{selected columns to be plotted in the \code{pvalue_table}}
 
-\item{pvalue_table_rownames}{selected column as the rownames of the `pvalue_table`. If set to NULL, no rownames will be displayed.}
+\item{pvalue_table_rownames}{selected column as the rownames of the \code{pvalue_table}. If set to NULL, no rownames will be displayed.}
 
 \item{ES_geom}{geom for plotting running enrichment score,
 one of 'line' or 'dot'}

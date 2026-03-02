@@ -104,5 +104,5 @@
 Category-gene-network plot
 }
 \seealso{
-[cnetplot][ggtangle::cnetplot]
+\link[ggtangle:cnetplot]{cnetplot}
 }

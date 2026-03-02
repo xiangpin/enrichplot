@@ -2,7 +2,7 @@
 #'
 #' @param y A data.frame of enrichment result
 #' @param geneSets A list, the names of geneSets are term ids,
-#' and every object is a vertor of genes.
+#' and every element is a vector of genes.
 #' @param method Method of calculating the similarity between nodes,
 #' one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
 #' "JC" (Jaccard similarity coefficient) methods
@@ -69,7 +69,7 @@ has_pairsim <- function(x) {
 #' @param color a string, the column name of y for nodes colours
 #' @param cex_line Numeric, scale of line width
 #' @param min_edge The minimum similarity threshold for whether
-#' two nodes are connected, should between 0 and 1, default value is 0.2.
+#' two nodes are connected; should be between 0 and 1 (default `0.2`).
 #' @param pair_sim Semantic similarity matrix.
 #' @param method Method of calculating the similarity between nodes,
 #' one of "Resnik", "Lin", "Rel", "Jiang" , "Wang"  and
@@ -229,8 +229,8 @@ get_label_location <- function(node_data, label_format) {
 #' @param node_data node information data frame.
 #' @param enrichDf data.frame of enrichment result.
 #' @param nWords Numeric, the number of words in the cluster tags.
-#' @param clusterFunction function of Clustering method, such as stats::kmeans, cluster::clara,
-#' cluster::fanny or cluster::pam.
+#' @param clusterFunction clustering method function, such as `stats::kmeans`, `cluster::clara`,
+#' `cluster::fanny`, or `cluster::pam`.
 #' @param nCluster Numeric, the number of clusters,
 #' the default value is square root of the number of nodes.
 #' @noRd
@@ -283,13 +283,13 @@ groupNode <- function(
     return(node_data)   
 }
 
-#' add ellipse to group the node
+#' Add ellipse to group nodes
 #'
 #' @param node_data node data frame
 #' @param group_legend Logical, if TRUE, the grouping legend will be displayed.
 #' The default is FALSE.
 #' @param label logical, TRUE to label the ellipse (default)
-#' @param ellipse_style style of ellipse, one of "ggforce" an "polygon".
+#' @param ellipse_style style of ellipse, one of "ggforce" and "polygon".
 #' @param ellipse_pro numeric indicating confidence value for the ellipses
 #' @param alpha the transparency of ellipse fill.
 #' @importFrom rlang check_installed

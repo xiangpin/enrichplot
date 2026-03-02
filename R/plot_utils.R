@@ -40,7 +40,7 @@ autofacet <- function(by = 'row', scales = "free", levels = NULL) {
 #' @importFrom ggplot2 ggtitle
 #' @importFrom ggplot2 scale_color_continuous
 #' @importFrom ggplot2 guide_colorbar
-#' @author Guangchuang Yu \url{https://yulab-smu.top}
+#' @author Guangchuang Yu <https://yulab-smu.top>
 plotting.clusterProfile <- function(
     clProf.reshape.df,
     x = ~Cluster,

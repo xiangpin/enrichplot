@@ -41,35 +41,32 @@ ssplot.compareClusterResult(
 
 \item{...}{additional parameters
 
-Additional parameters can refer to the following parameters:
-    \itemize{
-      \item \code{layout} igraph layout function for node positioning
-      \item \code{color} Variable used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
-      \item \code{size_category} relative size of the categories
-      \item \code{min_edge} The minimum similarity threshold for whether
-        two nodes are connected, should be between 0 and 1, default value is 0.2.
-      \item \code{color_edge} color of the network edge
-      \item \code{size_edge} relative size of edge width.
-      \item \code{node_label} Select which labels to display,
-        one of 'category', 'group', 'all' and 'none'.
-      \item \code{node_label_size} size of node label, default is 5.
-      \item \code{pie} one of 'equal' or 'Count' to set the slice ratio of the pies (for `compareClusterResult` only).
-      \item \code{label_format} a numeric value sets wrap length, alternatively a custom function to format axis labels.
-      \item \code{clusterFunction} function of Clustering method, such as `stats::kmeans` (the default),
-        `cluster::clara`, `cluster::fanny` or `cluster::pam`.
-      \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
-      \item \code{nCluster} Numeric, the number of clusters,
-        the default value is square root of the number of nodes.
-    }
+Additional parameters accepted via \code{...} include:
+\itemize{
+\item \code{layout}: igraph layout function for node positioning.
+\item \code{color}: variable used to color enriched terms, e.g., \code{'pvalue'}, \code{'p.adjust'}, or \code{'qvalue'}.
+\item \code{size_category}: relative size of the categories.
+\item \code{min_edge}: minimum similarity threshold to connect two nodes; between 0 and 1 (default \code{0.2}).
+\item \code{color_edge}: color of network edges.
+\item \code{size_edge}: relative edge width.
+\item \code{node_label}: which labels to display; one of \code{'category'}, \code{'group'}, \code{'all'}, \code{'none'}.
+\item \code{node_label_size}: size of node labels (default \code{5}).
+\item \code{pie}: \code{'equal'} or \code{'Count'} to set the slice ratio of pies (for \code{compareClusterResult} only).
+\item \code{label_format}: a numeric wrap length or a custom function to format axis labels.
+\item \code{clusterFunction}: clustering method function, such as \code{stats::kmeans} (default),
+\code{cluster::clara}, \code{cluster::fanny}, or \code{cluster::pam}.
+\item \code{nWords}: number of words in cluster tags (default \code{4}).
+\item \code{nCluster}: number of clusters (default is the square root of the number of nodes).
+}
 
-Additional parameters can refer to the `emapplot` function: \link{emapplot}.}
+See also: \code{\link[=emapplot]{emapplot()}} for additional parameters and behavior.}
 
 \item{showCategory}{number of categories to display or a vector of terms.}
 
 \item{drfun}{The function used for dimension reduction,
-e.g. `stats::cmdscale` (the default), `vegan::metaMDS`, or `ape::pcoa`.}
+e.g. \code{stats::cmdscale} (the default), \code{vegan::metaMDS}, or \code{ape::pcoa}.}
 
-\item{dr.params}{list, the parameters of `tidydr::dr`.}
+\item{dr.params}{list, the parameters of \code{tidydr::dr}.}
 
 \item{node_label}{Select which labels to display,
 one of 'category', 'group', 'all' and 'none'.}

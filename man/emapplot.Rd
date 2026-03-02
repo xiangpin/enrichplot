@@ -64,8 +64,8 @@ one of 'category', 'group', 'all' and 'none'.}
 
 \item{label_format}{a numeric value sets wrap length, alternatively a custom function to format axis labels.}
 
-\item{clusterFunction}{function of Clustering method, such as `stats::kmeans` (the default),
-`cluster::clara`, `cluster::fanny` or `cluster::pam`.}
+\item{clusterFunction}{clustering method function, such as \code{stats::kmeans} (default),
+\code{cluster::clara}, \code{cluster::fanny}, or \code{cluster::pam}.}
 
 \item{nWords}{Numeric, the number of words in the cluster tags, the default value is 4.}
 
@@ -83,11 +83,11 @@ over-representation test or gene set enrichment analysis
 This function visualizes gene sets as a network (i.e. enrichment map).
 Mutually overlapping gene sets tend to cluster together, making it
 easier for interpretation. When the similarity between terms meets
-a certain threshold (default is 0.2, adjusted by parameter `min_edge`),
+a certain threshold (default is 0.2, adjusted by parameter \code{min_edge}),
 there will be edges between terms. The stronger the similarity,
 the shorter and thicker the edges. The similarity between terms is
-obtained by the function `pairwise_termsim`. Details of the similarity
-calculation can be found in its documentation: \link{pairwise_termsim}.
+obtained by the function \code{pairwise_termsim}. Details of the similarity
+calculation can be found in its documentation: \code{\link[=pairwise_termsim]{pairwise_termsim()}}.
 }
 \examples{
 \dontrun{

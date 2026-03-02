@@ -50,7 +50,7 @@ setGeneric("dotplot", function(object, ...) {
 #' there will be edges between terms. The stronger the similarity,
 #' the shorter and thicker the edges. The similarity between terms is
 #' obtained by the function `pairwise_termsim`. Details of the similarity
-#' calculation can be found in its documentation: \link{pairwise_termsim}.
+#' calculation can be found in its documentation: [pairwise_termsim()].
 #' @title emapplot
 #' @rdname emapplot
 #' @param x Enrichment result.
@@ -98,7 +98,7 @@ setGeneric("emapplot", function(x, ...) {
 #' When users want to calculate the correlation between GO terms or DO terms, they can also choose
 #' "Resnik", "Lin", "Rel" or "Jiang" (they are semantic similarity calculation methods from the 'GOSemSim' package),
 #' and at this time, the user needs to provide the `semData` parameter, which can be obtained through
-#' \code{\link[GOSemSim]{godata}}.
+#' [GOSemSim::godata()].
 #' @title pairwise_termsim
 #' @rdname pairwise_termsim
 #' @param x enrichment result.

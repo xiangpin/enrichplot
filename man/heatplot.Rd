@@ -30,7 +30,7 @@ heatplot.enrichResult(
 
 \item{...}{Additional parameters}
 
-\item{showTop}{number of top genes ranked by `abs(foldChange) * frequency`
+\item{showTop}{number of top genes ranked by \code{abs(foldChange) * frequency}
 to be shown in the heatmap, default NULL means all genes are shown}
 
 \item{symbol}{symbol of the nodes, one of "rect" (the default) or "dot"}

@@ -35,28 +35,23 @@ setMethod(
 #' @param dr.params list, the parameters of `tidydr::dr`.
 #' @param ... additional parameters
 #'
-#' Additional parameters can refer to the following parameters:
-#'     \itemize{
-#'       \item \code{layout} igraph layout function for node positioning
-#'       \item \code{color} Variable used to color enriched terms, e.g. 'pvalue','p.adjust' or 'qvalue'.
-#'       \item \code{size_category} relative size of the categories
-#'       \item \code{min_edge} The minimum similarity threshold for whether
-#'         two nodes are connected, should be between 0 and 1, default value is 0.2.
-#'       \item \code{color_edge} color of the network edge
-#'       \item \code{size_edge} relative size of edge width.
-#'       \item \code{node_label} Select which labels to display,
-#'         one of 'category', 'group', 'all' and 'none'.
-#'       \item \code{node_label_size} size of node label, default is 5.
-#'       \item \code{pie} one of 'equal' or 'Count' to set the slice ratio of the pies (for `compareClusterResult` only).
-#'       \item \code{label_format} a numeric value sets wrap length, alternatively a custom function to format axis labels.
-#'       \item \code{clusterFunction} function of Clustering method, such as `stats::kmeans` (the default),
-#'         `cluster::clara`, `cluster::fanny` or `cluster::pam`.
-#'       \item \code{nWords} Numeric, the number of words in the cluster tags, the default value is 4.
-#'       \item \code{nCluster} Numeric, the number of clusters,
-#'         the default value is square root of the number of nodes.
-#'     }
+#' Additional parameters accepted via `...` include:
+#' - `layout`: igraph layout function for node positioning.
+#' - `color`: variable used to color enriched terms, e.g., `'pvalue'`, `'p.adjust'`, or `'qvalue'`.
+#' - `size_category`: relative size of the categories.
+#' - `min_edge`: minimum similarity threshold to connect two nodes; between 0 and 1 (default `0.2`).
+#' - `color_edge`: color of network edges.
+#' - `size_edge`: relative edge width.
+#' - `node_label`: which labels to display; one of `'category'`, `'group'`, `'all'`, `'none'`.
+#' - `node_label_size`: size of node labels (default `5`).
+#' - `pie`: `'equal'` or `'Count'` to set the slice ratio of pies (for `compareClusterResult` only).
+#' - `label_format`: a numeric wrap length or a custom function to format axis labels.
+#' - `clusterFunction`: clustering method function, such as `stats::kmeans` (default),
+#'   `cluster::clara`, `cluster::fanny`, or `cluster::pam`.
+#' - `nWords`: number of words in cluster tags (default `4`).
+#' - `nCluster`: number of clusters (default is the square root of the number of nodes).
 #'
-#' Additional parameters can refer to the `emapplot` function: \link{emapplot}.
+#' See also: [emapplot()] for additional parameters and behavior.
 #' @importFrom tidydr theme_dr
 ssplot.enrichResult <- function(
     x,
@@ -103,8 +98,7 @@ ssplot.enrichResult <- function(
 #' @param pie one of 'equal' or 'Count' to set the slice ratio of the pies
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 coord_equal
-# @param cex_pie2axis It is used to adjust the relative size of the pie chart on the coordinate axis,
-# the default value is 0.0125.
+# @param cex_pie2axis Adjust the relative size of the pie chart on the axes (default `0.0125`).
 #' @importFrom stats setNames
 ssplot.compareClusterResult <- function(
     x,

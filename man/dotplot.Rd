@@ -134,7 +134,7 @@ e.g. 'pvalue', 'p.adjust' or 'qvalue'}
 \item{size}{variable used to scale the sizes of categories,
 one of "geneRatio", "Percentage" and "count"}
 
-\item{split}{apply `showCategory` to each category specified by the 'split', e.g., "ONTOLOGY", "category" and "intersect".  Default is NULL and do nothing}
+\item{split}{apply \code{showCategory} to each category specified by the 'split', e.g., "ONTOLOGY", "category" and "intersect".  Default is NULL and do nothing}
 
 \item{font.size}{font size}
 
@@ -161,7 +161,7 @@ nodes of the same group with wires.}
 \item{shape}{a logical value, whether to use nodes of
 different shapes to distinguish the group it belongs to}
 
-\item{facet}{apply `facet_grid` to the plot by specified variable, e.g., "ONTOLOGY", "category" and "intersect".}
+\item{facet}{apply \code{facet_grid} to the plot by specified variable, e.g., "ONTOLOGY", "category" and "intersect".}
 
 \item{strip_width}{width of strip text (facet label).}
 }
