@@ -36,10 +36,10 @@ goplot(
 \arguments{
 \item{x}{enrichment result.}
 
-\item{showCategory}{number of enriched terms to display}
+\item{showCategory}{number of categories to display, or a vector of terms.}
 
-\item{color}{variable used to color enriched terms, e.g. pvalue,
-p.adjust or qvalue}
+\item{color}{variable used to color enriched terms, e.g. \code{'pvalue'},
+\code{'p.adjust'}, or \code{'qvalue'}.}
 
 \item{layout}{layout of the map}
 

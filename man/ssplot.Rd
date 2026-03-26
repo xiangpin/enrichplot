@@ -41,25 +41,7 @@ ssplot.compareClusterResult(
 
 \item{...}{additional parameters
 
-Additional parameters accepted via \code{...} include:
-\itemize{
-\item \code{layout}: igraph layout function for node positioning.
-\item \code{color}: variable used to color enriched terms, e.g., \code{'pvalue'}, \code{'p.adjust'}, or \code{'qvalue'}.
-\item \code{size_category}: relative size of the categories.
-\item \code{min_edge}: minimum similarity threshold to connect two nodes; between 0 and 1 (default \code{0.2}).
-\item \code{color_edge}: color of network edges.
-\item \code{size_edge}: relative edge width.
-\item \code{node_label}: which labels to display; one of \code{'category'}, \code{'group'}, \code{'all'}, \code{'none'}.
-\item \code{node_label_size}: size of node labels (default \code{5}).
-\item \code{pie}: \code{'equal'} or \code{'Count'} to set the slice ratio of pies (for \code{compareClusterResult} only).
-\item \code{label_format}: a numeric wrap length or a custom function to format axis labels.
-\item \code{clusterFunction}: clustering method function, such as \code{stats::kmeans} (default),
-\code{cluster::clara}, \code{cluster::fanny}, or \code{cluster::pam}.
-\item \code{nWords}: number of words in cluster tags (default \code{4}).
-\item \code{nCluster}: number of clusters (default is the square root of the number of nodes).
-}
-
-See also: \code{\link[=emapplot]{emapplot()}} for additional parameters and behavior.}
+Additional plotting parameters are inherited from \code{\link[=emapplot]{emapplot()}}.}
 
 \item{showCategory}{number of categories to display or a vector of terms.}
 

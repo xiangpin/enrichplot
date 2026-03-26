@@ -6,7 +6,7 @@
 \alias{enrichplot-package}
 \title{enrichplot: Visualization of Functional Enrichment Result}
 \description{
-The 'enrichplot' package implements several visualization methods for interpreting functional enrichment results obtained from ORA or GSEA analysis. It is mainly designed to work with the 'clusterProfiler' package suite. All the visualization methods are developed based on 'ggplot2' graphics.
+The 'enrichplot' package provides visualization methods for interpreting functional enrichment results from ORA or GSEA analyses. It is designed to work with the 'clusterProfiler' ecosystem and builds on 'ggplot2' for flexible and extensible graphics.
 }
 \seealso{
 Useful links:

@@ -39,6 +39,35 @@ setGeneric("dotplot", function(object, ...) {
     standardGeneric("dotplot")
 })
 
+#' Shared term-plot parameters
+#'
+#' @name enrichplot-term-params
+#' @param showCategory number of categories to display, or a vector of terms.
+#' @param color variable used to color enriched terms, e.g. `'pvalue'`,
+#'   `'p.adjust'`, or `'qvalue'`.
+#' @param label_format a numeric wrap width, or a custom function to format
+#'   axis labels.
+#' @keywords internal
+NULL
+
+#' Shared parameters for enrichment plots
+#'
+#' @name enrichplot-common-params
+#' @param color variable used to color enriched terms, e.g. `'pvalue'`,
+#'   `'p.adjust'`, or `'qvalue'`.
+#' @param showCategory number of categories to display, or a vector of terms.
+#' @param size variable used to scale category size, one of `"geneRatio"`,
+#'   `"Percentage"`, or `"count"`.
+#' @param split apply `showCategory` to each category specified by `split`,
+#'   e.g., `"ONTOLOGY"`, `"category"`, or `"intersect"`. Default is `NULL`.
+#' @param font.size font size.
+#' @param title figure title.
+#' @param label_format a numeric wrap width, or a custom function to format
+#'   axis labels.
+#' @param includeAll logical value.
+#' @keywords internal
+NULL
+
 #' Enrichment Map for enrichment result of
 #' over-representation test or gene set enrichment analysis
 #'
@@ -143,9 +172,7 @@ setGeneric(
 #' @title goplot
 #' @rdname goplot
 #' @param x enrichment result.
-#' @param showCategory number of enriched terms to display
-#' @param color variable used to color enriched terms, e.g. pvalue,
-#' p.adjust or qvalue
+#' @inheritParams enrichplot-term-params
 #' @param layout layout of the map
 #' @param geom label geom, one of 'label' or 'text'
 #' @param ... additional parameters.
@@ -416,5 +443,15 @@ setGeneric("ssplot", function(x, ...) {
     standardGeneric("ssplot")
 })
 
-
-
+#' Manhattan plot for enrichment result
+#'
+#' @title manhattanplot
+#' @rdname manhattanplot
+#' @param x enrichment result.
+#' @inheritParams enrichplot-common-params
+#' @param ... additional parameters.
+#' @return ggplot object
+#' @export
+setGeneric("manhattanplot", function(x, ...) {
+    standardGeneric("manhattanplot")
+})

@@ -1,5 +1,6 @@
-# enrichplot 1.31.4.003
+# enrichplot 1.31.4.004
 
++ manhattan plot for enriched result (2026-03-26, Thu)
 + update roxygen document to use markdown syntax (2026-03-02, Mon)
 + bug fixed in xy-lab format in `ssplot()` (2026-03-02, Mon)
 + bug fixed in formula supports in `dotplot()` (2026-02-26, Thu)

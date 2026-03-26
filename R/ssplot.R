@@ -33,25 +33,10 @@ setMethod(
 #' @param drfun The function used for dimension reduction,
 #' e.g. `stats::cmdscale` (the default), `vegan::metaMDS`, or `ape::pcoa`.
 #' @param dr.params list, the parameters of `tidydr::dr`.
+#' @inheritParams emapplot
 #' @param ... additional parameters
 #'
-#' Additional parameters accepted via `...` include:
-#' - `layout`: igraph layout function for node positioning.
-#' - `color`: variable used to color enriched terms, e.g., `'pvalue'`, `'p.adjust'`, or `'qvalue'`.
-#' - `size_category`: relative size of the categories.
-#' - `min_edge`: minimum similarity threshold to connect two nodes; between 0 and 1 (default `0.2`).
-#' - `color_edge`: color of network edges.
-#' - `size_edge`: relative edge width.
-#' - `node_label`: which labels to display; one of `'category'`, `'group'`, `'all'`, `'none'`.
-#' - `node_label_size`: size of node labels (default `5`).
-#' - `pie`: `'equal'` or `'Count'` to set the slice ratio of pies (for `compareClusterResult` only).
-#' - `label_format`: a numeric wrap length or a custom function to format axis labels.
-#' - `clusterFunction`: clustering method function, such as `stats::kmeans` (default),
-#'   `cluster::clara`, `cluster::fanny`, or `cluster::pam`.
-#' - `nWords`: number of words in cluster tags (default `4`).
-#' - `nCluster`: number of clusters (default is the square root of the number of nodes).
-#'
-#' See also: [emapplot()] for additional parameters and behavior.
+#' Additional plotting parameters are inherited from [emapplot()].
 #' @importFrom tidydr theme_dr
 ssplot.enrichResult <- function(
     x,
@@ -95,7 +80,6 @@ ssplot.enrichResult <- function(
 
 
 #' @rdname ssplot
-#' @param pie one of 'equal' or 'Count' to set the slice ratio of the pies
 #' @importFrom ggplot2 theme_classic
 #' @importFrom ggplot2 coord_equal
 # @param cex_pie2axis Adjust the relative size of the pie chart on the axes (default `0.0125`).
