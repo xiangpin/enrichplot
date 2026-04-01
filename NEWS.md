@@ -1,5 +1,6 @@
-# enrichplot 1.31.4.004
+# enrichplot 1.31.5
 
++ `ridgeplot` now supports `stat` parameter (default is 'density_ridges' and can be changed to 'binline') (2026-04-01, Wed, #343)
 + manhattan plot for enriched result (2026-03-26, Thu)
 + update roxygen document to use markdown syntax (2026-03-02, Mon)
 + bug fixed in xy-lab format in `ssplot()` (2026-03-02, Mon)
