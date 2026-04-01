@@ -26,6 +26,7 @@ setMethod(
 #' @rdname ridgeplot
 #' @param orderBy The order of the Y-axis
 #' @param decreasing logical. Should the orderBy order be increasing or decreasing?
+#' @param stat statistic passed to `ggridges::geom_density_ridges()`.
 #' @importFrom ggplot2 scale_fill_gradientn
 #' @importFrom ggplot2 scale_x_reverse
 #' @importFrom ggplot2 xlab
@@ -42,7 +43,8 @@ ridgeplot.gseaResult <- function(
     core_enrichment = TRUE,
     label_format = 30,
     orderBy = "NES",
-    decreasing = FALSE
+    decreasing = FALSE,
+    stat = "density_ridges"
 ) {
     ## Input validation with better error messages
     check_input(x, type = "gseaResult", arg_name = "x")
@@ -133,7 +135,7 @@ ridgeplot.gseaResult <- function(
         gs2val.df,
         aes(x = .data[["value"]], y = .data[["category"]], fill = .data[[fill]])
     ) +
-        ggridges::geom_density_ridges() +
+        ggridges::geom_density_ridges(stat = stat) +
         set_enrichplot_color(type = "fill", name = fill, transform = 'log10') +
         scale_y_discrete(labels = label_func) +
         xlab(NULL) +

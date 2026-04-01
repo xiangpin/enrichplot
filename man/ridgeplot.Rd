@@ -31,7 +31,8 @@ ridgeplot.gseaResult(
   core_enrichment = TRUE,
   label_format = 30,
   orderBy = "NES",
-  decreasing = FALSE
+  decreasing = FALSE,
+  stat = "density_ridges"
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ custom function to format axis labels.}
 \item{orderBy}{The order of the Y-axis}
 
 \item{decreasing}{logical. Should the orderBy order be increasing or decreasing?}
+
+\item{stat}{statistic passed to \code{ggridges::geom_density_ridges()}.}
 }
 \value{
 ggplot object
