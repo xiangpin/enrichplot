@@ -1,5 +1,6 @@
 # enrichplot 1.31.5
 
++ `cnetplot.compareClusterResult()` now supports `categorySizeBy` for category pie sizing and aligns docs with `ggtangle::cnetplot()` semantics (2026-04-23, Wed)
 + `ridgeplot` now supports `stat` parameter (default is 'density_ridges' and can be changed to 'binline') (2026-04-01, Wed, #343)
 + manhattan plot for enriched result (2026-03-26, Thu)
 + update roxygen document to use markdown syntax (2026-03-02, Mon)

@@ -54,13 +54,15 @@
   size_item = 1,
   color_edge = "grey",
   size_edge = 0.5,
-  categorySizeBy = NULL,
+  categorySizeBy = ~itemNum,
   node_label = "all",
   foldChange = NULL,
   fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
   pie = "equal",
+  split = NULL,
+  includeAll = TRUE,
   ...
 )
 }
@@ -83,7 +85,9 @@
 
 \item{size_edge}{relative size of edge}
 
-\item{categorySizeBy}{method of category size, one of "itemNum" (default), "pvalue", "p.adjust", "qvalue" or a numeric vector}
+\item{categorySizeBy}{An expression (e.g., \code{itemNum}, \code{p.adjust}) or a formula
+(e.g., \code{~ -log10(p.adjust)}) to set the category node size. For
+\code{compareClusterResult}, this controls the category pie size.}
 
 \item{node_label}{one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'.
 'exclusive' labels genes that uniquely belong to categories; 'share' labels genes that are shared between categories.}
@@ -99,6 +103,12 @@
 \item{...}{additional parameters}
 
 \item{pie}{one of 'equal' or 'Count' to set the slice ratio of the pies}
+
+\item{split}{apply \code{showCategory} to each category specified by \code{split} for
+\code{compareClusterResult}, e.g. \code{ONTOLOGY}, \code{category} or \code{intersect}.}
+
+\item{includeAll}{logical value passed to \code{fortify()} when selecting terms
+from a \code{compareClusterResult}.}
 }
 \description{
 Category-gene-network plot

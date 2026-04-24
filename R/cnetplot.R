@@ -11,13 +11,19 @@
 #' @param size_item relative size of the item nodes (e.g., genes)
 #' @param color_edge color of edge
 #' @param size_edge relative size of edge
-#' @param categorySizeBy method of category size, one of "itemNum" (default), "pvalue", "p.adjust", "qvalue" or a numeric vector
+#' @param categorySizeBy An expression (e.g., `itemNum`, `p.adjust`) or a formula
+#'   (e.g., `~ -log10(p.adjust)`) to set the category node size. For
+#'   `compareClusterResult`, this controls the category pie size.
 #' @param node_label one of 'all', 'none', 'category', 'item', 'exclusive' or 'share'.
 #' 'exclusive' labels genes that uniquely belong to categories; 'share' labels genes that are shared between categories.
 #' @param foldChange numeric values to color the item (e.g., fold change of gene expression values)
 #' @param fc_threshold threshold for filtering genes by absolute fold change (e.g., fc_threshold = 1 keeps only genes with |foldChange| > 1).
 #' @param hilight selected categories to be highlighted
 #' @param hilight_alpha transparency value for non-highlighted items
+#' @param split apply `showCategory` to each category specified by `split` for
+#'   `compareClusterResult`, e.g. `ONTOLOGY`, `category` or `intersect`.
+#' @param includeAll logical value passed to `fortify()` when selecting terms
+#'   from a `compareClusterResult`.
 #' @param ... additional parameters
 #' @importFrom ggtangle cnetplot
 #' @method cnetplot enrichResult
@@ -119,23 +125,32 @@ cnetplot.compareClusterResult <- function(
     size_item = 1,
     color_edge = "grey",
     size_edge = .5,
-    categorySizeBy = NULL,
+    categorySizeBy = ~itemNum,
     node_label = "all",
     foldChange = NULL,
     fc_threshold = NULL,
     hilight = "none",
     hilight_alpha = .3,
     pie = "equal",
+    split = NULL,
+    includeAll = TRUE,
     ...
 ) {
-    d <- tidy_compareCluster(x, showCategory)
+    category_size_quo <- rlang::enquo(categorySizeBy)
+    d <- tidy_compareCluster(
+        x,
+        showCategory = showCategory,
+        split = split,
+        includeAll = includeAll
+    )
     y <- split(d$geneID, d$Description)
     gs <- lapply(y, function(item) unique(unlist(strsplit(item, split = "/"))))
+    category_size <- compute_comparecluster_category_size(d, category_size_quo)
 
     p <- cnetplot(
         gs,
         layout = layout,
-        showCategory = showCategory, 
+        showCategory = names(gs),
         foldChange = foldChange,
         fc_threshold = fc_threshold,
         color_category = color_category,
@@ -155,7 +170,8 @@ cnetplot.compareClusterResult <- function(
         d,
         pie,
         category_scale = size_category,
-        item_scale = size_item
+        item_scale = size_item,
+        category_size = category_size
     )
 
     p <- p + geom_cnet_label(node_label = node_label)
@@ -170,11 +186,17 @@ add_node_pie <- function(
     d,
     pie = "equal",
     category_scale = 1,
-    item_scale = 1
+    item_scale = 1,
+    category_size = NULL
 ) {
     ## category nodes
     dd <- d[, c('Cluster', 'Description', 'Count')]
-    pathway_size <- sapply(split(dd$Count, dd$Description), sum)
+    default_size <- sapply(split(dd$Count, dd$Description), sum)
+    if (is.null(category_size)) {
+        category_size <- default_size
+    } else {
+        category_size <- category_size[names(default_size)]
+    }
     if (pie == "equal") {
         dd$Count <- 1
     }
@@ -184,10 +206,8 @@ add_node_pie <- function(
         values_from = "Count",
         values_fill = 0
     )
-    # dd$pathway_size <- sqrt(pathway_size[dd$Description]/sum(pathway_size))
-    dd$pathway_size <- pathway_size[dd$Description] /
-        sum(pathway_size) *
-        category_scale
+    normalized_category_size <- normalize_comparecluster_radius(category_size)
+    dd$pathway_radius <- normalized_category_size[dd$Description] * category_scale
 
     ## gene nodes
     y <- split(d$geneID, d$Cluster)
@@ -200,8 +220,7 @@ add_node_pie <- function(
         values_from = "Count",
         values_fill = 0
     )
-    # dd$pathway_size <- sqrt(pathway_size[dd$Description]/sum(pathway_size))
-    dg$pathway_size <- .05 * item_scale # 1/nrow(dg) * item_scale
+    dg$pathway_radius <- .05 * item_scale
 
     d2 <- rbind(dd, dg)
 
@@ -211,34 +230,143 @@ add_node_pie <- function(
             aes(
                 x = .data$x,
                 y = .data$y,
-                r = .data$pathway_size * category_scale
+                r = .data$pathway_radius
             ),
             cols = as.character(unique(d$Cluster)),
             legend_name = "Cluster",
             color = NA
         ) +
-        scatterpie::geom_scatterpie_legend(
-            dd$pathway_size * category_scale,
+        coord_fixed() +
+        guides(size = "none")
+
+    if (any(dd$pathway_radius > 0)) {
+        p <- p + scatterpie::geom_scatterpie_legend(
+            unique(dd$pathway_radius),
             x = min(p$data$x),
             y = min(p$data$y),
             n = 3,
-            # labeller=function(x) round(sum(pathway_size) * x^2)
-            # https://github.com/YuLab-SMU/enrichplot/issues/328
-            labeller = function(x) round(x / category_scale * sum(pathway_size))
-        ) +
-        coord_fixed() +
-        guides(size = "none")
+            labeller = function(x) {
+                format(signif(x / category_scale * sum(category_size), 3), trim = TRUE)
+            }
+        )
+    }
 
     return(p)
 }
 
+compute_comparecluster_category_size <- function(d, categorySizeBy) {
+    term_names <- unique(as.character(d$Description))
+    gene_sets <- split(d$geneID, d$Description)
+    item_num <- vapply(
+        gene_sets[term_names],
+        function(item) {
+            length(unique(unlist(strsplit(item, split = "/"))))
+        },
+        FUN.VALUE = numeric(1)
+    )
 
-tidy_compareCluster <- function(x, showCategory) {
+    term_df <- data.frame(
+        Description = term_names,
+        itemNum = item_num,
+        Count = vapply(
+            split(d$Count, d$Description)[term_names],
+            sum,
+            FUN.VALUE = numeric(1)
+        ),
+        stringsAsFactors = FALSE
+    )
+
+    numeric_cols <- setdiff(names(d)[vapply(d, is.numeric, logical(1))], "Count")
+    if (length(numeric_cols) > 0) {
+        for (col in numeric_cols) {
+            term_df[[col]] <- summarize_comparecluster_numeric_column(
+                d[[col]],
+                d$Description,
+                term_names,
+                col
+            )
+        }
+    }
+
+    if (inherits(categorySizeBy, "quosure")) {
+        category_size_expr <- rlang::quo_get_expr(categorySizeBy)
+        category_size_env <- rlang::quo_get_env(categorySizeBy)
+    } else {
+        category_size_expr <- substitute(categorySizeBy)
+        category_size_env <- parent.frame()
+    }
+    if (rlang::is_formula(category_size_expr)) {
+        category_size_expr <- rlang::f_rhs(category_size_expr)
+    }
+
+    category_size <- rlang::eval_tidy(
+        rlang::new_quosure(category_size_expr, env = category_size_env),
+        data = term_df
+    )
+    if (!is.numeric(category_size)) {
+        stop("`categorySizeBy` must evaluate to a numeric vector.")
+    }
+    if (length(category_size) == 1) {
+        category_size <- rep(category_size, nrow(term_df))
+    }
+    if (length(category_size) != nrow(term_df)) {
+        stop("`categorySizeBy` must return a scalar or one value per category.")
+    }
+    if (anyNA(category_size) || any(!is.finite(category_size))) {
+        stop("`categorySizeBy` returned non-finite values.")
+    }
+    if (any(category_size < 0)) {
+        stop("`categorySizeBy` must be non-negative for pie radius scaling.")
+    }
+    if (sum(category_size) <= 0) {
+        stop("`categorySizeBy` must produce at least one positive value.")
+    }
+
+    stats::setNames(category_size, term_df$Description)
+}
+
+summarize_comparecluster_numeric_column <- function(values, groups, group_names, column_name) {
+    split_values <- split(values, groups)
+    vapply(
+        split_values[group_names],
+        function(x) {
+            x <- x[is.finite(x)]
+            if (length(x) == 0) {
+                return(NA_real_)
+            }
+            if (column_name %in% c("pvalue", "p.adjust", "qvalue")) {
+                return(min(x))
+            }
+            unique_values <- unique(x)
+            if (length(unique_values) == 1) {
+                return(unique_values)
+            }
+            NA_real_
+        },
+        FUN.VALUE = numeric(1)
+    )
+}
+
+normalize_comparecluster_radius <- function(x) {
+    total <- sum(x)
+    if (!is.finite(total) || total <= 0) {
+        stop("Category pie size scaling requires a positive total size.")
+    }
+    x / total
+}
+
+
+tidy_compareCluster <- function(
+    x,
+    showCategory,
+    split = NULL,
+    includeAll = TRUE
+) {
     d <- fortify(
         x,
         showCategory = showCategory,
-        includeAll = TRUE,
-        split = NULL
+        includeAll = includeAll,
+        split = split
     )
     d$Cluster <- sub("\n.*", "", d$Cluster)
 
