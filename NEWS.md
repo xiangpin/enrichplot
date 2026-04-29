@@ -1,3 +1,7 @@
+# enrichplot 1.32.0
+
++ Bioconductor RELEASE_3_23 (2026-04-29, Wed)
+
 # enrichplot 1.31.5
 
 + `cnetplot.compareClusterResult()` now supports `categorySizeBy` for category pie sizing and aligns docs with `ggtangle::cnetplot()` semantics (2026-04-22, Wed)
