@@ -122,3 +122,28 @@ test_that("cnetplot supports share and exclusive mnsea labels", {
     expect_true("g1" %in% share_labels || "g2" %in% share_labels)
     expect_true(length(exclusive_labels) == 0 || "g1" %in% exclusive_labels || "g2" %in% exclusive_labels)
 })
+
+test_that("cnetplot encodes mnsea edge semantics and honors size_edge", {
+    x <- mock_mnsea_result()
+
+    p_small <- cnetplot(x, pathway_id = "T1", include_couplings = TRUE, size_edge = 0.5)
+    p_large <- cnetplot(x, pathway_id = "T1", include_couplings = TRUE, size_edge = 2)
+    p_no_coupling <- cnetplot(x, pathway_id = "T1", include_couplings = FALSE, size_edge = 2)
+
+    edge_small <- ggplot2::ggplot_build(p_small)$data[[1]]
+    edge_large <- ggplot2::ggplot_build(p_large)$data[[1]]
+    edge_no_coupling <- ggplot2::ggplot_build(p_no_coupling)$data[[1]]
+
+    expect_gt(mean(edge_large$linewidth, na.rm = TRUE), mean(edge_small$linewidth, na.rm = TRUE))
+    expect_gte(length(unique(edge_large$linetype)), 2)
+    expect_equal(length(unique(edge_no_coupling$linetype)), 1)
+})
+
+test_that("cnetplot encodes mnsea feature sign with node colors", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", node_label = "none")
+    feature_nodes <- ggplot2::ggplot_build(p)$data[[2]]
+
+    expect_gte(length(unique(feature_nodes$colour)), 2)
+})

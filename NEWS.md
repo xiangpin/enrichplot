@@ -1,5 +1,6 @@
 # enrichplot 1.33.0.001
 
++ refine `cnetplot.mnseaResult()` with edge-type legends, effective `size_edge` scaling, and feature-node sign encoding backed by lightweight regression tests (2026-06-24, Wed)
 + align default `pathway_id` resolution across `mnsea` helpers and feature-level `heatplot()`, and add `share` / `exclusive` label support to `cnetplot.mnseaResult()` with regression coverage (2026-06-24, Wed)
 + add `cnetplot.mnseaResult()` for pathway-specific multilayer subnetworks, including pathway anchor nodes and lightweight regression coverage for the new network view (2026-06-24, Wed)
 + add `heatplot.mnseaResult()` for term-layer and pathway-specific feature heatmaps, and cover the new `mnsea` helper/plotting workflow with lightweight tests (2026-06-24, Wed)

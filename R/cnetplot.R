@@ -184,6 +184,21 @@ prepare_mnsea_cnetplot_data <- function(
     list(graph = g, nodes = nodes, edges = edges, pathway = subnet$pathway)
 }
 
+normalize_mnsea_edge_width <- function(x, size_edge) {
+    if (length(x) == 0) {
+        return(numeric(0))
+    }
+    x <- as.numeric(x)
+    xmin <- suppressWarnings(min(x, na.rm = TRUE))
+    xmax <- suppressWarnings(max(x, na.rm = TRUE))
+
+    if (!is.finite(xmin) || !is.finite(xmax) || xmax <= xmin) {
+        return(rep(size_edge, length(x)))
+    }
+
+    size_edge * (0.8 + (x - xmin) / (xmax - xmin) * 1.2)
+}
+
 #' @rdname cnetplot
 #' @method cnetplot mnseaResult
 #' @export
@@ -205,12 +220,31 @@ cnetplot.mnseaResult <- function(
         include_couplings = include_couplings
     )
     g <- plot_data$graph
+    edge_type_labels <- c(
+        membership = "Pathway membership",
+        intra = "Within-layer",
+        coupling = "Cross-layer coupling"
+    )
+    sign_colors <- c(
+        activated = "#D73027",
+        suppressed = "#4575B4",
+        neutral = "grey40"
+    )
+    edge_types <- as.character(igraph::E(g)$edge_type)
+    igraph::E(g)$edge_type_label <- factor(
+        edge_type_labels[edge_types],
+        levels = unname(edge_type_labels)
+    )
+    igraph::E(g)$edge_width <- normalize_mnsea_edge_width(
+        igraph::E(g)$abs_weight,
+        size_edge = size_edge
+    )
 
     p <- ggplot(g, layout = layout) +
         geom_edge(
             aes(
-                linewidth = .data$abs_weight,
-                linetype = .data$edge_type
+                linewidth = .data$edge_width,
+                linetype = .data$edge_type_label
             ),
             color = color_edge,
             alpha = 0.7
@@ -241,10 +275,11 @@ cnetplot.mnseaResult <- function(
                 x = .data$x,
                 y = .data$y,
                 size = .data$plot_size,
-                fill = .data$layer
+                fill = .data$layer,
+                color = .data$sign
             ),
             shape = 21,
-            color = "black"
+            stroke = 1
         ) +
         geom_point(
             data = pathway_nodes,
@@ -255,18 +290,27 @@ cnetplot.mnseaResult <- function(
             color = "black"
         ) +
         scale_size(range = c(3, 8)) +
+        ggplot2::scale_linewidth_identity() +
+        ggplot2::scale_color_manual(
+            values = sign_colors,
+            name = "Feature sign",
+            drop = FALSE
+        ) +
         ggplot2::scale_linetype_manual(
             values = c(
-                membership = "solid",
-                intra = "solid",
-                coupling = "dashed"
-            )
+                "Pathway membership" = "solid",
+                "Within-layer" = "solid",
+                "Cross-layer coupling" = "dashed"
+            ),
+            drop = FALSE,
+            name = "Edge type"
         ) +
         guides(
             linewidth = "none",
             linetype = guide_legend(order = 1),
             fill = guide_legend(order = 2),
-            size = guide_legend(order = 3)
+            color = guide_legend(order = 3),
+            size = guide_legend(order = 4)
         )
 
     if (node_label != "none") {

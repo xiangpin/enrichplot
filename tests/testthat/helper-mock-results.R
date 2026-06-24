@@ -110,7 +110,7 @@ mock_mnsea_result <- function() {
         ),
         Feature = c("g1", "g2", "g1", "g2", "g2", "g3", "g2", "g3"),
         layer = c("rna", "rna", "protein", "protein", "rna", "rna", "protein", "protein"),
-        score = c(1.2, 0.8, 0.4, 1.0, -0.7, -0.5, -0.3, -0.9),
+        score = c(1.2, 0.8, -0.4, 1.0, -0.7, -0.5, -0.3, -0.9),
         abs_score = c(1.2, 0.8, 0.4, 1.0, 0.7, 0.5, 0.3, 0.9),
         is_core = c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE),
         stringsAsFactors = FALSE
@@ -178,7 +178,7 @@ mock_mnsea_result <- function() {
         ),
         layer_scores = list(
             rna = c(g1 = 1.2, g2 = 0.8, g3 = -0.5),
-            protein = c(g1 = 0.4, g2 = 1.0, g3 = -0.9)
+            protein = c(g1 = -0.4, g2 = 1.0, g3 = -0.9)
         ),
         collapsed_scores = c(g1 = 0.8, g2 = 0.9, g3 = -0.7),
         layer_weights = c(rna = 1, protein = 1.5),
