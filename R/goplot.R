@@ -29,6 +29,7 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
                                 layout = igraph::layout_with_sugiyama, geom = "text", 
                                 ID = "Description", ...) {
     segment.size <- get_ggrepel_segsize()
+    check_installed('glue', 'for `goplot()`.')
     # has_package("AnnotationDbi")
     n <- update_n(x, showCategory)
     geneSets <- geneInCategory(x) ## use core gene for gsea result

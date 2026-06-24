@@ -36,7 +36,7 @@ pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, show
     if (is.numeric(n)) {
         y <- y[1:n, ]
     } else {
-        y <- y[match(n, y$Description),]
+        y <- y[resolve_term_rows(x, n), ]
         n <- length(n)
     }
 

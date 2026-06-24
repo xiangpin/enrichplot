@@ -72,11 +72,13 @@ upsetplot.enrichResult <- function(x, n=10, ...) {
 upsetplot.gseaResult <- function(x, n = 10, type = "boxplot", ...) {
     n <- update_n(x, n)
     geneSets <- extract_geneSets(x, n)
+    labels <- get_geneSet_labels(geneSets)
 
     ## foldChange <- fc_readable(x, x@geneList)
     d <- list2df(geneSets)
+    d$Description <- labels[as.character(d$categoryID)]
 
-    category <- split(d[,1], d[, 2])
+    category <- split(d$Description, d$Gene)
     check_installed('tibble', 'for `upsetplot()`.')
     y <- tibble::tibble(Description = category,
                       gene = names(category),

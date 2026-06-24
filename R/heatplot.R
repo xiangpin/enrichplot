@@ -54,20 +54,28 @@ heatplot.enrichResult <- function(
     n <- update_n(x, showCategory)
     geneSets <- extract_geneSets(x, n)
     if (!is.null(showTop) && showTop > 0) {
+        if (is.null(foldChange)) {
+            yulab.utils::yulab_abort(
+                "`showTop` requires `foldChange`.",
+                class = "missing_foldchange_error"
+            )
+        }
         nfreq <- table(unlist(geneSets))
         nfc <- nfreq * abs(foldChange[names(nfreq)])
         topgenes <- head(names(sort(nfc, decreasing = TRUE)), showTop)
         geneSets <- lapply(geneSets, function(s) intersect(s, topgenes))
+        geneSets <- set_geneSet_labels(geneSets, get_geneSet_labels(geneSets))
     }
     foldChange <- fc_readable(x, foldChange)
     pvalue <- fc_readable(x, pvalue)
     d <- list2df(geneSets)
+    d$categoryID <- get_geneSet_labels(geneSets)[as.character(d$categoryID)]
     if (!is.null(foldChange)) {
-        d$foldChange <- foldChange[as.character(d[, 2])]
+        d$foldChange <- foldChange[as.character(d$Gene)]
     }
 
     if (!is.null(pvalue)) {
-        d$pvalue <- pvalue[as.character(d[, 2])]
+        d$pvalue <- pvalue[as.character(d$Gene)]
     }
 
     p <- ggplot(d, aes(x = .data$Gene, y = .data$categoryID))

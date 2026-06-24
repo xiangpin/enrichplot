@@ -38,7 +38,7 @@ get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
         w <- DOSE::doSim(id, id, measure = method)
     }
     rownames(y) <- y$ID
-    rownames(w) <- colnames(w) <- y[colnames(w), "Description"]
+    rownames(w) <- colnames(w) <- get_term_labels(y, colnames(w))
     return(w)
 }
 
@@ -99,13 +99,13 @@ build_emap_graph <- function(
         # when just one node
         g <- graph.empty(0, directed = FALSE)
         g <- add_vertices(g, nv = 1)
-        V(g)$name <- as.character(enrichDf$Description)
+        V(g)$name <- unname(get_term_labels(enrichDf, enrichDf$ID))
         V(g)$color <- "red"
         return(g)
     } else {
         w <- pair_sim[
-            as.character(enrichDf$Description),
-            as.character(enrichDf$Description)
+            unname(get_term_labels(enrichDf, enrichDf$ID)),
+            unname(get_term_labels(enrichDf, enrichDf$ID))
         ]
     }
 
@@ -115,8 +115,8 @@ build_emap_graph <- function(
     wd <- wd[!is.na(wd[, 3]), ]
     if (method != "JC") {
         # map id to names
-        wd[, 1] <- enrichDf[wd[, 1], "Description"]
-        wd[, 2] <- enrichDf[wd[, 2], "Description"]
+        wd[, 1] <- get_term_labels(enrichDf, wd[, 1])
+        wd[, 2] <- get_term_labels(enrichDf, wd[, 2])
     }
 
     g <- graph_from_data_frame(wd[, -3], directed = FALSE)
@@ -124,10 +124,9 @@ build_emap_graph <- function(
     # Use similarity as the weight(length) of an edge
     E(g)$weight <- wd[, 3]
     g <- delete.edges(g, E(g)[wd[, 3] < min_edge])
-    idx <- unlist(sapply(V(g)$name, function(x) {
-        which(x == enrichDf$Description)
-    }))
-    cnt <- sapply(geneSets[idx], length)
+    label_map <- get_term_labels(enrichDf, enrichDf$ID)
+    idx <- match(V(g)$name, label_map)
+    cnt <- sapply(geneSets[enrichDf$ID[idx]], length)
     V(g)$size <- cnt
     if (color %in% names(enrichDf)) {
         colVar <- enrichDf[idx, color]
@@ -158,7 +157,7 @@ get_igraph <- function(x, nCategory, color, cex_line, min_edge) {
     if (is.numeric(nCategory)) {
         y <- y[1:nCategory, ]
     } else {
-        y <- y[match(nCategory, y$Description), ]
+        y <- y[resolve_term_rows(x, nCategory), ]
         nCategory <- length(nCategory)
     }
 

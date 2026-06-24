@@ -1,3 +1,8 @@
+# enrichplot 1.33.0.001
+
++ harden term selection and label handling across `cnetplot()`, `emapplot()`, `pairwise_termsim()` and `upsetplot()` by using stable term identifiers internally while keeping display labels readable (2026-06-24, Wed)
++ fix `heatplot(showTop)` to fail early when `foldChange` is missing, correct the `reverse` behavior in `set_enrichplot_color()`, and add runtime checks for optional plotting dependencies (2026-06-24, Wed)
+
 # enrichplot 1.32.0
 
 + Bioconductor RELEASE_3_23 (2026-04-29, Wed)

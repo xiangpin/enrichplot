@@ -52,6 +52,82 @@ update_n <- function(x, showCategory) {
     return(n)
 }
 
+get_term_mapping <- function(x) {
+    y <- as.data.frame(x)
+    if (!all(c("ID", "Description") %in% colnames(y))) {
+        yulab_abort(
+            "Input data must have 'ID' and 'Description' columns",
+            class = "missing_column_error"
+        )
+    }
+
+    ids <- as.character(y$ID)
+    descriptions <- as.character(y$Description)
+    labels <- descriptions
+    duplicated_desc <- duplicated(descriptions) |
+        duplicated(descriptions, fromLast = TRUE)
+    labels[duplicated_desc] <- paste0(
+        descriptions[duplicated_desc],
+        " [",
+        ids[duplicated_desc],
+        "]"
+    )
+
+    data.frame(
+        ID = ids,
+        Description = descriptions,
+        label = labels,
+        stringsAsFactors = FALSE
+    )
+}
+
+resolve_term_rows <- function(x, terms) {
+    mapping <- get_term_mapping(x)
+    idx <- integer()
+
+    for (term in as.character(terms)) {
+        id_hits <- which(mapping$ID == term)
+        if (length(id_hits) > 0) {
+            idx <- c(idx, id_hits)
+            next
+        }
+
+        label_hits <- which(mapping$label == term)
+        if (length(label_hits) > 0) {
+            idx <- c(idx, label_hits)
+            next
+        }
+
+        description_hits <- which(mapping$Description == term)
+        if (length(description_hits) > 0) {
+            idx <- c(idx, description_hits)
+        }
+    }
+
+    unique(idx)
+}
+
+get_term_labels <- function(x, ids) {
+    mapping <- get_term_mapping(x)
+    idx <- match(as.character(ids), mapping$ID)
+    labels <- mapping$label[idx]
+    names(labels) <- as.character(ids)
+    labels
+}
+
+get_geneSet_labels <- function(geneSets) {
+    labels <- attr(geneSets, "term_labels", exact = TRUE)
+    if (is.null(labels)) {
+        labels <- setNames(names(geneSets), names(geneSets))
+    }
+    labels
+}
+
+set_geneSet_labels <- function(geneSets, labels) {
+    attr(geneSets, "term_labels") <- labels
+    geneSets
+}
+
 #' Extract gene sets from enrichment result
 #'
 #' @param x enrichment result object
@@ -64,15 +140,24 @@ extract_geneSets <- function(x, n) {
     if (inherits(x, 'list')) {
         geneSets <- x
     } else {
-        geneSets <- geneInCategory(x) ## use core gene for gsea result
+        all_geneSets <- geneInCategory(x) ## use core gene for gsea result
         y <- as.data.frame(x)
-        geneSets <- geneSets[y$ID]
-        names(geneSets) <- y$Description
+        if (is.numeric(n)) {
+            selected <- y[seq_len(n), , drop = FALSE]
+        } else {
+            idx <- resolve_term_rows(x, n)
+            selected <- y[idx, , drop = FALSE]
+        }
+        geneSets <- all_geneSets[as.character(selected$ID)]
+        geneSets <- set_geneSet_labels(
+            geneSets,
+            get_term_labels(x, selected$ID)
+        )
     }
     if (is.numeric(n)) {
         return(geneSets[1:n])
     }
-    return(geneSets[n]) ## if n is a vector of Description
+    return(geneSets) ## if n is a vector of selected terms
 }
 
 #' Make fold change data readable
@@ -159,6 +244,7 @@ prepare_pie_gene <- function(y) {
     check_input(y, type = "data.frame", arg_name = "y")
 
     check_installed('tibble', 'for `prepare_pie_gene()`.')
+    check_installed('tidyr', 'for `prepare_pie_gene()`.')
     gene_pie <- tibble::as_tibble(y[, c("Cluster", "Description", "geneID")])
     gene_pie$geneID <- strsplit(gene_pie$geneID, '/')
     gene_pie2 <- as.data.frame(tidyr::unnest(gene_pie, cols = geneID))

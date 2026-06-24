@@ -184,6 +184,8 @@ hplot <- function(x, geneSetID) {
         stop("hplot only work for GSEA result")
     }
 
+    check_installed('ggHoriPlot', 'for `hplot()`.')
+
     gsdata <- get_gsdata(x, geneSetID)
 
     ggplot(gsdata, aes(.data$x, .data$runningScore)) +

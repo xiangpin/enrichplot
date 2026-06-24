@@ -349,6 +349,7 @@ add_cluster_panel <- function(
             )
     } else if (cluster_panel == "dotplot") {
         # Add dotplot panel
+        check_installed('ggtreeExtra', 'for `treeplot(cluster_panel = \"dotplot\")`.')
         dotdata <- as.data.frame(x)
         pData <- as.data.frame(p$data)
         paths <- pData$label[order(pData$y, decreasing = TRUE)]
@@ -418,6 +419,7 @@ create_tree_plot <- function(
 ) {
     # Set colors
     if (is.null(group_color)) {
+        check_installed('scales', 'for `treeplot()`.')
         n_clusters <- length(unique(clus))
         group_color <- scales::hue_pal()(n_clusters)
     }

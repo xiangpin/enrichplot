@@ -93,6 +93,7 @@ emapplot_internal <- function(
 
     g <- gg$graph
     size <- vapply(gg$geneSet, length, FUN.VALUE = numeric(1))
+    names(size) <- unname(get_geneSet_labels(gg$geneSet))
     V(g)$size = size[V(g)$name]
 
     p <- ggplot(g, layout = layout) +

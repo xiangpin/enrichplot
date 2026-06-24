@@ -10,6 +10,21 @@
 get_enrichplot_color <- function(n = 2) {
     colors <- getOption("enrichplot.colours")
     if (!is.null(colors)) {
+        colors <- as.character(colors)
+        if (length(colors) < 2) {
+            rlang::abort(
+                "`options(enrichplot.colours = ...)` must provide at least 2 colors."
+            )
+        }
+        if (n == 2) {
+            return(colors[seq_len(2)])
+        }
+        if (n == 3) {
+            if (length(colors) == 2) {
+                return(c(colors[1], "white", colors[2]))
+            }
+            return(colors[seq_len(3)])
+        }
         return(colors)
     }
 
@@ -55,7 +70,7 @@ set_enrichplot_color <- function(
     ...
 ) {
     type <- match.arg(type, c("color", "colour", "fill"))
-    if (!reverse) {
+    if (reverse) {
         colors = rev(colors)
     }
     n <- length(colors)

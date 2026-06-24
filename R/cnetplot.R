@@ -53,22 +53,21 @@ cnetplot.enrichResult <- function(
 
     # Attach enrichment results to geneSets attributes
     y <- as.data.frame(x)
-    # Filter y to match geneSets (names are Descriptions)
-    # We match by Description.
-    # Note: If duplicate Descriptions exist, this might be ambiguous,
-    # but extract_geneSets assumes Descriptions are valid keys.
-    idx <- match(names(geneSets), y$Description)
+    idx <- match(names(geneSets), y$ID)
     y_subset <- y[idx, ]
-    
+
     for (col in colnames(y_subset)) {
         if (is.numeric(y_subset[[col]])) {
             attr(geneSets, col) <- y_subset[[col]]
         }
     }
 
+    plot_geneSets <- geneSets
+    names(plot_geneSets) <- unname(get_geneSet_labels(geneSets))
+
     args <- list(...)
     plot_args <- list(
-        x = geneSets,
+        x = plot_geneSets,
         layout = layout,
         showCategory = showCategory,
         foldChange = foldChange,
@@ -189,6 +188,8 @@ add_node_pie <- function(
     item_scale = 1,
     category_size = NULL
 ) {
+    check_installed('tidyr', 'for `cnetplot()`.')
+
     ## category nodes
     dd <- d[, c('Cluster', 'Description', 'Count')]
     default_size <- sapply(split(dd$Count, dd$Description), sum)
