@@ -32,10 +32,11 @@ pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, show
     y <- as.data.frame(x)
     geneSets <- geneInCategory(x)
     n <- update_n(x, showCategory)
-    if (n == 0) stop("no enriched term found...")
     if (is.numeric(n)) {
+        if (n == 0) stop("no enriched term found...")
         y <- y[1:n, ]
     } else {
+        if (length(n) == 0) stop("no enriched term found...")
         y <- y[resolve_term_rows(x, n), ]
         n <- length(n)
     }

@@ -15,6 +15,8 @@ get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
     ## Choose the method to calculate the similarity
     if (method == "JC") {
         w <- .cal_jc_similarity(geneSets, id = id, name = y$Description)
+        rownames(y) <- y$ID
+        rownames(w) <- colnames(w) <- unname(get_term_labels(y, id))
         return(w)
     }
 
@@ -38,7 +40,7 @@ get_similarity_matrix <- function(y, geneSets, method, semData = NULL) {
         w <- DOSE::doSim(id, id, measure = method)
     }
     rownames(y) <- y$ID
-    rownames(w) <- colnames(w) <- get_term_labels(y, colnames(w))
+    rownames(w) <- colnames(w) <- unname(get_term_labels(y, colnames(w)))
     return(w)
 }
 

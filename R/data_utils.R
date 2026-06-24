@@ -17,13 +17,19 @@ update_n <- function(x, showCategory) {
         if (inherits(x, 'list')) {
             showCategory <- showCategory[showCategory %in% names(x)]
         } else {
-            if (!"Description" %in% colnames(as.data.frame(x))) {
+            if (!all(c("ID", "Description") %in% colnames(as.data.frame(x)))) {
                 yulab_abort(
-                    "Input data must have 'Description' column",
+                    "Input data must have 'ID' and 'Description' columns",
                     class = "missing_column_error"
                 )
             }
-            showCategory <- intersect(showCategory, x$Description)
+            mapping <- get_term_mapping(x)
+            valid_terms <- unique(c(
+                mapping$ID,
+                mapping$Description,
+                mapping$label
+            ))
+            showCategory <- showCategory[showCategory %in% valid_terms]
         }
         return(showCategory)
     }

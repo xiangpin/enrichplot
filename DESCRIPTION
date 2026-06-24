@@ -2,8 +2,8 @@ Package: enrichplot
 Title: Visualization of Functional Enrichment Result
 Version: 1.33.0.001
 Authors@R: c(
-    person(given = "Guangchuang", family = "Yu", email = "guangchuangyu@gmail.com",   role  = c("aut", "cre"), comment = c(ORCID = "0000-0002-6485-8781")),
-    person(given = "Chun-Hui", family = "Gao", email = "gaospecial@gmail.com", role = "ctb", comment = c(ORCID = "0000-0002-1445-7939")))
+    person(given = "Guangchuang", family = "Yu", email = "guangchuangyu@gmail.com",   role  = c("aut", "cre"), comment = c(ORCID = "0000-0002-6485-8781"))
+    )
 Description: The 'enrichplot' package provides visualization methods for interpreting functional enrichment results from ORA or GSEA analyses. 
     It is designed to work with the 'clusterProfiler' ecosystem and builds on 'ggplot2' for flexible and extensible graphics.
 Depends: R (>= 4.2.0)
@@ -51,6 +51,7 @@ Suggests:
     org.Hs.eg.db,
     quarto,
     scales,
+    testthat (>= 3.0.0),
     tibble,
     tidyr
 VignetteBuilder: quarto
@@ -62,3 +63,4 @@ biocViews: Annotation, GeneSetEnrichment, GO, KEGG,
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3
