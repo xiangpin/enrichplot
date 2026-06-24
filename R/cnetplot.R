@@ -24,6 +24,9 @@
 #'   `compareClusterResult`, e.g. `ONTOLOGY`, `category` or `intersect`.
 #' @param includeAll logical value passed to `fortify()` when selecting terms
 #'   from a `compareClusterResult`.
+#' @param pathway_id optional pathway ID for `mnseaResult` subnetworks.
+#' @param include_couplings logical, whether inter-layer coupling edges should
+#'   be kept in `mnseaResult` network plots.
 #' @param ... additional parameters
 #' @importFrom ggtangle cnetplot
 #' @method cnetplot enrichResult
@@ -105,6 +108,173 @@ cnetplot.enrichResult <- function(
 #' @method cnetplot gseaResult
 #' @export
 cnetplot.gseaResult <- cnetplot.enrichResult
+
+#' @rdname cnetplot
+#' @details For `mnseaResult`, `cnetplot()` visualizes a pathway-specific
+#' multilayer subnetwork returned by `fortify_mnsea_subnetwork()`. Feature nodes
+#' are grouped by layer, a synthetic pathway node is added as the anchor, and
+#' optional coupling edges connect features across layers.
+prepare_mnsea_cnetplot_data <- function(
+    x,
+    pathway_id,
+    include_couplings,
+    include_isolated = FALSE
+) {
+    subnet <- fortify_mnsea_subnetwork(
+        x,
+        pathway_id = pathway_id,
+        include_couplings = include_couplings,
+        include_isolated = include_isolated
+    )
+    nodes <- subnet$nodes
+    edges <- subnet$edges
+
+    if (nrow(nodes) == 0) {
+        yulab.utils::yulab_abort("No mnsea subnetwork nodes available for plotting.")
+    }
+
+    if (!"abs_score" %in% colnames(nodes)) {
+        nodes$abs_score <- 1
+    }
+    feature_max <- max(nodes$abs_score[nodes$node_type == "feature"], na.rm = TRUE)
+    if (!is.finite(feature_max) || feature_max <= 0) {
+        feature_max <- 1
+    }
+    nodes$plot_size <- ifelse(
+        nodes$node_type == "pathway",
+        feature_max,
+        nodes$abs_score
+    )
+    nodes$plot_size[!is.finite(nodes$plot_size) | nodes$plot_size <= 0] <- 1
+
+    if (nrow(edges) == 0) {
+        vertices <- nodes
+        vertices$name <- vertices$node_key
+        vertices <- vertices[, c("name", setdiff(colnames(vertices), "name")), drop = FALSE]
+        g <- igraph::graph_from_data_frame(
+            data.frame(from = character(0), to = character(0)),
+            directed = FALSE,
+            vertices = vertices
+        )
+        return(list(graph = g, nodes = nodes, edges = edges, pathway = subnet$pathway))
+    }
+
+    vertices <- nodes
+    vertices$name <- vertices$node_key
+    vertices <- vertices[, c("name", setdiff(colnames(vertices), "name")), drop = FALSE]
+    g <- igraph::graph_from_data_frame(
+        edges[, c("from", "to"), drop = FALSE],
+        directed = FALSE,
+        vertices = vertices
+    )
+    edge_match <- match(
+        paste(igraph::ends(g, igraph::E(g))[, 1], igraph::ends(g, igraph::E(g))[, 2]),
+        paste(edges$from, edges$to)
+    )
+    if (anyNA(edge_match)) {
+        reverse_match <- match(
+            paste(igraph::ends(g, igraph::E(g))[, 2], igraph::ends(g, igraph::E(g))[, 1]),
+            paste(edges$from, edges$to)
+        )
+        edge_match[is.na(edge_match)] <- reverse_match[is.na(edge_match)]
+    }
+    igraph::E(g)$edge_type <- edges$edge_type[edge_match]
+    igraph::E(g)$abs_weight <- edges$abs_weight[edge_match]
+
+    list(graph = g, nodes = nodes, edges = edges, pathway = subnet$pathway)
+}
+
+#' @rdname cnetplot
+#' @method cnetplot mnseaResult
+#' @export
+cnetplot.mnseaResult <- function(
+    x,
+    layout = igraph::layout_with_kk,
+    pathway_id = NULL,
+    include_couplings = TRUE,
+    color_category = "#E5C494",
+    size_category = 1,
+    color_edge = "grey",
+    size_edge = .5,
+    node_label = "all",
+    ...
+) {
+    plot_data <- prepare_mnsea_cnetplot_data(
+        x = x,
+        pathway_id = pathway_id,
+        include_couplings = include_couplings
+    )
+    g <- plot_data$graph
+
+    p <- ggplot(g, layout = layout) +
+        geom_edge(
+            aes(
+                linewidth = .data$abs_weight,
+                linetype = .data$edge_type
+            ),
+            color = color_edge,
+            alpha = 0.7
+        )
+
+    node_data <- p$data
+    feature_nodes <- node_data[node_data$node_type == "feature", , drop = FALSE]
+    pathway_nodes <- node_data[node_data$node_type == "pathway", , drop = FALSE]
+
+    p <- p +
+        geom_point(
+            data = feature_nodes,
+            aes(
+                x = .data$x,
+                y = .data$y,
+                size = .data$plot_size,
+                fill = .data$layer
+            ),
+            shape = 21,
+            color = "black"
+        ) +
+        geom_point(
+            data = pathway_nodes,
+            aes(x = .data$x, y = .data$y),
+            shape = 23,
+            size = 6 * size_category,
+            fill = color_category,
+            color = "black"
+        ) +
+        scale_size(range = c(3, 8)) +
+        ggplot2::scale_linetype_manual(
+            values = c(
+                membership = "solid",
+                intra = "solid",
+                coupling = "dashed"
+            )
+        ) +
+        guides(
+            linewidth = "none",
+            linetype = guide_legend(order = 1),
+            fill = guide_legend(order = 2),
+            size = guide_legend(order = 3)
+        )
+
+    if (node_label != "none") {
+        label_data <- switch(
+            node_label,
+            category = pathway_nodes,
+            item = feature_nodes,
+            all = node_data,
+            node_data
+        )
+        p <- p +
+            geom_text_repel(
+                data = label_data,
+                aes(x = .data$x, y = .data$y, label = .data$label),
+                bg.color = "white",
+                bg.r = .1,
+                size = 4
+            )
+    }
+
+    p
+}
 
 #' @rdname cnetplot
 #' @param pie one of 'equal' or 'Count' to set the slice ratio of the pies

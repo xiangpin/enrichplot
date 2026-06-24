@@ -23,7 +23,8 @@ test_that("fortify_mnsea_subnetwork standardizes nodes and edges", {
         c("from", "to", "edge_type", "abs_weight") %in%
             colnames(subnet$edges)
     ))
-    expect_true(any(subnet$edges$edge_type %in% c("intra", "coupling")))
+    expect_true("pathway" %in% subnet$nodes$node_type)
+    expect_true(any(subnet$edges$edge_type %in% c("membership", "intra", "coupling")))
 })
 
 test_that("dotplot works for mnseaResult contribution view", {
@@ -72,4 +73,13 @@ test_that("heatplot rejects incompatible mnseaResult value semantics", {
         heatplot(x, pathway_id = "T1", value = "share"),
         "When `pathway_id` is provided, `value` must be `score` or `abs_score`."
     )
+})
+
+test_that("cnetplot works for mnseaResult subnetworks", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", include_couplings = TRUE, node_label = "category")
+
+    expect_s3_class(p, "ggplot")
+    expect_true("pathway" %in% p$data$node_type)
 })

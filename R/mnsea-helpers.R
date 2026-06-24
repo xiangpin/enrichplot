@@ -104,6 +104,58 @@ fortify_mnsea_subnetwork <- function(
         edges$abs_weight <- abs(edges$weight)
     }
 
+    if (nrow(nodes) > 0) {
+        pathway_nes <- if (!is.null(subnet$pathway$NES)) {
+            subnet$pathway$NES[1]
+        } else {
+            NA_real_
+        }
+        pathway_abs_score <- if (is.finite(pathway_nes)) {
+            abs(pathway_nes)
+        } else {
+            max(nodes$abs_score, na.rm = TRUE)
+        }
+        pathway_node <- data.frame(
+            ID = pathway_id,
+            Description = pathway_description,
+            Feature = pathway_description,
+            layer = "pathway",
+            score = pathway_nes,
+            abs_score = pathway_abs_score,
+            is_core = TRUE,
+            node_key = paste0("pathway::", pathway_id),
+            collapsed_score = pathway_nes,
+            layer_weight = 1,
+            node = paste0("pathway::", pathway_id),
+            label = pathway_description,
+            node_type = "pathway",
+            sign = ifelse(
+                is.na(pathway_nes),
+                "neutral",
+                ifelse(pathway_nes < 0, "suppressed", "activated")
+            ),
+            pathway_id = pathway_id,
+            pathway_description = pathway_description,
+            stringsAsFactors = FALSE
+        )
+
+        membership_edges <- data.frame(
+            from = pathway_node$node_key,
+            to = nodes$node_key,
+            from_layer = "pathway",
+            to_layer = nodes$layer,
+            from_feature = pathway_id,
+            to_feature = nodes$Feature,
+            weight = nodes$abs_score,
+            edge_type = "membership",
+            abs_weight = nodes$abs_score,
+            stringsAsFactors = FALSE
+        )
+
+        nodes <- rbind(pathway_node, nodes)
+        edges <- rbind(membership_edges, edges)
+    }
+
     subnet$nodes <- nodes
     subnet$edges <- edges
     subnet

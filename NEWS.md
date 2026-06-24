@@ -1,5 +1,6 @@
 # enrichplot 1.33.0.001
 
++ add `cnetplot.mnseaResult()` for pathway-specific multilayer subnetworks, including pathway anchor nodes and lightweight regression coverage for the new network view (2026-06-24, Wed)
 + add `heatplot.mnseaResult()` for term-layer and pathway-specific feature heatmaps, and cover the new `mnsea` helper/plotting workflow with lightweight tests (2026-06-24, Wed)
 + refactor shared plot data preparation for `cnetplot()`, `emapplot()`, `heatplot()` and `pairwise_termsim()` around unified term selection helpers, and add smoke tests for `compareClusterResult` network visualizations (2026-06-24, Wed)
 + add a minimal `testthat` skeleton for regression coverage, and align `update_n()` / `pairwise_termsim()` / `get_similarity_matrix()` with stable term selection semantics (2026-06-24, Wed)

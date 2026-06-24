@@ -3,6 +3,8 @@
 \name{prepare_cnetplot_data}
 \alias{prepare_cnetplot_data}
 \alias{cnetplot.gseaResult}
+\alias{prepare_mnsea_cnetplot_data}
+\alias{cnetplot.mnseaResult}
 \alias{cnetplot.compareClusterResult}
 \title{Category-Gene-Network Plot}
 \usage{
@@ -24,6 +26,26 @@
   fc_threshold = NULL,
   hilight = "none",
   hilight_alpha = 0.3,
+  ...
+)
+
+prepare_mnsea_cnetplot_data(
+  x,
+  pathway_id,
+  include_couplings,
+  include_isolated = FALSE
+)
+
+\method{cnetplot}{mnseaResult}(
+  x,
+  layout = igraph::layout_with_kk,
+  pathway_id = NULL,
+  include_couplings = TRUE,
+  color_category = "#E5C494",
+  size_category = 1,
+  color_edge = "grey",
+  size_edge = 0.5,
+  node_label = "all",
   ...
 )
 
@@ -85,6 +107,11 @@
 
 \item{...}{additional parameters}
 
+\item{pathway_id}{optional pathway ID for \code{mnseaResult} subnetworks.}
+
+\item{include_couplings}{logical, whether inter-layer coupling edges should
+be kept in \code{mnseaResult} network plots.}
+
 \item{pie}{one of 'equal' or 'Count' to set the slice ratio of the pies}
 
 \item{split}{apply \code{showCategory} to each category specified by \code{split} for
@@ -95,6 +122,12 @@ from a \code{compareClusterResult}.}
 }
 \description{
 Category-gene-network plot
+}
+\details{
+For \code{mnseaResult}, \code{cnetplot()} visualizes a pathway-specific
+multilayer subnetwork returned by \code{fortify_mnsea_subnetwork()}. Feature nodes
+are grouped by layer, a synthetic pathway node is added as the anchor, and
+optional coupling edges connect features across layers.
 }
 \seealso{
 \link[ggtangle:cnetplot]{cnetplot}
