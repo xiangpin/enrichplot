@@ -147,3 +147,13 @@ test_that("cnetplot encodes mnsea feature sign with node colors", {
 
     expect_gte(length(unique(feature_nodes$colour)), 2)
 })
+
+test_that("cnetplot distinguishes mnsea pathway and feature nodes with shapes", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", node_label = "none")
+    built <- ggplot2::ggplot_build(p)$data
+
+    expect_true(all(built[[2]]$shape == 21))
+    expect_true(all(built[[3]]$shape == 23))
+})

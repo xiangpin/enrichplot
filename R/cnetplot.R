@@ -252,6 +252,14 @@ cnetplot.mnseaResult <- function(
 
     node_data <- p$data
     node_data$membership_class <- NA_character_
+    node_type_labels <- c(
+        feature = "Feature node",
+        pathway = "Pathway node"
+    )
+    node_data$node_type_label <- factor(
+        node_type_labels[node_data$node_type],
+        levels = unname(node_type_labels)
+    )
     feature_nodes <- node_data[node_data$node_type == "feature", , drop = FALSE]
     pathway_nodes <- node_data[node_data$node_type == "pathway", , drop = FALSE]
     if (nrow(feature_nodes) > 0) {
@@ -276,21 +284,29 @@ cnetplot.mnseaResult <- function(
                 y = .data$y,
                 size = .data$plot_size,
                 fill = .data$layer,
-                color = .data$sign
+                color = .data$sign,
+                shape = .data$node_type_label
             ),
-            shape = 21,
             stroke = 1
         ) +
         geom_point(
             data = pathway_nodes,
-            aes(x = .data$x, y = .data$y),
-            shape = 23,
+            aes(x = .data$x, y = .data$y, shape = .data$node_type_label),
             size = 6 * size_category,
             fill = color_category,
-            color = "black"
+            color = "black",
+            stroke = 1.2
         ) +
         scale_size(range = c(3, 8)) +
         ggplot2::scale_linewidth_identity() +
+        ggplot2::scale_shape_manual(
+            values = c(
+                "Feature node" = 21,
+                "Pathway node" = 23
+            ),
+            name = "Node type",
+            drop = FALSE
+        ) +
         ggplot2::scale_color_manual(
             values = sign_colors,
             name = "Feature sign",
@@ -308,9 +324,10 @@ cnetplot.mnseaResult <- function(
         guides(
             linewidth = "none",
             linetype = guide_legend(order = 1),
-            fill = guide_legend(order = 2),
-            color = guide_legend(order = 3),
-            size = guide_legend(order = 4)
+            shape = guide_legend(order = 2),
+            fill = guide_legend(order = 3),
+            color = guide_legend(order = 4),
+            size = guide_legend(order = 5)
         )
 
     if (node_label != "none") {
