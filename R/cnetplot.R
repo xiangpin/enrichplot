@@ -297,7 +297,10 @@ cnetplot.mnseaResult <- function(
             color = "black",
             stroke = 1.2
         ) +
-        scale_size(range = c(3, 8)) +
+        ggplot2::scale_size_continuous(
+            range = c(3, 8),
+            name = "Feature magnitude"
+        ) +
         ggplot2::scale_linewidth_identity() +
         ggplot2::scale_shape_manual(
             values = c(
@@ -312,6 +315,7 @@ cnetplot.mnseaResult <- function(
             name = "Feature sign",
             drop = FALSE
         ) +
+        ggplot2::scale_fill_discrete(name = "Layer") +
         ggplot2::scale_linetype_manual(
             values = c(
                 "Pathway membership" = "solid",

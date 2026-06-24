@@ -157,3 +157,15 @@ test_that("cnetplot distinguishes mnsea pathway and feature nodes with shapes", 
     expect_true(all(built[[2]]$shape == 21))
     expect_true(all(built[[3]]$shape == 23))
 })
+
+test_that("cnetplot uses explicit mnsea legend titles", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", node_label = "none")
+
+    expect_equal(p$scales$get_scales("linetype")$name, "Edge type")
+    expect_equal(p$scales$get_scales("shape")$name, "Node type")
+    expect_equal(p$scales$get_scales("fill")$name, "Layer")
+    expect_equal(p$scales$get_scales("colour")$name, "Feature sign")
+    expect_equal(p$scales$get_scales("size")$name, "Feature magnitude")
+})
