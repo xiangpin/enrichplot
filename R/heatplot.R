@@ -18,6 +18,16 @@ setMethod(
     }
 )
 
+#' @rdname heatplot
+#' @exportMethod heatplot
+setMethod(
+    "heatplot",
+    signature(x = "mnseaResult"),
+    function(x, showCategory = 30, ...) {
+        heatplot.mnseaResult(x, showCategory, ...)
+    }
+)
+
 
 #' @rdname heatplot
 #' @importFrom ggplot2 geom_tile
@@ -35,6 +45,11 @@ setMethod(
 #' by default wraps names longer than 30 characters
 #' @param symbol symbol of the nodes, one of "rect" (the default) or "dot"
 #' @param pvalue pvalue of genes
+#' @param pathway_id optional pathway ID for pathway-specific `mnseaResult`
+#' heatmaps.
+#' @param value fill value for `mnseaResult`; use `"share"` or
+#' `"contribution"` for term-layer heatmaps and `"score"` or `"abs_score"`
+#' for pathway-specific feature heatmaps.
 #' @author Guangchuang Yu
 prepare_heatplot_data <- function(x, showCategory, showTop, foldChange, pvalue) {
     selected <- select_terms(x, showCategory)
@@ -67,6 +82,87 @@ prepare_heatplot_data <- function(x, showCategory, showTop, foldChange, pvalue) 
     }
 
     d
+}
+
+prepare_heatplot_mnsea_data <- function(
+    x,
+    showCategory,
+    pathway_id,
+    showTop,
+    value
+) {
+    if (is.null(pathway_id)) {
+        if (!value %in% c("share", "contribution")) {
+            yulab.utils::yulab_abort(
+                "When `pathway_id` is NULL, `value` must be `share` or `contribution`."
+            )
+        }
+
+        df <- fortify(
+            x,
+            showCategory = showCategory,
+            by = value,
+            level = "pathway"
+        )
+        if (nrow(df) == 0) {
+            yulab.utils::yulab_abort("No mnsea pathway contribution data available for plotting.")
+        }
+
+        df$axis_label <- factor(
+            as.character(df$Description),
+            levels = levels(df$Description)
+        )
+        df$fill_value <- df[[value]]
+
+        return(list(
+            data = df,
+            y_var = "axis_label",
+            fill_name = value,
+            colors = get_enrichplot_color(2),
+            reverse = FALSE
+        ))
+    }
+
+    if (!value %in% c("score", "abs_score")) {
+        yulab.utils::yulab_abort(
+            "When `pathway_id` is provided, `value` must be `score` or `abs_score`."
+        )
+    }
+
+    df <- fortify_mnsea_contribution(x, pathway_id = pathway_id, level = "feature")
+    if (nrow(df) == 0) {
+        yulab.utils::yulab_abort(
+            "No mnsea feature contribution data available for the selected `pathway_id`."
+        )
+    }
+
+    feature_rank <- stats::aggregate(
+        df$abs_score,
+        by = list(Feature = df$Feature),
+        FUN = max,
+        na.rm = TRUE
+    )
+    feature_rank <- feature_rank[order(feature_rank$x, decreasing = TRUE), , drop = FALSE]
+
+    if (!is.null(showTop) && showTop > 0) {
+        keep_features <- head(feature_rank$Feature, showTop)
+        df <- df[df$Feature %in% keep_features, , drop = FALSE]
+        feature_rank <- feature_rank[feature_rank$Feature %in% keep_features, , drop = FALSE]
+    }
+
+    df$axis_label <- factor(
+        as.character(df$Feature),
+        levels = rev(feature_rank$Feature)
+    )
+    df$fill_value <- df[[value]]
+
+    list(
+        data = df,
+        y_var = "axis_label",
+        fill_name = value,
+        colors = if (value == "score") get_enrichplot_color(3) else get_enrichplot_color(2),
+        reverse = FALSE
+    )
 }
 
 heatplot.enrichResult <- function(
@@ -172,4 +268,62 @@ heatplot.enrichResult <- function(
             panel.grid.major = element_blank(),
             axis.text.x = element_text(angle = 60, hjust = 1)
         )
+}
+
+heatplot.mnseaResult <- function(
+    x,
+    showCategory = 10,
+    pathway_id = NULL,
+    showTop = NULL,
+    value = c("score", "abs_score", "share", "contribution"),
+    label_format = 30
+) {
+    value <- match.arg(value)
+    label_func <- .label_format(label_format)
+    plot_data <- prepare_heatplot_mnsea_data(
+        x = x,
+        showCategory = showCategory,
+        pathway_id = pathway_id,
+        showTop = showTop,
+        value = value
+    )
+    d <- plot_data$data
+
+    p <- ggplot(
+        d,
+        aes(
+            x = .data$layer,
+            y = .data[[plot_data$y_var]],
+            fill = .data$fill_value
+        )
+    ) +
+        geom_tile(color = "white") +
+        xlab(NULL) +
+        ylab(NULL) +
+        theme_minimal() +
+        scale_y_discrete(labels = label_func) +
+        theme(
+            panel.grid.major = element_blank(),
+            axis.text.x = element_text(angle = 45, hjust = 1)
+        )
+
+    if (value == "score") {
+        return(
+            p + set_enrichplot_color(
+                colors = plot_data$colors,
+                type = "fill",
+                name = plot_data$fill_name,
+                transform = "identity",
+                reverse = plot_data$reverse
+            )
+        )
+    }
+
+    p + set_enrichplot_color(
+        colors = plot_data$colors,
+        type = "fill",
+        name = plot_data$fill_name,
+        transform = "identity",
+        reverse = plot_data$reverse
+    )
 }

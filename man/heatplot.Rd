@@ -4,6 +4,7 @@
 \alias{heatplot}
 \alias{heatplot,enrichResult-method}
 \alias{heatplot,gseaResult-method}
+\alias{heatplot,mnseaResult-method}
 \alias{prepare_heatplot_data}
 \title{heatplot}
 \usage{
@@ -12,6 +13,8 @@ heatplot(x, showCategory = 30, ...)
 \S4method{heatplot}{enrichResult}(x, showCategory = 30, ...)
 
 \S4method{heatplot}{gseaResult}(x, showCategory = 30, ...)
+
+\S4method{heatplot}{mnseaResult}(x, showCategory = 30, ...)
 
 prepare_heatplot_data(x, showCategory, showTop, foldChange, pvalue)
 }
@@ -34,6 +37,13 @@ custom function to format axis labels.
 by default wraps names longer than 30 characters}
 
 \item{symbol}{symbol of the nodes, one of "rect" (the default) or "dot"}
+
+\item{pathway_id}{optional pathway ID for pathway-specific \code{mnseaResult}
+heatmaps.}
+
+\item{value}{fill value for \code{mnseaResult}; use \code{"share"} or
+\code{"contribution"} for term-layer heatmaps and \code{"score"} or \code{"abs_score"}
+for pathway-specific feature heatmaps.}
 }
 \value{
 ggplot object
