@@ -36,7 +36,7 @@ cat(packageDescription('enrichplot')$Description)
 ```
 
 
-For details, please visit <https://yulab-smu.top/biomedical-knowledge-mining-book/enrichplot.html>.
+For details, please visit <https://yulab-smu.top/biomedical-knowledge-mining-book/>.
 
 
 ## :writing_hand: Authors
