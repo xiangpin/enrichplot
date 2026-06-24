@@ -86,6 +86,42 @@ setMethod(
 )
 
 #' @rdname dotplot
+#' @exportMethod dotplot
+setMethod(
+    "dotplot",
+    signature(object = "mnseaResult"),
+    function(
+        object,
+        x = "share",
+        color = "contribution",
+        showCategory = 10,
+        size = NULL,
+        split = NULL,
+        font.size = 12,
+        title = "",
+        orderBy = "x",
+        label_format = 30,
+        layer = NULL,
+        ...
+    ) {
+        dotplot.mnseaResult(
+            object = object,
+            x = x,
+            color = color,
+            showCategory = showCategory,
+            size = size,
+            split = split,
+            font.size = font.size,
+            title = title,
+            orderBy = orderBy,
+            label_format = label_format,
+            layer = layer,
+            ...
+        )
+    }
+)
+
+#' @rdname dotplot
 #' @aliases dotplot,compareClusterResult,ANY-method
 #' @exportMethod dotplot
 setMethod(
@@ -223,6 +259,7 @@ setMethod(
 #' by default wraps names longer than 30 characters
 #' @param orderBy The order of the Y-axis
 #' @param decreasing logical. Should the orderBy order be increasing or decreasing?
+#' @param layer optional layer or layers to retain for `mnseaResult`.
 #' @importFrom ggplot2 fortify
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
@@ -338,6 +375,111 @@ dotplot.enrichResult <- function(
     return(label_func)
 }
 
+dotplot.mnseaResult <- function(
+    object,
+    x = "share",
+    color = "contribution",
+    showCategory = 10,
+    size = NULL,
+    split = NULL,
+    font.size = 12,
+    title = "",
+    orderBy = "x",
+    label_format = 30,
+    layer = NULL,
+    decreasing = TRUE
+) {
+    x <- match.arg(x, c("share", "contribution"))
+    colorBy <- match.arg(
+        color,
+        c("contribution", "NES", "pvalue", "p.adjust", "qvalue")
+    )
+    if (is.null(size)) {
+        size <- "n_feature"
+    }
+
+    fortify_by <- if (x == "contribution") {
+        "contribution"
+    } else if (colorBy %in% c("contribution", "NES")) {
+        colorBy
+    } else {
+        "p.adjust"
+    }
+
+    df <- fortify(
+        object,
+        showCategory = showCategory,
+        by = fortify_by,
+        level = "pathway",
+        layer = layer
+    )
+
+    if (nrow(df) == 0) {
+        yulab.utils::yulab_abort("No mnsea contribution data available for plotting.")
+    }
+
+    if (orderBy != "x" && !orderBy %in% colnames(df)) {
+        message('wrong orderBy parameter; set to default `orderBy = "x"`')
+        orderBy <- "x"
+    }
+
+    if (orderBy == "x") {
+        df <- dplyr::mutate(df, x = .data[[x]])
+    }
+
+    label_func <- .label_format(label_format)
+    idx <- order(df[[orderBy]], decreasing = decreasing)
+    df$Description <- factor(
+        as.character(df$Description),
+        levels = rev(unique(as.character(df$Description[idx])))
+    )
+
+    color_scale <- switch(
+        colorBy,
+        NES = list(
+            colors = get_enrichplot_color(3),
+            transform = "identity",
+            reverse = TRUE
+        ),
+        contribution = list(
+            colors = get_enrichplot_color(2),
+            transform = "identity",
+            reverse = TRUE
+        ),
+        list(
+            colors = get_enrichplot_color(2),
+            transform = "log10",
+            reverse = TRUE
+        )
+    )
+
+    p <- .dotplot_internal(
+        df = df,
+        x = x,
+        size = size,
+        colorBy = colorBy,
+        color = colorBy,
+        label_func = label_func,
+        font.size = font.size,
+        title = title,
+        color_colors = color_scale$colors,
+        color_transform = color_scale$transform,
+        color_reverse = color_scale$reverse
+    )
+
+    if (!is.null(split) && split %in% colnames(df)) {
+        p <- p +
+            facet_grid(
+                .data[[split]] ~ .,
+                scales = "free_y",
+                space = "free_y",
+                switch = "y"
+            )
+    }
+
+    p
+}
+
 #' Internal helper function for dotplot construction
 #' @param df data frame containing the plot data
 #' @param x x-axis variable name
@@ -349,9 +491,26 @@ dotplot.enrichResult <- function(
 #' @param title plot title
 #' @param size_range range for size scaling, default c(3, 8)
 #' @param shape_point whether to use enrichplot_point_shape, default TRUE
+#' @param color_colors color palette used for fill mapping
+#' @param color_transform transform applied to the fill scale
+#' @param color_reverse whether to reverse the color legend
 #' @return ggplot object with enrichplotDot class
 #' @noRd
-.dotplot_internal <- function(df, x, size, colorBy, color, label_func, font.size, title, size_range = c(3, 8), shape_point = TRUE) {
+.dotplot_internal <- function(
+    df,
+    x,
+    size,
+    colorBy,
+    color,
+    label_func,
+    font.size,
+    title,
+    size_range = c(3, 8),
+    shape_point = TRUE,
+    color_colors = get_enrichplot_color(2),
+    color_transform = "log10",
+    color_reverse = TRUE
+) {
     p <- ggplot(
         df,
         aes(
@@ -362,7 +521,13 @@ dotplot.enrichResult <- function(
         )
     ) +
         geom_point() +
-        set_enrichplot_color(type = "fill", name = color, transform = 'log10') +
+        set_enrichplot_color(
+            colors = color_colors,
+            type = "fill",
+            name = color,
+            transform = color_transform,
+            reverse = color_reverse
+        ) +
         scale_y_discrete(labels = label_func) +
         ylab(NULL) +
         ggtitle(title) +

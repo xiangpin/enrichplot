@@ -4,6 +4,7 @@
 \alias{dotplot}
 \alias{dotplot,enrichResult-method}
 \alias{dotplot,gseaResult-method}
+\alias{dotplot,mnseaResult-method}
 \alias{dotplot,compareClusterResult-method}
 \alias{dotplot,compareClusterResult,ANY-method}
 \alias{dotplot,enrichResultList-method}
@@ -41,6 +42,21 @@ dotplot(object, ...)
   title = "",
   orderBy = "x",
   label_format = 30,
+  ...
+)
+
+\S4method{dotplot}{mnseaResult}(
+  object,
+  x = "share",
+  color = "contribution",
+  showCategory = 10,
+  size = NULL,
+  split = NULL,
+  font.size = 12,
+  title = "",
+  orderBy = "x",
+  label_format = 30,
+  layer = NULL,
   ...
 )
 
@@ -145,6 +161,8 @@ one of "geneRatio", "Percentage" and "count"}
 \item{label_format}{a numeric value sets wrap length, alternatively a
 custom function to format axis labels.
 by default wraps names longer than 30 characters}
+
+\item{layer}{optional layer or layers to retain for \code{mnseaResult}.}
 
 \item{by}{one of "geneRatio", "Percentage" and "count"}
 

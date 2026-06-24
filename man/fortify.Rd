@@ -3,6 +3,8 @@
 \name{fortify.compareClusterResult}
 \alias{fortify.compareClusterResult}
 \alias{fortify.enrichResult}
+\alias{fortify.nseaResult}
+\alias{fortify.mnseaResult}
 \title{fortify}
 \usage{
 \method{fortify}{compareClusterResult}(
@@ -25,6 +27,30 @@
   split = NULL,
   ...
 )
+
+\method{fortify}{nseaResult}(
+  model,
+  data,
+  showCategory = 5,
+  by = "Count",
+  order = FALSE,
+  drop = FALSE,
+  split = NULL,
+  ...
+)
+
+\method{fortify}{mnseaResult}(
+  model,
+  data,
+  showCategory = 5,
+  by = c("p.adjust", "NES", "contribution", "share"),
+  order = FALSE,
+  drop = FALSE,
+  split = NULL,
+  level = c("result", "pathway"),
+  layer = NULL,
+  ...
+)
 }
 \arguments{
 \item{model}{'enrichResult' or 'compareClusterResult' object}
@@ -44,6 +70,10 @@
 \item{order}{logical}
 
 \item{drop}{logical}
+
+\item{level}{One of \code{"result"} or \code{"pathway"} for \code{mnseaResult}.}
+
+\item{layer}{Optional layer or layers to retain for pathway-level output.}
 }
 \value{
 data.frame

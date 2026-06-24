@@ -168,6 +168,7 @@ fortify.compareClusterResult <- function(
 #' @param split separate result by 'split' variable
 #' @param ... additional parameter
 #' @return data.frame
+#' @importClassesFrom enrichit mnseaResult nseaResult
 #' @importFrom ggplot2 fortify
 ## @method fortify enrichResult
 #' @export
@@ -207,6 +208,103 @@ fortify.gseaResult <- function(
     fortify_internal(model, data, showCategory, by, order, drop, split)
 }
 
+#' @rdname fortify
+## @method fortify nseaResult
+#' @export
+fortify.nseaResult <- function(
+    model,
+    data,
+    showCategory = 5,
+    by = "Count",
+    order = FALSE,
+    drop = FALSE,
+    split = NULL,
+    ...
+) {
+    fortify_internal(model, data, showCategory, by, order, drop, split)
+}
+
+#' @rdname fortify
+#' @param level One of `"result"` or `"pathway"` for `mnseaResult`.
+#' @param layer Optional layer or layers to retain for pathway-level output.
+## @method fortify mnseaResult
+#' @export
+fortify.mnseaResult <- function(
+    model,
+    data,
+    showCategory = 5,
+    by = c("p.adjust", "NES", "contribution", "share"),
+    order = FALSE,
+    drop = FALSE,
+    split = NULL,
+    level = c("result", "pathway"),
+    layer = NULL,
+    ...
+) {
+    level <- match.arg(level)
+    if (level == "result") {
+        return(
+            fortify_internal(
+                model = model,
+                data = data,
+                showCategory = showCategory,
+                by = "Count",
+                order = order,
+                drop = drop,
+                split = split
+            )
+        )
+    }
+
+    by <- match.arg(by)
+    df <- fortify_mnsea_contribution(model, level = "pathway")
+    result_df <- .result_data(model)
+    keep_cols <- intersect(
+        c("ID", "Description", "pvalue", "p.adjust", "qvalue", "NES"),
+        colnames(result_df)
+    )
+
+    if (length(keep_cols) > 0) {
+        term_df <- unique(result_df[, keep_cols, drop = FALSE])
+        join_by <- intersect(c("ID", "Description"), colnames(term_df))
+        df <- merge(df, term_df, by = join_by, all.x = TRUE, sort = FALSE)
+    }
+
+    if (!is.null(layer)) {
+        df <- df[df$layer %in% layer, , drop = FALSE]
+    }
+
+    if (nrow(df) == 0) {
+        return(df)
+    }
+
+    if ("NES" %in% colnames(df)) {
+        df$.sign <- "activated"
+        df$.sign[df$NES < 0] <- "suppressed"
+    }
+
+    if (is.numeric(showCategory)) {
+        rank_df <- .rank_mnsea_terms(df, by = by)
+        show_n <- min(showCategory, nrow(rank_df))
+        rank_df <- rank_df[seq_len(show_n), , drop = FALSE]
+        df <- df[df$ID %in% rank_df$ID, , drop = FALSE]
+        term_levels <- rank_df$Description
+    } else {
+        keep <- unique(showCategory)
+        df <- df[df$Description %in% keep | df$ID %in% keep, , drop = FALSE]
+        term_levels <- unique(df$Description)
+    }
+
+    if (by %in% c("contribution", "share")) {
+        idx <- order(df[[by]], decreasing = TRUE)
+        df <- df[idx, , drop = FALSE]
+    }
+
+    df$Description <- factor(df$Description, levels = rev(unique(term_levels)))
+    rownames(df) <- NULL
+    df
+}
+
 
 fortify_internal <- function(
     model,
@@ -217,7 +315,7 @@ fortify_internal <- function(
     drop = FALSE,
     split = NULL
 ) {
-    res <- as.data.frame(model)
+    res <- .result_data(model)
     res <- res[!is.na(res$Description), ]
     if (inherits(model, "gseaResult")) {
         res$Count <- str_count(res$core_enrichment, "/")

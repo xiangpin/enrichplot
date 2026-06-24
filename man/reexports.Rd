@@ -19,14 +19,14 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{aplot}{\code{\link[aplot]{plot_list}}}
+  \item{aplot}{\code{\link[aplot:plot_list]{plot_list()}}}
 
-  \item{DOSE}{\code{\link[DOSE]{theme_dose}}}
+  \item{DOSE}{\code{\link[DOSE:theme_dose]{theme_dose()}}}
 
-  \item{enrichit}{\code{\link[enrichit]{geneID}}, \code{\link[enrichit]{geneInCategory}}, \code{\link[enrichit]{gseaScores}}}
+  \item{enrichit}{\code{\link[enrichit:geneID]{geneID()}}, \code{\link[enrichit:geneInCategory]{geneInCategory()}}, \code{\link[enrichit:gseaScores]{gseaScores()}}}
 
-  \item{ggplot2}{\code{\link[ggplot2]{facet_grid}}, \code{\link[ggplot2:labs]{ggtitle}}}
+  \item{ggplot2}{\code{\link[ggplot2:facet_grid]{facet_grid()}}, \code{\link[ggplot2:ggtitle]{ggtitle()}}}
 
-  \item{ggtangle}{\code{\link[ggtangle]{cnetplot}}, \code{\link[ggtangle]{geom_cnet_label}}}
+  \item{ggtangle}{\code{\link[ggtangle:cnetplot]{cnetplot()}}, \code{\link[ggtangle:geom_cnet_label]{geom_cnet_label()}}}
 }}
 
