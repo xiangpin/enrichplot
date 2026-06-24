@@ -24,22 +24,31 @@ setMethod("pairwise_termsim", signature(x = "compareClusterResult"),
 
 
 #' @rdname pairwise_termsim
+prepare_pairwise_termsim_data <- function(x, showCategory) {
+    selected <- select_terms(x, showCategory)
+    list(
+        result = selected$result,
+        geneSets = geneInCategory(x),
+        selection = selected$selection
+    )
+}
+
+#' @rdname pairwise_termsim
 pairwise_termsim.enrichResult <- function(x, method = "JC", semData = NULL, showCategory = NULL) {
     if (is.null(showCategory)) {
         showCategory <- .default_pairwise_termsim_category(x)
     }
 
-    y <- as.data.frame(x)
-    geneSets <- geneInCategory(x)
-    n <- update_n(x, showCategory)
-    if (is.numeric(n)) {
-        if (n == 0) stop("no enriched term found...")
-        y <- y[1:n, ]
-    } else {
-        if (length(n) == 0) stop("no enriched term found...")
-        y <- y[resolve_term_rows(x, n), ]
-        n <- length(n)
+    selected <- prepare_pairwise_termsim_data(x, showCategory)
+    n <- selected$selection
+    if (is.numeric(n) && n == 0) {
+        stop("no enriched term found...")
     }
+    if (!is.numeric(n) && length(n) == 0) {
+        stop("no enriched term found...")
+    }
+    y <- selected$result
+    geneSets <- selected$geneSets
 
     x@termsim <- get_similarity_matrix(y = y, geneSets = geneSets, method = method,
                 semData = semData)

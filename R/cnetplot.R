@@ -30,6 +30,17 @@
 #' @export
 #' @seealso
 #' [cnetplot][ggtangle::cnetplot]
+prepare_cnetplot_data <- function(x, showCategory, foldChange) {
+    selected <- select_terms(x, showCategory)
+    geneSets <- attach_result_attributes(selected$geneSets, selected$result)
+
+    list(
+        geneSets = geneSets,
+        plot_geneSets = as_plot_geneSets(geneSets),
+        foldChange = fc_readable(x, foldChange)
+    )
+}
+
 cnetplot.enrichResult <- function(
     x,
     layout = igraph::layout_with_kk,
@@ -48,29 +59,14 @@ cnetplot.enrichResult <- function(
     hilight_alpha = .3,
     ...
 ) {
-    geneSets <- extract_geneSets(x, showCategory)
-    foldChange <- fc_readable(x, foldChange)
-
-    # Attach enrichment results to geneSets attributes
-    y <- as.data.frame(x)
-    idx <- match(names(geneSets), y$ID)
-    y_subset <- y[idx, ]
-
-    for (col in colnames(y_subset)) {
-        if (is.numeric(y_subset[[col]])) {
-            attr(geneSets, col) <- y_subset[[col]]
-        }
-    }
-
-    plot_geneSets <- geneSets
-    names(plot_geneSets) <- unname(get_geneSet_labels(geneSets))
+    plot_data <- prepare_cnetplot_data(x, showCategory, foldChange)
 
     args <- list(...)
     plot_args <- list(
-        x = plot_geneSets,
+        x = plot_data$plot_geneSets,
         layout = layout,
         showCategory = showCategory,
-        foldChange = foldChange,
+        foldChange = plot_data$foldChange,
         fc_threshold = fc_threshold,
         color_category = color_category,
         size_category = size_category,
@@ -94,7 +90,7 @@ cnetplot.enrichResult <- function(
             name = "fold change",
             transform = 'identity'
         )
-    if (!is.null(foldChange)) {
+    if (!is.null(plot_data$foldChange)) {
         p <- p +
             guides(
                 size = guide_legend(order = 1),
@@ -188,7 +184,7 @@ add_node_pie <- function(
     item_scale = 1,
     category_size = NULL
 ) {
-    check_installed('tidyr', 'for `cnetplot()`.')
+    require_suggested('tidyr', 'for `cnetplot()`.')
 
     ## category nodes
     dd <- d[, c('Cluster', 'Description', 'Count')]

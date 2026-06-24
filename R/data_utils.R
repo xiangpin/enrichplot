@@ -134,6 +134,64 @@ set_geneSet_labels <- function(geneSets, labels) {
     geneSets
 }
 
+attach_result_attributes <- function(geneSets, result_df) {
+    if (is.null(result_df) || nrow(result_df) == 0) {
+        return(geneSets)
+    }
+    for (col in colnames(result_df)) {
+        if (is.numeric(result_df[[col]])) {
+            attr(geneSets, col) <- result_df[[col]]
+        }
+    }
+    geneSets
+}
+
+as_plot_geneSets <- function(geneSets) {
+    plot_geneSets <- geneSets
+    names(plot_geneSets) <- unname(get_geneSet_labels(geneSets))
+    plot_geneSets
+}
+
+select_terms <- function(x, showCategory) {
+    selection <- update_n(x, showCategory)
+
+    if (inherits(x, "list")) {
+        if (is.numeric(selection)) {
+            geneSets <- x[seq_len(selection)]
+        } else {
+            geneSets <- x[selection]
+        }
+        labels <- get_geneSet_labels(geneSets)
+        return(list(
+            selection = selection,
+            result = NULL,
+            geneSets = geneSets,
+            ids = names(geneSets),
+            labels = labels
+        ))
+    }
+
+    y <- as.data.frame(x)
+    if (is.numeric(selection)) {
+        selected <- y[seq_len(selection), , drop = FALSE]
+    } else {
+        idx <- resolve_term_rows(x, selection)
+        selected <- y[idx, , drop = FALSE]
+    }
+
+    labels <- get_term_labels(x, selected$ID)
+    geneSets <- geneInCategory(x)[as.character(selected$ID)]
+    geneSets <- set_geneSet_labels(geneSets, labels)
+
+    list(
+        selection = selection,
+        result = selected,
+        geneSets = geneSets,
+        ids = as.character(selected$ID),
+        labels = labels
+    )
+}
+
 #' Extract gene sets from enrichment result
 #'
 #' @param x enrichment result object
@@ -141,29 +199,7 @@ set_geneSet_labels <- function(geneSets, labels) {
 #' @return gene sets list
 #' @noRd
 extract_geneSets <- function(x, n) {
-    n <- update_n(x, n)
-
-    if (inherits(x, 'list')) {
-        geneSets <- x
-    } else {
-        all_geneSets <- geneInCategory(x) ## use core gene for gsea result
-        y <- as.data.frame(x)
-        if (is.numeric(n)) {
-            selected <- y[seq_len(n), , drop = FALSE]
-        } else {
-            idx <- resolve_term_rows(x, n)
-            selected <- y[idx, , drop = FALSE]
-        }
-        geneSets <- all_geneSets[as.character(selected$ID)]
-        geneSets <- set_geneSet_labels(
-            geneSets,
-            get_term_labels(x, selected$ID)
-        )
-    }
-    if (is.numeric(n)) {
-        return(geneSets[1:n])
-    }
-    return(geneSets) ## if n is a vector of selected terms
+    select_terms(x, n)$geneSets
 }
 
 #' Make fold change data readable
@@ -249,8 +285,7 @@ prepare_pie_gene <- function(y) {
     ## Input validation
     check_input(y, type = "data.frame", arg_name = "y")
 
-    check_installed('tibble', 'for `prepare_pie_gene()`.')
-    check_installed('tidyr', 'for `prepare_pie_gene()`.')
+    require_suggested(c('tibble', 'tidyr'), 'for `prepare_pie_gene()`.')
     gene_pie <- tibble::as_tibble(y[, c("Cluster", "Description", "geneID")])
     gene_pie$geneID <- strsplit(gene_pie$geneID, '/')
     gene_pie2 <- as.data.frame(tidyr::unnest(gene_pie, cols = geneID))

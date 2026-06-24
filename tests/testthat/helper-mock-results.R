@@ -1,4 +1,5 @@
 loadNamespace("DOSE")
+loadNamespace("clusterProfiler")
 
 mock_enrich_result <- function() {
     result <- data.frame(
@@ -40,4 +41,35 @@ mock_enrich_result <- function() {
 
 mock_foldchange <- function() {
     c(g1 = 1, g2 = 2, g3 = 3)
+}
+
+mock_comparecluster_result <- function() {
+    gc <- list(
+        A = c("1", "2", "3"),
+        B = c("2", "3", "4")
+    )
+    df <- data.frame(
+        Cluster = c("A", "A", "B", "B"),
+        ID = c("T1", "T2", "T1", "T2"),
+        Description = c("dup", "other", "dup", "other"),
+        geneID = c("1/2", "2/3", "2/3", "3/4"),
+        Count = c(2L, 2L, 2L, 2L),
+        p.adjust = c(0.01, 0.02, 0.03, 0.04),
+        stringsAsFactors = FALSE
+    )
+
+    methods::new(
+        "compareClusterResult",
+        compareClusterResult = df,
+        geneClusters = gc,
+        fun = "mock",
+        gene2Symbol = character(),
+        keytype = "UNKNOWN",
+        readable = FALSE,
+        .call = quote(mock()),
+        termsim = matrix(0, 0, 0),
+        method = "",
+        dr = list(),
+        organism = "mock"
+    )
 }

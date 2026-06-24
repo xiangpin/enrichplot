@@ -29,7 +29,7 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
                                 layout = igraph::layout_with_sugiyama, geom = "text", 
                                 ID = "Description", ...) {
     segment.size <- get_ggrepel_segsize()
-    check_installed('glue', 'for `goplot()`.')
+    require_suggested('glue', 'for `goplot()`.')
     # has_package("AnnotationDbi")
     n <- update_n(x, showCategory)
     geneSets <- geneInCategory(x) ## use core gene for gsea result
@@ -78,7 +78,7 @@ goplot.enrichResult <- function(x, showCategory = 10, color = "p.adjust",
     g <- graph_from_data_frame(edge, directed=TRUE, vertices=node)
     E(g)$relationship <- edge[,3]
 
-    check_installed('ggarchery', 'for `goplot()`.')
+    require_suggested('ggarchery', 'for `goplot()`.')
 
     position = ggarchery::position_attractsegment(
             start_shave=.03, 

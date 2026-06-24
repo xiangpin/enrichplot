@@ -14,7 +14,7 @@
 #' @author Guangchuang Yu
 pmcplot <- function(query, period, proportion = TRUE) {
     
-    check_installed('europepmc', 'for `pmcplot()`.')
+    require_suggested('europepmc', 'for `pmcplot()`.')
     
     res <- map_df(query, function(x) {
         period <- get("period", parent.env(parent.env(new.env())))	

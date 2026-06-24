@@ -129,7 +129,7 @@ ridgeplot.gseaResult <- function(
         label_func <- label_format
     }
 
-    check_installed('ggridges', 'for `ridgeplot()`.')
+    require_suggested('ggridges', 'for `ridgeplot()`.')
 
     ggplot(
         gs2val.df,

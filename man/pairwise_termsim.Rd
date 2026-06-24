@@ -5,6 +5,7 @@
 \alias{pairwise_termsim,enrichResult-method}
 \alias{pairwise_termsim,gseaResult-method}
 \alias{pairwise_termsim,compareClusterResult-method}
+\alias{prepare_pairwise_termsim_data}
 \alias{pairwise_termsim.enrichResult}
 \alias{pairwise_termsim.compareClusterResult}
 \title{pairwise_termsim}
@@ -16,6 +17,8 @@ pairwise_termsim(x, method = "JC", semData = NULL, showCategory = NULL)
 \S4method{pairwise_termsim}{gseaResult}(x, method = "JC", semData = NULL, showCategory = NULL)
 
 \S4method{pairwise_termsim}{compareClusterResult}(x, method = "JC", semData = NULL, showCategory = NULL)
+
+prepare_pairwise_termsim_data(x, showCategory)
 
 pairwise_termsim.enrichResult(
   x,

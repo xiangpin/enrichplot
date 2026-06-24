@@ -273,7 +273,7 @@ setMethod(
     }
     
     if (nrow(hl_df) > 0) {
-        rlang::check_installed('ggrepel', 'for labeling in `manhattanplot()`.')
+        require_suggested('ggrepel', 'for labeling in `manhattanplot()`.')
         hl_df$label <- label_func(hl_df$Description)
         p <- p + ggrepel::geom_text_repel(
             data = hl_df,

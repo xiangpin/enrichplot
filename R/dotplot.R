@@ -646,7 +646,7 @@ dotplot.compareClusterResult <- function(
     
     # Handle shape variations
     if (shape) {
-        check_installed('ggstar', 'for `dotplot()` with `shape = TRUE`.')
+        require_suggested('ggstar', 'for `dotplot()` with `shape = TRUE`.')
         ggstar <- "ggstar"
         require(ggstar, character.only = TRUE)
         # Replace the base geom_point with ggstar

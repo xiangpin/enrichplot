@@ -148,7 +148,7 @@ color_palette <- function(colors) {
     ## Check input validity
     yulab.utils::check_input(colors, type = "character", min_length = 2, arg_name = "colors")
     
-    rlang::check_installed('grDevices', 'for `color_palette()`.')
+    require_suggested('grDevices', 'for `color_palette()`.')
     grDevices::colorRampPalette(colors)(n = 299)
 }
 

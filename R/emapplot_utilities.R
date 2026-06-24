@@ -125,7 +125,7 @@ build_emap_graph <- function(
     E(g)$width <- sqrt(wd[, 3] * 5) * cex_line
     # Use similarity as the weight(length) of an edge
     E(g)$weight <- wd[, 3]
-    g <- delete.edges(g, E(g)[wd[, 3] < min_edge])
+    g <- igraph::delete_edges(g, E(g)[wd[, 3] < min_edge])
     label_map <- get_term_labels(enrichDf, enrichDf$ID)
     idx <- match(V(g)$name, label_map)
     cnt <- sapply(geneSets[enrichDf$ID[idx]], length)
@@ -139,45 +139,6 @@ build_emap_graph <- function(
     V(g)$color <- colVar
     return(g)
 }
-
-
-#' Get an iGraph object
-#'
-#' @param x Enrichment result.
-#' @param nCategory Number of enriched terms to display.
-#' @param color variable that used to color enriched terms, e.g. 'pvalue',
-#' 'p.adjust' or 'qvalue'.
-#' @param cex_line Scale of line width.
-#' @param min_edge The minimum similarity threshold for whether
-#' two nodes are connected, should between 0 and 1, default value is 0.2.
-#'
-#' @return an iGraph object
-#' @noRd
-get_igraph <- function(x, nCategory, color, cex_line, min_edge) {
-    y <- as.data.frame(x)
-    geneSets <- geneInCategory(x) ## use core gene for gsea result
-    if (is.numeric(nCategory)) {
-        y <- y[1:nCategory, ]
-    } else {
-        y <- y[resolve_term_rows(x, nCategory), ]
-        nCategory <- length(nCategory)
-    }
-
-    if (nCategory == 0) {
-        stop("no enriched term found...")
-    }
-
-    build_emap_graph(
-        enrichDf = y,
-        geneSets = geneSets,
-        color = color,
-        cex_line = cex_line,
-        min_edge = min_edge,
-        pair_sim = x@termsim,
-        method = x@method
-    )
-}
-
 
 #' Merge the compareClusterResult file
 #'
@@ -309,7 +270,7 @@ add_ellipse <- function(
     names(show_legend) <- c("fill", "color")
     ellipse_style <- match.arg(ellipse_style, c("ggforce", "polygon"))
 
-    check_installed('ggforce', 'for `add_ellipse()`.');
+    require_suggested('ggforce', 'for `add_ellipse()`.');
 
     if (ellipse_style == "ggforce") {
         if (label) {

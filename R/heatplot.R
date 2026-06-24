@@ -36,6 +36,39 @@ setMethod(
 #' @param symbol symbol of the nodes, one of "rect" (the default) or "dot"
 #' @param pvalue pvalue of genes
 #' @author Guangchuang Yu
+prepare_heatplot_data <- function(x, showCategory, showTop, foldChange, pvalue) {
+    selected <- select_terms(x, showCategory)
+    geneSets <- selected$geneSets
+
+    if (!is.null(showTop) && showTop > 0) {
+        if (is.null(foldChange)) {
+            yulab.utils::yulab_abort(
+                "`showTop` requires `foldChange`.",
+                class = "missing_foldchange_error"
+            )
+        }
+        nfreq <- table(unlist(geneSets))
+        nfc <- nfreq * abs(foldChange[names(nfreq)])
+        topgenes <- head(names(sort(nfc, decreasing = TRUE)), showTop)
+        geneSets <- lapply(geneSets, function(s) intersect(s, topgenes))
+        geneSets <- set_geneSet_labels(geneSets, get_geneSet_labels(selected$geneSets))
+    }
+
+    foldChange <- fc_readable(x, foldChange)
+    pvalue <- fc_readable(x, pvalue)
+    d <- list2df(geneSets)
+    d$categoryID <- get_geneSet_labels(geneSets)[as.character(d$categoryID)]
+    if (!is.null(foldChange)) {
+        d$foldChange <- foldChange[as.character(d$Gene)]
+    }
+
+    if (!is.null(pvalue)) {
+        d$pvalue <- pvalue[as.character(d$Gene)]
+    }
+
+    d
+}
+
 heatplot.enrichResult <- function(
     x,
     showCategory = 30,
@@ -51,32 +84,13 @@ heatplot.enrichResult <- function(
         label_func <- label_format
     }
 
-    n <- update_n(x, showCategory)
-    geneSets <- extract_geneSets(x, n)
-    if (!is.null(showTop) && showTop > 0) {
-        if (is.null(foldChange)) {
-            yulab.utils::yulab_abort(
-                "`showTop` requires `foldChange`.",
-                class = "missing_foldchange_error"
-            )
-        }
-        nfreq <- table(unlist(geneSets))
-        nfc <- nfreq * abs(foldChange[names(nfreq)])
-        topgenes <- head(names(sort(nfc, decreasing = TRUE)), showTop)
-        geneSets <- lapply(geneSets, function(s) intersect(s, topgenes))
-        geneSets <- set_geneSet_labels(geneSets, get_geneSet_labels(geneSets))
-    }
-    foldChange <- fc_readable(x, foldChange)
-    pvalue <- fc_readable(x, pvalue)
-    d <- list2df(geneSets)
-    d$categoryID <- get_geneSet_labels(geneSets)[as.character(d$categoryID)]
-    if (!is.null(foldChange)) {
-        d$foldChange <- foldChange[as.character(d$Gene)]
-    }
-
-    if (!is.null(pvalue)) {
-        d$pvalue <- pvalue[as.character(d$Gene)]
-    }
+    d <- prepare_heatplot_data(
+        x = x,
+        showCategory = showCategory,
+        showTop = showTop,
+        foldChange = foldChange,
+        pvalue = pvalue
+    )
 
     p <- ggplot(d, aes(x = .data$Gene, y = .data$categoryID))
 
@@ -113,7 +127,7 @@ heatplot.enrichResult <- function(
     reverselog_trans <- function(base = exp(1)) {
         trans <- function(x) -log(x, base)
 
-        check_installed('scales', 'for `heatplot()`.')
+        require_suggested('scales', 'for `heatplot()`.')
 
         inv <- function(x) base^(-x)
         scales::trans_new(

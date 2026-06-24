@@ -24,10 +24,5 @@ Authors:
   \item Guangchuang Yu \email{guangchuangyu@gmail.com} (\href{https://orcid.org/0000-0002-6485-8781}{ORCID})
 }
 
-Other contributors:
-\itemize{
-  \item Chun-Hui Gao \email{gaospecial@gmail.com} (\href{https://orcid.org/0000-0002-1445-7939}{ORCID}) [contributor]
-}
-
 }
 \keyword{internal}

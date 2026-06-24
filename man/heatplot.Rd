@@ -4,7 +4,7 @@
 \alias{heatplot}
 \alias{heatplot,enrichResult-method}
 \alias{heatplot,gseaResult-method}
-\alias{heatplot.enrichResult}
+\alias{prepare_heatplot_data}
 \title{heatplot}
 \usage{
 heatplot(x, showCategory = 30, ...)
@@ -13,15 +13,7 @@ heatplot(x, showCategory = 30, ...)
 
 \S4method{heatplot}{gseaResult}(x, showCategory = 30, ...)
 
-heatplot.enrichResult(
-  x,
-  showCategory = 30,
-  showTop = NULL,
-  symbol = "rect",
-  foldChange = NULL,
-  pvalue = NULL,
-  label_format = 30
-)
+prepare_heatplot_data(x, showCategory, showTop, foldChange, pvalue)
 }
 \arguments{
 \item{x}{enrichment result.}
@@ -33,8 +25,6 @@ heatplot.enrichResult(
 \item{showTop}{number of top genes ranked by \code{abs(foldChange) * frequency}
 to be shown in the heatmap, default NULL means all genes are shown}
 
-\item{symbol}{symbol of the nodes, one of "rect" (the default) or "dot"}
-
 \item{foldChange}{fold change.}
 
 \item{pvalue}{pvalue of genes}
@@ -42,6 +32,8 @@ to be shown in the heatmap, default NULL means all genes are shown}
 \item{label_format}{a numeric value sets wrap length, alternatively a
 custom function to format axis labels.
 by default wraps names longer than 30 characters}
+
+\item{symbol}{symbol of the nodes, one of "rect" (the default) or "dot"}
 }
 \value{
 ggplot object

@@ -39,7 +39,7 @@ test_that("heatplot uses disambiguated labels for duplicate descriptions", {
     )
 
     expect_s3_class(p, "ggplot")
-    expect_setequal(unique(p$data$categoryID), c("T1", "T2"))
+    expect_setequal(unique(p$data$categoryID), c("dup [T1]", "dup [T2]"))
     expect_equal(
         anyDuplicated(ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y$get_labels()),
         0L
@@ -65,4 +65,21 @@ test_that("get_enrichplot_color expands two custom colors to three safely", {
         enrichplot:::get_enrichplot_color(3),
         c("#111111", "white", "#222222")
     )
+})
+
+test_that("cnetplot smoke test works for compareClusterResult", {
+    x <- mock_comparecluster_result()
+
+    p <- cnetplot(x, showCategory = 2)
+
+    expect_s3_class(p, "ggplot")
+})
+
+test_that("emapplot smoke test works for compareClusterResult", {
+    x <- mock_comparecluster_result()
+    x <- pairwise_termsim(x, method = "JC", showCategory = 2)
+
+    p <- emapplot(x, showCategory = 2)
+
+    expect_s3_class(p, "ggplot")
 })

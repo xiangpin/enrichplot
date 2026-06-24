@@ -10,7 +10,7 @@
 #' @author guangchuang yu
 ggtable <- function(d, p = NULL) {
     # has_package("ggplotify")
-    check_installed('ggplotify', 'for `ggtable()`.')
+    require_suggested('ggplotify', 'for `ggtable()`.')
     ggplotify::as.ggplot(tableGrob2(d, p))
 }
 
@@ -24,7 +24,7 @@ tableGrob2 <- function(d, p = NULL, rows=NULL) {
     if (!is.null(rows)) {
         rows <- rows[order_index]
     }
-    check_installed('gridExtra', 'for `tableGrob2()`.')
+    require_suggested('gridExtra', 'for `tableGrob2()`.')
     tp <- gridExtra::tableGrob(d, rows=rows)
     if (is.null(p) || is.null(rows)) {
         return(tp)

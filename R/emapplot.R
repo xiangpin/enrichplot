@@ -56,6 +56,27 @@ setMethod(
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom ggrepel geom_label_repel
 #' @author Guangchuang Yu
+prepare_emapplot_data <- function(x, showCategory, color, min_edge, size_edge) {
+    selected <- select_terms(x, showCategory)
+    g <- build_emap_graph(
+        enrichDf = selected$result,
+        geneSets = selected$geneSets,
+        color = color,
+        cex_line = size_edge,
+        min_edge = min_edge,
+        pair_sim = x@termsim,
+        method = x@method
+    )
+    plot_result <- selected$result
+    plot_result$Description <- unname(selected$labels)
+
+    list(
+        graph = g,
+        geneSet = selected$geneSets,
+        result = plot_result
+    )
+}
+
 emapplot_internal <- function(
     x,
     layout = igraph::layout_with_kk,
@@ -82,13 +103,7 @@ emapplot_internal <- function(
             size_edge = size_edge
         )
     } else {
-        gg <- graph_from_enrichResult(
-            x,
-            showCategory = showCategory,
-            color = color,
-            min_edge = min_edge,
-            size_edge = size_edge
-        )
+        gg <- prepare_emapplot_data(x, showCategory, color, min_edge, size_edge)
     }
 
     g <- gg$graph
@@ -104,7 +119,7 @@ emapplot_internal <- function(
     } else {
         if (color %in% names(as.data.frame(x))) {
             p <- p %<+%
-                x[, c("Description", color)] +
+                gg$result[, c("Description", color)] +
                 geom_point(aes(color = .data[[color]], size = .data$size)) +
                 scale_size(range = c(3, 8) * size_category)
             p <- p + set_enrichplot_color(colors = get_enrichplot_color(2))
@@ -115,7 +130,7 @@ emapplot_internal <- function(
                 )
         } else {
             p <- p %<+%
-                x[, "Description", drop = FALSE] +
+                gg$result[, "Description", drop = FALSE] +
                 geom_point(aes(size = .data$size), color = color) +
                 scale_size(range = c(3, 8) * size_category)
         }
@@ -186,27 +201,6 @@ emapplot_internal <- function(
             size = guide_legend(order = 1),
             color = guide_colorbar(order = 2)
         )
-}
-
-graph_from_enrichResult <- function(
-    x,
-    showCategory = 30,
-    color = "p.adjust",
-    min_edge = .2,
-    size_edge = .5
-) {
-    n <- update_n(x, showCategory)
-    y <- as.data.frame(x)
-    ## get graph.data.frame() object
-    g <- get_igraph(
-        x = x,
-        nCategory = n,
-        color = color,
-        cex_line = size_edge,
-        min_edge = min_edge
-    )
-    gs <- extract_geneSets(x, n)
-    return(list(graph = g, geneSet = gs))
 }
 
 graph_from_compareClusterResult <- function(

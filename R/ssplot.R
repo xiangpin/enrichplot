@@ -274,7 +274,7 @@ get_drResult <- function(
         pie = pie
     )
     
-    check_installed('tidydr', 'for `get_drResult()`')
+    require_suggested('tidydr', 'for `get_drResult()`')
     
     ## Optimized error handling
     drResult <- tryCatch({

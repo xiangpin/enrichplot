@@ -5,7 +5,7 @@
 \alias{emapplot,enrichResult-method}
 \alias{emapplot,gseaResult-method}
 \alias{emapplot,compareClusterResult-method}
-\alias{emapplot_internal}
+\alias{prepare_emapplot_data}
 \title{emapplot}
 \usage{
 emapplot(x, ...)
@@ -16,23 +16,7 @@ emapplot(x, ...)
 
 \S4method{emapplot}{compareClusterResult}(x, showCategory = 30, ...)
 
-emapplot_internal(
-  x,
-  layout = igraph::layout_with_kk,
-  showCategory = 30,
-  color = "p.adjust",
-  size_category = 1,
-  min_edge = 0.2,
-  color_edge = "grey",
-  size_edge = 0.5,
-  node_label = "category",
-  node_label_size = 5,
-  pie = "equal",
-  label_format = 30,
-  clusterFunction = stats::kmeans,
-  nWords = 4,
-  nCluster = NULL
-)
+prepare_emapplot_data(x, showCategory, color, min_edge, size_edge)
 }
 \arguments{
 \item{x}{Enrichment result.}
@@ -41,19 +25,19 @@ emapplot_internal(
 
 \item{showCategory}{number of categories to display or a vector of terms.}
 
-\item{layout}{igraph layout}
-
 \item{color}{Variable used to color enriched terms, e.g. 'pvalue',
 'p.adjust' or 'qvalue'.}
-
-\item{size_category}{relative size of the categories}
 
 \item{min_edge}{The minimum similarity threshold for whether
 two nodes are connected, should be between 0 and 1, default value is 0.2.}
 
-\item{color_edge}{color of the network edge}
-
 \item{size_edge}{relative size of edge width}
+
+\item{layout}{igraph layout}
+
+\item{size_category}{relative size of the categories}
+
+\item{color_edge}{color of the network edge}
 
 \item{node_label}{Select which labels to display,
 one of 'category', 'group', 'all' and 'none'.}
