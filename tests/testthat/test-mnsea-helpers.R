@@ -27,6 +27,17 @@ test_that("fortify_mnsea_subnetwork standardizes nodes and edges", {
     expect_true(any(subnet$edges$edge_type %in% c("membership", "intra", "coupling")))
 })
 
+test_that("mnsea helpers use a stable default pathway when pathway_id is NULL", {
+    x <- mock_mnsea_result()
+
+    feature_df <- fortify_mnsea_contribution(x, level = "feature")
+    subnet <- fortify_mnsea_subnetwork(x)
+
+    expect_true(all(feature_df$ID == "T1"))
+    expect_true(all(subnet$nodes$pathway_id == "T1"))
+    expect_true(all(subnet$pathway$ID == "T1"))
+})
+
 test_that("dotplot works for mnseaResult contribution view", {
     x <- mock_mnsea_result()
 
@@ -62,13 +73,28 @@ test_that("heatplot works for mnseaResult pathway-specific feature view", {
     expect_true(all(p$data$ID == "T1"))
 })
 
+test_that("cnetplot uses the default mnsea pathway when pathway_id is NULL", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, node_label = "category")
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(p$data$pathway_id == "T1"))
+})
+
+test_that("heatplot uses the default mnsea pathway for feature view", {
+    x <- mock_mnsea_result()
+
+    p <- heatplot(x, showTop = 2, value = "score")
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(p$data$ID == "T1"))
+    expect_lte(length(unique(as.character(p$data$Feature))), 2)
+})
+
 test_that("heatplot rejects incompatible mnseaResult value semantics", {
     x <- mock_mnsea_result()
 
-    expect_error(
-        heatplot(x, value = "score"),
-        "When `pathway_id` is NULL, `value` must be `share` or `contribution`."
-    )
     expect_error(
         heatplot(x, pathway_id = "T1", value = "share"),
         "When `pathway_id` is provided, `value` must be `score` or `abs_score`."
@@ -82,4 +108,17 @@ test_that("cnetplot works for mnseaResult subnetworks", {
 
     expect_s3_class(p, "ggplot")
     expect_true("pathway" %in% p$data$node_type)
+})
+
+test_that("cnetplot supports share and exclusive mnsea labels", {
+    x <- mock_mnsea_result()
+
+    p_share <- cnetplot(x, pathway_id = "T1", node_label = "share")
+    p_exclusive <- cnetplot(x, pathway_id = "T1", node_label = "exclusive")
+
+    share_labels <- unique(unlist(lapply(p_share$layers, function(layer) layer$data$label)))
+    exclusive_labels <- unique(unlist(lapply(p_exclusive$layers, function(layer) layer$data$label)))
+
+    expect_true("g1" %in% share_labels || "g2" %in% share_labels)
+    expect_true(length(exclusive_labels) == 0 || "g1" %in% exclusive_labels || "g2" %in% exclusive_labels)
 })

@@ -22,6 +22,7 @@ fortify_mnsea_contribution <- function(
     ...
 ) {
     level <- match.arg(level)
+    pathway_id <- resolve_mnsea_pathway_id(x, pathway_id, level = level)
     df <- get_mnsea_contribution(x, pathway_id = pathway_id, level = level)
     df <- as.data.frame(df, stringsAsFactors = FALSE)
 
@@ -63,6 +64,7 @@ fortify_mnsea_subnetwork <- function(
     include_isolated = FALSE,
     ...
 ) {
+    pathway_id <- resolve_mnsea_pathway_id(x, pathway_id, level = "feature")
     subnet <- extract_mnsea_subnetwork(
         x,
         pathway_id = pathway_id,
@@ -166,6 +168,25 @@ fortify_mnsea_subnetwork <- function(
         return(as.data.frame(x@result, stringsAsFactors = FALSE))
     }
     as.data.frame(x, stringsAsFactors = FALSE)
+}
+
+default_mnsea_pathway_id <- function(x) {
+    result_df <- .result_data(x)
+    if (!"ID" %in% colnames(result_df) || nrow(result_df) == 0) {
+        yulab.utils::yulab_abort("No mnsea pathways available for plotting.")
+    }
+    as.character(result_df$ID[1])
+}
+
+resolve_mnsea_pathway_id <- function(x, pathway_id = NULL, level = c("pathway", "feature")) {
+    level <- match.arg(level)
+    if (!is.null(pathway_id)) {
+        return(as.character(pathway_id))
+    }
+    if (level == "pathway") {
+        return(NULL)
+    }
+    default_mnsea_pathway_id(x)
 }
 
 .rank_mnsea_terms <- function(df, by = c("p.adjust", "NES", "contribution", "share")) {

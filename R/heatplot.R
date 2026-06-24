@@ -91,13 +91,7 @@ prepare_heatplot_mnsea_data <- function(
     showTop,
     value
 ) {
-    if (is.null(pathway_id)) {
-        if (!value %in% c("share", "contribution")) {
-            yulab.utils::yulab_abort(
-                "When `pathway_id` is NULL, `value` must be `share` or `contribution`."
-            )
-        }
-
+    if (is.null(pathway_id) && value %in% c("share", "contribution")) {
         df <- fortify(
             x,
             showCategory = showCategory,
@@ -129,6 +123,7 @@ prepare_heatplot_mnsea_data <- function(
         )
     }
 
+    pathway_id <- resolve_mnsea_pathway_id(x, pathway_id, level = "feature")
     df <- fortify_mnsea_contribution(x, pathway_id = pathway_id, level = "feature")
     if (nrow(df) == 0) {
         yulab.utils::yulab_abort(

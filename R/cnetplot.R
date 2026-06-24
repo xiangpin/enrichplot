@@ -217,8 +217,22 @@ cnetplot.mnseaResult <- function(
         )
 
     node_data <- p$data
+    node_data$membership_class <- NA_character_
     feature_nodes <- node_data[node_data$node_type == "feature", , drop = FALSE]
     pathway_nodes <- node_data[node_data$node_type == "pathway", , drop = FALSE]
+    if (nrow(feature_nodes) > 0) {
+        feature_freq <- table(feature_nodes$Feature)
+        feature_nodes$membership_class <- ifelse(
+            feature_freq[feature_nodes$Feature] > 1,
+            "share",
+            "exclusive"
+        )
+    } else {
+        feature_nodes$membership_class <- character(0)
+    }
+    node_data[node_data$node_type == "feature", "membership_class"] <- feature_nodes$membership_class
+    pathway_nodes <- node_data[node_data$node_type == "pathway", , drop = FALSE]
+    feature_nodes <- node_data[node_data$node_type == "feature", , drop = FALSE]
 
     p <- p +
         geom_point(
@@ -260,6 +274,8 @@ cnetplot.mnseaResult <- function(
             node_label,
             category = pathway_nodes,
             item = feature_nodes,
+            exclusive = feature_nodes[feature_nodes$membership_class == "exclusive", , drop = FALSE],
+            share = feature_nodes[feature_nodes$membership_class == "share", , drop = FALSE],
             all = node_data,
             node_data
         )
