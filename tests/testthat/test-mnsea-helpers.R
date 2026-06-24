@@ -123,6 +123,26 @@ test_that("cnetplot supports share and exclusive mnsea labels", {
     expect_true(length(exclusive_labels) == 0 || "g1" %in% exclusive_labels || "g2" %in% exclusive_labels)
 })
 
+test_that("cnetplot default mnsea labels keep pathway labels and deduplicate features", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", node_label = "all")
+    label_data <- p$layers[[4]]$data
+
+    expect_true("Pathway 1" %in% label_data$label)
+    feature_labels <- label_data$label[label_data$node_type == "feature"]
+    expect_equal(anyDuplicated(feature_labels), 0L)
+})
+
+test_that("cnetplot item labels use one representative label per feature", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", node_label = "item")
+    item_labels <- p$layers[[4]]$data$label
+
+    expect_equal(anyDuplicated(item_labels), 0L)
+})
+
 test_that("cnetplot encodes mnsea edge semantics and honors size_edge", {
     x <- mock_mnsea_result()
 

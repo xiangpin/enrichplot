@@ -1,5 +1,6 @@
 # enrichplot 1.33.0.001
 
++ refine default label selection in `cnetplot.mnseaResult()` to keep pathway annotations while deduplicating repeated feature labels across layers, with regression coverage for the quieter defaults (2026-06-24, Wed)
 + clarify `cnetplot.mnseaResult()` legend titles for edge type, node type, layer, feature sign, and feature magnitude, with regression coverage for the updated defaults (2026-06-24, Wed)
 + distinguish pathway and feature nodes in `cnetplot.mnseaResult()` with explicit node-type shapes and regression coverage for the updated legend semantics (2026-06-24, Wed)
 + refine `cnetplot.mnseaResult()` with edge-type legends, effective `size_edge` scaling, and feature-node sign encoding backed by lightweight regression tests (2026-06-24, Wed)

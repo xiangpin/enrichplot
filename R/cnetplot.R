@@ -199,6 +199,49 @@ normalize_mnsea_edge_width <- function(x, size_edge) {
     size_edge * (0.8 + (x - xmin) / (xmax - xmin) * 1.2)
 }
 
+select_mnsea_feature_labels <- function(feature_nodes, membership = NULL, max_labels = 8L) {
+    if (nrow(feature_nodes) == 0) {
+        return(feature_nodes)
+    }
+
+    label_nodes <- feature_nodes
+    if (!is.null(membership)) {
+        label_nodes <- label_nodes[
+            label_nodes$membership_class %in% membership,
+            ,
+            drop = FALSE
+        ]
+    }
+    if (nrow(label_nodes) == 0) {
+        return(label_nodes)
+    }
+
+    label_nodes <- label_nodes[order(-label_nodes$plot_size, label_nodes$Feature), , drop = FALSE]
+    label_nodes <- label_nodes[!duplicated(label_nodes$Feature), , drop = FALSE]
+
+    if (!is.null(max_labels) && nrow(label_nodes) > max_labels) {
+        label_nodes <- label_nodes[seq_len(max_labels), , drop = FALSE]
+    }
+
+    label_nodes
+}
+
+select_mnsea_label_data <- function(node_label, node_data, pathway_nodes, feature_nodes) {
+    feature_label_nodes <- select_mnsea_feature_labels(feature_nodes)
+    share_label_nodes <- select_mnsea_feature_labels(feature_nodes, membership = "share")
+    exclusive_label_nodes <- select_mnsea_feature_labels(feature_nodes, membership = "exclusive")
+
+    switch(
+        node_label,
+        category = pathway_nodes,
+        item = feature_label_nodes,
+        exclusive = exclusive_label_nodes,
+        share = share_label_nodes,
+        all = rbind(pathway_nodes, feature_label_nodes),
+        node_data
+    )
+}
+
 #' @rdname cnetplot
 #' @method cnetplot mnseaResult
 #' @export
@@ -335,14 +378,11 @@ cnetplot.mnseaResult <- function(
         )
 
     if (node_label != "none") {
-        label_data <- switch(
-            node_label,
-            category = pathway_nodes,
-            item = feature_nodes,
-            exclusive = feature_nodes[feature_nodes$membership_class == "exclusive", , drop = FALSE],
-            share = feature_nodes[feature_nodes$membership_class == "share", , drop = FALSE],
-            all = node_data,
-            node_data
+        label_data <- select_mnsea_label_data(
+            node_label = node_label,
+            node_data = node_data,
+            pathway_nodes = pathway_nodes,
+            feature_nodes = feature_nodes
         )
         p <- p +
             geom_text_repel(
