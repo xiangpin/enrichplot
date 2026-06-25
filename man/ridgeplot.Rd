@@ -3,6 +3,7 @@
 \name{ridgeplot}
 \alias{ridgeplot}
 \alias{ridgeplot,gseaResult-method}
+\alias{ridgeplot,mnseaResult-method}
 \alias{ridgeplot.gseaResult}
 \title{ridgeplot}
 \usage{
@@ -21,6 +22,19 @@ ridgeplot(
   fill = "p.adjust",
   core_enrichment = TRUE,
   label_format = 30,
+  ...
+)
+
+\S4method{ridgeplot}{mnseaResult}(
+  x,
+  showCategory = 30,
+  fill = "p.adjust",
+  core_enrichment = TRUE,
+  label_format = 30,
+  orderBy = "NES",
+  decreasing = FALSE,
+  stat = "density_ridges",
+  layer = NULL,
   ...
 )
 
@@ -54,6 +68,8 @@ custom function to format axis labels.}
 \item{decreasing}{logical. Should the orderBy order be increasing or decreasing?}
 
 \item{stat}{statistic passed to \code{ggridges::geom_density_ridges()}.}
+
+\item{layer}{Optional \code{mnsea} layer. When \code{NULL}, use collapsed scores.}
 }
 \value{
 ggplot object

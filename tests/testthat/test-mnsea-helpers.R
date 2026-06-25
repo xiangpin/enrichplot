@@ -181,6 +181,59 @@ test_that("gseaplot mnseaResult rejects multi-layer requests", {
     )
 })
 
+test_that("ridgeplot works for mnseaResult with collapsed scores", {
+    x <- mock_mnsea_result()
+
+    p <- ridgeplot(x, showCategory = 2, fill = "NES")
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(c("ID", "category", "value", "layer", "NES") %in% colnames(p$data)))
+    expect_equal(unique(as.character(p$data$layer)), "collapsed")
+    expect_setequal(unique(as.character(p$data$ID)), c("T1", "T2"))
+})
+
+test_that("ridgeplot mnseaResult supports single-layer ranked scores", {
+    x <- mock_mnsea_result()
+
+    p <- ridgeplot(x, showCategory = "T1", fill = "NES", layer = "protein")
+
+    expect_s3_class(p, "ggplot")
+    expect_equal(unique(as.character(p$data$layer)), "protein")
+    expect_equal(unique(as.character(p$data$ID)), "T1")
+    expect_setequal(unique(as.numeric(p$data$value)), c(-0.4, 1.0))
+})
+
+test_that("ridgeplot mnseaResult respects core enrichment filter", {
+    x <- mock_mnsea_result()
+
+    p_core <- ridgeplot(
+        x,
+        showCategory = "T2",
+        fill = "NES",
+        core_enrichment = TRUE,
+        layer = "rna"
+    )
+    p_all <- ridgeplot(
+        x,
+        showCategory = "T2",
+        fill = "NES",
+        core_enrichment = FALSE,
+        layer = "rna"
+    )
+
+    expect_false(-0.5 %in% as.numeric(p_core$data$value))
+    expect_true(-0.5 %in% as.numeric(p_all$data$value))
+})
+
+test_that("ridgeplot mnseaResult rejects multi-layer requests", {
+    x <- mock_mnsea_result()
+
+    expect_error(
+        ridgeplot(x, showCategory = "T1", fill = "NES", layer = c("rna", "protein")),
+        "`layer` must be `NULL` or a single layer"
+    )
+})
+
 test_that("cnetplot uses the default mnsea pathway when pathway_id is NULL", {
     x <- mock_mnsea_result()
 

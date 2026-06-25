@@ -1,5 +1,6 @@
 # enrichplot 1.33.0.001
 
++ add a minimal `ridgeplot.mnseaResult()` that shows pathway-level feature score distributions from collapsed scores or a selected single layer, with regression coverage for layer-aware ranked scores and `core_enrichment` filtering (2026-06-25, Thu)
 + add a minimal `gseaplot.mnseaResult()` that supports collapsed-score and single-layer running-score views for one pathway at a time, with regression coverage for stable pathway selection and layer-aware ranked scores (2026-06-25, Thu)
 + batch-refine `mnsea` plot semantics by aligning `layer` filtering and readable legend labels across `dotplot()`, `heatplot()`, `cnetplot()` and `emapplot()`, while fixing `emapplot.mnseaResult()` to retain all selected pathways when rebuilding overlap graphs after layer filtering, with expanded regression coverage (2026-06-25, Thu)
 + add a minimal `emapplot.mnseaResult()` that reuses cached term similarity when available and otherwise falls back to internal `JC` overlap for pathway-level map plots, with regression coverage (2026-06-24, Wed)
