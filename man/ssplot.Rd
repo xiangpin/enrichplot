@@ -4,6 +4,7 @@
 \alias{ssplot}
 \alias{ssplot,enrichResult-method}
 \alias{ssplot,gseaResult-method}
+\alias{ssplot,mnseaResult-method}
 \alias{ssplot,compareClusterResult-method}
 \alias{ssplot.enrichResult}
 \alias{ssplot.compareClusterResult}
@@ -14,6 +15,8 @@ ssplot(x, ...)
 \S4method{ssplot}{enrichResult}(x, showCategory = 30, ...)
 
 \S4method{ssplot}{gseaResult}(x, showCategory = 30, ...)
+
+\S4method{ssplot}{mnseaResult}(x, showCategory = 30, ...)
 
 \S4method{ssplot}{compareClusterResult}(x, showCategory = 30, ...)
 

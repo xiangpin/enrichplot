@@ -264,6 +264,24 @@ test_that("upsetplot mnseaResult respects core enrichment filter", {
     expect_true("g3" %in% as.character(df_all$Feature))
 })
 
+test_that("ssplot works for mnseaResult with collapsed similarity space", {
+    x <- mock_mnsea_result()
+
+    p <- ssplot(x, showCategory = 2, node_label = "none")
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(c("label", "size") %in% colnames(p$data)))
+    expect_setequal(unique(as.character(p$data$label)), c("Pathway 1", "Pathway 2"))
+})
+
+test_that("ssplot mnseaResult supports single-layer similarity space", {
+    x <- mock_mnsea_result()
+    dr <- get_mnsea_drResult(x, showCategory = 2, layer = "rna", drfun = stats::cmdscale, dr.params = list(eig = TRUE))
+
+    expect_true(all(c("Dimension1", "Dimension2") %in% colnames(dr$drdata)))
+    expect_setequal(rownames(dr$drdata), c("Pathway 1", "Pathway 2"))
+})
+
 test_that("cnetplot uses the default mnsea pathway when pathway_id is NULL", {
     x <- mock_mnsea_result()
 

@@ -111,23 +111,23 @@ prepare_emapplot_mnsea_feature_data <- function(x, ids, layer = NULL) {
     feature_df
 }
 
-prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_edge, layer = NULL) {
+prepare_mnsea_similarity_data <- function(x, showCategory, layer = NULL) {
     selected <- select_terms(x, showCategory)
     if (nrow(selected$result) == 0) {
-        yulab.utils::yulab_abort("No mnsea pathways available for emapplot.")
+        yulab.utils::yulab_abort("No mnsea pathways available for plotting.")
     }
 
     pathway_df <- fortify_mnsea_contribution(x, level = "pathway", layer = layer)
     feature_df <- prepare_emapplot_mnsea_feature_data(x, ids = selected$ids, layer = layer)
     if (nrow(pathway_df) == 0 || nrow(feature_df) == 0) {
-        yulab.utils::yulab_abort("No mnsea layers available for emapplot after filtering.")
+        yulab.utils::yulab_abort("No mnsea layers available after filtering.")
     }
 
     pathway_df <- pathway_df[pathway_df$ID %in% selected$ids, , drop = FALSE]
     feature_df <- feature_df[feature_df$ID %in% selected$ids, , drop = FALSE]
     retained_ids <- intersect(unique(pathway_df$ID), unique(feature_df$ID))
     if (length(retained_ids) == 0) {
-        yulab.utils::yulab_abort("No mnsea pathways available for emapplot after filtering.")
+        yulab.utils::yulab_abort("No mnsea pathways available after filtering.")
     }
 
     keep <- selected$ids %in% retained_ids
@@ -169,15 +169,6 @@ prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_e
     )
     pathway_summary$Description <- as.character(pathway_summary$Description)
 
-    g <- build_emap_graph(
-        enrichDf = selected$result,
-        geneSets = selected$geneSets,
-        color = color,
-        cex_line = size_edge,
-        min_edge = min_edge,
-        pair_sim = pair_sim,
-        method = method
-    )
     plot_result <- selected$result
     plot_result$Description <- term_labels
     plot_result <- merge(
@@ -189,15 +180,41 @@ prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_e
     )
 
     list(
-        graph = g,
+        result = plot_result,
         geneSet = selected$geneSets,
-        result = plot_result
+        pair_sim = pair_sim,
+        method = method
+    )
+}
+
+prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_edge, layer = NULL) {
+    plot_data <- prepare_mnsea_similarity_data(
+        x,
+        showCategory = showCategory,
+        layer = layer
+    )
+
+    g <- build_emap_graph(
+        enrichDf = plot_data$result,
+        geneSets = plot_data$geneSet,
+        color = color,
+        cex_line = size_edge,
+        min_edge = min_edge,
+        pair_sim = plot_data$pair_sim,
+        method = plot_data$method
+    )
+
+    list(
+        graph = g,
+        geneSet = plot_data$geneSet,
+        result = plot_data$result
     )
 }
 
 emapplot_internal <- function(
     x,
     layout = igraph::layout_with_kk,
+    coords = NULL,
     showCategory = 30,
     color = "p.adjust",
     size_category = 1,
@@ -238,6 +255,21 @@ emapplot_internal <- function(
     size <- vapply(gg$geneSet, length, FUN.VALUE = numeric(1))
     names(size) <- unname(get_geneSet_labels(gg$geneSet))
     V(g)$size = size[V(g)$name]
+
+    if (!is.null(coords)) {
+        coords <- as.data.frame(coords)
+        if (!all(c("x", "y") %in% colnames(coords))) {
+            yulab.utils::yulab_abort("`coords` must contain `x` and `y` columns.")
+        }
+        coords <- coords[, c("x", "y"), drop = FALSE]
+        if (is.null(rownames(coords))) {
+            yulab.utils::yulab_abort("`coords` must use node labels as row names.")
+        }
+        layout_coords <- coords
+        layout <- function(graph) {
+            as.matrix(layout_coords[igraph::V(graph)$name, c("x", "y"), drop = FALSE])
+        }
+    }
 
     p <- ggplot(g, layout = layout)
     if (igraph::ecount(g) > 0) {

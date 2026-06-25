@@ -22,6 +22,16 @@ setMethod(
 #' @exportMethod ssplot
 setMethod(
     "ssplot",
+    signature(x = "mnseaResult"),
+    function(x, showCategory = 30, ...) {
+        ssplot.mnseaResult(x, showCategory = showCategory, ...)
+    }
+)
+
+#' @rdname ssplot
+#' @exportMethod ssplot
+setMethod(
+    "ssplot",
     signature(x = "compareClusterResult"),
     function(x, showCategory = 30, ...) {
         ssplot.compareClusterResult(x, showCategory = showCategory, ...)
@@ -67,12 +77,54 @@ ssplot.enrichResult <- function(
     p <- emapplot(
         x = x,
         showCategory = showCategory,
+        coords = coords,
         #group = group,
         node_label = node_label,
         ...
     )
 
     ## Set axis label according to drfun
+    p <- adj_axis(p = p, drResult = drResult)
+
+    p + theme_dr()
+}
+
+ssplot.mnseaResult <- function(
+    x,
+    showCategory = 30,
+    layer = NULL,
+    drfun = NULL,
+    dr.params = list(),
+    node_label = "group",
+    ...
+) {
+    if (is.null(drfun)) {
+        drfun = stats::cmdscale
+        dr.params = list(eig = TRUE)
+    }
+    if (is.character(drfun)) {
+        drfun <- eval(parse(text = drfun))
+    }
+
+    drResult <- get_mnsea_drResult(
+        x = x,
+        showCategory = showCategory,
+        layer = layer,
+        drfun = drfun,
+        dr.params = dr.params
+    )
+    coords <- drResult$drdata[, c(1, 2), drop = FALSE]
+    colnames(coords) <- c("x", "y")
+
+    p <- emapplot(
+        x = x,
+        showCategory = showCategory,
+        coords = coords,
+        layer = layer,
+        node_label = node_label,
+        ...
+    )
+
     p <- adj_axis(p = p, drResult = drResult)
 
     p + theme_dr()
@@ -298,4 +350,83 @@ get_drResult <- function(
     }
     
     return(drResult)
+}
+
+get_mnsea_drResult <- function(
+    x,
+    showCategory,
+    layer = NULL,
+    drfun,
+    dr.params
+) {
+    plot_data <- prepare_mnsea_similarity_data(
+        x = x,
+        showCategory = showCategory,
+        layer = layer
+    )
+    sim <- plot_data$pair_sim
+    labels <- rownames(sim)
+    if (is.null(labels) || length(labels) == 0) {
+        labels <- as.character(plot_data$result$Description)
+        rownames(sim) <- colnames(sim) <- labels
+    }
+
+    if (nrow(sim) <= 1) {
+        drdata <- data.frame(
+            Dimension1 = 0,
+            Dimension2 = 0,
+            row.names = labels[1]
+        )
+        return(list(
+            drdata = drdata,
+            data = structure(plot_data$result, Labels = labels),
+            eigenvalue = c(1, 0)
+        ))
+    }
+
+    if (nrow(sim) == 2) {
+        drdata <- data.frame(
+            Dimension1 = c(-0.5, 0.5),
+            Dimension2 = c(0, 0),
+            row.names = labels
+        )
+        return(list(
+            drdata = drdata,
+            data = structure(plot_data$result, Labels = labels),
+            eigenvalue = c(1, 0)
+        ))
+    }
+
+    if (!isSymmetric(sim)) {
+        sim <- (sim + t(sim)) / 2
+    }
+    sim[is.na(sim)] <- 0
+    sim <- pmin(pmax(sim, 0), 1)
+    diag(sim) <- 1
+    offdiag_idx <- row(sim) != col(sim)
+    sim[offdiag_idx & sim >= 1] <- 1 - .Machine$double.eps
+    distance_mat <- stats::as.dist(1 - sim)
+
+    require_suggested("tidydr", "for `ssplot()`")
+    drResult <- tryCatch({
+        do.call(tidydr::dr, c(list(data = distance_mat, fun = drfun), dr.params))
+    }, error = function(e) {
+        yulab.utils::yulab_warn(
+            "dimensionality reduction failed with provided drfun; falling back to stats::cmdscale",
+            class = "dr_fallback_warning"
+        )
+        tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
+    })
+
+    if (is.null(drResult$drdata)) {
+        yulab.utils::yulab_warn(
+            "Wrong drfun parameter or unsupported dimensionality reduction method; using stats::cmdscale",
+            class = "dr_parameter_warning"
+        )
+        drResult <- tidydr::dr(distance_mat, stats::cmdscale, eig = TRUE)
+    }
+
+    drResult$data <- structure(plot_data$result, Labels = labels)
+    rownames(drResult$drdata) <- labels
+    drResult
 }
