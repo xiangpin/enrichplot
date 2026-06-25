@@ -38,6 +38,18 @@ test_that("mnsea helpers use a stable default pathway when pathway_id is NULL", 
     expect_true(all(subnet$pathway$ID == "T1"))
 })
 
+test_that("mnsea helpers support stable layer filtering", {
+    x <- mock_mnsea_result()
+
+    pathway_df <- fortify_mnsea_contribution(x, level = "pathway", layer = "rna")
+    feature_df <- fortify_mnsea_contribution(x, level = "feature", pathway_id = "T1", layer = "protein")
+    subnet <- fortify_mnsea_subnetwork(x, pathway_id = "T1", layer = "rna")
+
+    expect_true(all(as.character(pathway_df$layer) == "rna"))
+    expect_true(all(as.character(feature_df$layer) == "protein"))
+    expect_true(all(as.character(subnet$nodes$layer[subnet$nodes$node_type == "feature"]) == "rna"))
+})
+
 test_that("dotplot works for mnseaResult contribution view", {
     x <- mock_mnsea_result()
 
@@ -52,6 +64,22 @@ test_that("dotplot works for mnseaResult contribution view", {
     expect_true(all(c("layer", "share", "contribution") %in% colnames(p$data)))
 })
 
+test_that("dotplot mnseaResult uses layer filter and readable legend names", {
+    x <- mock_mnsea_result()
+
+    p <- dotplot(
+        x,
+        x = "share",
+        color = "contribution",
+        showCategory = 2,
+        layer = "rna"
+    )
+
+    expect_true(all(as.character(p$data$layer) == "rna"))
+    expect_equal(p$scales$get_scales("fill")$name, "Contribution")
+    expect_equal(p$scales$get_scales("size")$name, "Feature count")
+})
+
 test_that("heatplot works for mnseaResult pathway contribution view", {
     x <- mock_mnsea_result()
 
@@ -62,6 +90,15 @@ test_that("heatplot works for mnseaResult pathway contribution view", {
     expect_setequal(unique(as.character(p$data$Description)), c("Pathway 1", "Pathway 2"))
 })
 
+test_that("heatplot mnseaResult uses layer filter and readable fill labels", {
+    x <- mock_mnsea_result()
+
+    p <- heatplot(x, showCategory = 2, layer = "protein", value = "contribution")
+
+    expect_true(all(as.character(p$data$layer) == "protein"))
+    expect_equal(p$scales$get_scales("fill")$name, "Contribution")
+})
+
 test_that("emapplot works for mnseaResult without precomputed termsim", {
     x <- mock_mnsea_result()
 
@@ -70,6 +107,17 @@ test_that("emapplot works for mnseaResult without precomputed termsim", {
     expect_s3_class(p, "ggplot")
     expect_true(all(c("label", "p.adjust") %in% colnames(p$data)))
     expect_setequal(unique(as.character(p$data$label)), c("Pathway 1", "Pathway 2"))
+})
+
+test_that("emapplot mnseaResult supports layer filter and readable legends", {
+    x <- mock_mnsea_result()
+
+    p <- emapplot(x, showCategory = 2, layer = "rna", color = "contribution", min_edge = 0)
+
+    expect_s3_class(p, "ggplot")
+    expect_equal(unname(p$data$contribution[match(c("Pathway 1", "Pathway 2"), p$data$label)]), c(0.7, 0.4))
+    expect_equal(p$scales$get_scales("colour")$name, "Contribution")
+    expect_equal(p$scales$get_scales("size")$name, "Feature count")
 })
 
 test_that("emapplot mnseaResult respects stable term selection labels", {
@@ -99,6 +147,15 @@ test_that("cnetplot uses the default mnsea pathway when pathway_id is NULL", {
 
     expect_s3_class(p, "ggplot")
     expect_true(all(p$data$pathway_id == "T1"))
+})
+
+test_that("cnetplot mnseaResult supports layer filtering", {
+    x <- mock_mnsea_result()
+
+    p <- cnetplot(x, pathway_id = "T1", layer = "protein", node_label = "none")
+
+    feature_layers <- unique(as.character(p$data$layer[p$data$node_type == "feature"]))
+    expect_equal(feature_layers, "protein")
 })
 
 test_that("heatplot uses the default mnsea pathway for feature view", {

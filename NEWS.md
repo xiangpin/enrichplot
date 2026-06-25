@@ -1,5 +1,6 @@
 # enrichplot 1.33.0.001
 
++ batch-refine `mnsea` plot semantics by aligning `layer` filtering and readable legend labels across `dotplot()`, `heatplot()`, `cnetplot()` and `emapplot()`, while fixing `emapplot.mnseaResult()` to retain all selected pathways when rebuilding overlap graphs after layer filtering, with expanded regression coverage (2026-06-25, Thu)
 + add a minimal `emapplot.mnseaResult()` that reuses cached term similarity when available and otherwise falls back to internal `JC` overlap for pathway-level map plots, with regression coverage (2026-06-24, Wed)
 + batch-refine `cnetplot.mnseaResult()` readability by splitting pathway and feature label layers, preferring shared features when labels are capped, and stabilizing layer ordering with expanded regression coverage (2026-06-24, Wed)
 + refine default label selection in `cnetplot.mnseaResult()` to keep pathway annotations while deduplicating repeated feature labels across layers, with regression coverage for the quieter defaults (2026-06-24, Wed)

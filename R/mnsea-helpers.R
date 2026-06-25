@@ -6,6 +6,7 @@
 #' @param x A `mnseaResult` object.
 #' @param level One of `"pathway"` or `"feature"`.
 #' @param pathway_id Optional pathway ID.
+#' @param layer Optional layer or layers to retain.
 #' @param include_couplings Logical, whether to keep inter-layer coupling edges.
 #' @param include_isolated Logical, whether to keep nodes without retained edges.
 #' @param ... Additional parameters reserved for future extensions.
@@ -19,6 +20,7 @@ fortify_mnsea_contribution <- function(
     x,
     level = c("pathway", "feature"),
     pathway_id = NULL,
+    layer = NULL,
     ...
 ) {
     level <- match.arg(level)
@@ -35,6 +37,10 @@ fortify_mnsea_contribution <- function(
         df <- df[, intersect(keep, colnames(df)), drop = FALSE]
         df$Description <- as.character(df$Description)
         df$layer <- as.character(df$layer)
+        df <- filter_mnsea_layers(df, layer = layer)
+        if (nrow(df) == 0) {
+            return(df)
+        }
         df <- df[order(df$Description, -df$contribution, df$layer), , drop = FALSE]
         rownames(df) <- NULL
         return(df)
@@ -43,6 +49,10 @@ fortify_mnsea_contribution <- function(
     df$Description <- as.character(df$Description)
     df$layer <- as.character(df$layer)
     df$Feature <- as.character(df$Feature)
+    df <- filter_mnsea_layers(df, layer = layer)
+    if (nrow(df) == 0) {
+        return(df)
+    }
     df$sign <- ifelse(
         df$score < 0,
         "suppressed",
@@ -60,6 +70,7 @@ fortify_mnsea_contribution <- function(
 fortify_mnsea_subnetwork <- function(
     x,
     pathway_id = NULL,
+    layer = NULL,
     include_couplings = TRUE,
     include_isolated = FALSE,
     ...
@@ -158,6 +169,22 @@ fortify_mnsea_subnetwork <- function(
         edges <- rbind(membership_edges, edges)
     }
 
+    if (!is.null(layer) && nrow(nodes) > 0) {
+        keep_layers <- resolve_mnsea_layers(nodes$layer[nodes$node_type == "feature"], layer = layer)
+        if (length(keep_layers) == 0) {
+            nodes <- nodes[0, , drop = FALSE]
+            edges <- edges[0, , drop = FALSE]
+        } else {
+            keep_nodes <- nodes$node_type == "pathway" | nodes$layer %in% keep_layers
+            nodes <- nodes[keep_nodes, , drop = FALSE]
+            keep_keys <- nodes$node_key
+            if (nrow(edges) > 0) {
+                edges <- edges[edges$from %in% keep_keys & edges$to %in% keep_keys, , drop = FALSE]
+            }
+            nodes <- filter_mnsea_layers(nodes, layer = keep_layers, keep_pathway = TRUE)
+        }
+    }
+
     subnet$nodes <- nodes
     subnet$edges <- edges
     subnet
@@ -187,6 +214,67 @@ resolve_mnsea_pathway_id <- function(x, pathway_id = NULL, level = c("pathway", 
         return(NULL)
     }
     default_mnsea_pathway_id(x)
+}
+
+resolve_mnsea_layers <- function(layers, layer = NULL) {
+    layers <- unique(as.character(layers))
+    layers <- layers[!is.na(layers)]
+    layers <- layers[layers != "pathway"]
+
+    if (is.null(layer)) {
+        return(layers)
+    }
+
+    requested <- unique(as.character(layer))
+    keep <- intersect(requested, layers)
+    keep
+}
+
+filter_mnsea_layers <- function(df, layer = NULL, layer_col = "layer", keep_pathway = FALSE) {
+    if (is.null(df) || nrow(df) == 0 || !layer_col %in% colnames(df)) {
+        return(df)
+    }
+
+    keep_layers <- resolve_mnsea_layers(df[[layer_col]], layer = layer)
+    if (!is.null(layer) && length(keep_layers) == 0) {
+        return(df[0, , drop = FALSE])
+    }
+
+    layer_values <- as.character(df[[layer_col]])
+    keep <- layer_values %in% keep_layers
+    if (keep_pathway) {
+        keep <- keep | layer_values == "pathway"
+    }
+    df <- df[keep, , drop = FALSE]
+    if (nrow(df) == 0) {
+        return(df)
+    }
+
+    final_levels <- keep_layers
+    if (is.null(layer)) {
+        final_levels <- resolve_mnsea_layers(df[[layer_col]], layer = NULL)
+    }
+    if (keep_pathway && any(as.character(df[[layer_col]]) == "pathway")) {
+        final_levels <- c("pathway", final_levels)
+    }
+    df[[layer_col]] <- factor(as.character(df[[layer_col]]), levels = unique(final_levels))
+    df
+}
+
+mnsea_plot_label <- function(name) {
+    switch(
+        as.character(name),
+        contribution = "Contribution",
+        share = "Layer share",
+        n_feature = "Feature count",
+        score = "Feature score",
+        abs_score = "Feature magnitude",
+        pvalue = "P-value",
+        p.adjust = "Adjusted p-value",
+        qvalue = "Q-value",
+        NES = "NES",
+        as.character(name)
+    )
 }
 
 .rank_mnsea_terms <- function(df, by = c("p.adjust", "NES", "contribution", "share")) {

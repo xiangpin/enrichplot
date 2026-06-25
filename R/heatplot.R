@@ -47,6 +47,7 @@ setMethod(
 #' @param pvalue pvalue of genes
 #' @param pathway_id optional pathway ID for pathway-specific `mnseaResult`
 #' heatmaps.
+#' @param layer optional layer or layers to retain for `mnseaResult` plots.
 #' @param value fill value for `mnseaResult`; use `"share"` or
 #' `"contribution"` for term-layer heatmaps and `"score"` or `"abs_score"`
 #' for pathway-specific feature heatmaps.
@@ -88,6 +89,7 @@ prepare_heatplot_mnsea_data <- function(
     x,
     showCategory,
     pathway_id,
+    layer,
     showTop,
     value
 ) {
@@ -96,7 +98,8 @@ prepare_heatplot_mnsea_data <- function(
             x,
             showCategory = showCategory,
             by = value,
-            level = "pathway"
+            level = "pathway",
+            layer = layer
         )
         if (nrow(df) == 0) {
             yulab.utils::yulab_abort("No mnsea pathway contribution data available for plotting.")
@@ -111,7 +114,7 @@ prepare_heatplot_mnsea_data <- function(
         return(list(
             data = df,
             y_var = "axis_label",
-            fill_name = value,
+            fill_name = mnsea_plot_label(value),
             colors = get_enrichplot_color(2),
             reverse = FALSE
         ))
@@ -124,7 +127,12 @@ prepare_heatplot_mnsea_data <- function(
     }
 
     pathway_id <- resolve_mnsea_pathway_id(x, pathway_id, level = "feature")
-    df <- fortify_mnsea_contribution(x, pathway_id = pathway_id, level = "feature")
+    df <- fortify_mnsea_contribution(
+        x,
+        pathway_id = pathway_id,
+        level = "feature",
+        layer = layer
+    )
     if (nrow(df) == 0) {
         yulab.utils::yulab_abort(
             "No mnsea feature contribution data available for the selected `pathway_id`."
@@ -154,7 +162,7 @@ prepare_heatplot_mnsea_data <- function(
     list(
         data = df,
         y_var = "axis_label",
-        fill_name = value,
+        fill_name = mnsea_plot_label(value),
         colors = if (value == "score") get_enrichplot_color(3) else get_enrichplot_color(2),
         reverse = FALSE
     )
@@ -269,6 +277,7 @@ heatplot.mnseaResult <- function(
     x,
     showCategory = 10,
     pathway_id = NULL,
+    layer = NULL,
     showTop = NULL,
     value = c("score", "abs_score", "share", "contribution"),
     label_format = 30
@@ -279,6 +288,7 @@ heatplot.mnseaResult <- function(
         x = x,
         showCategory = showCategory,
         pathway_id = pathway_id,
+        layer = layer,
         showTop = showTop,
         value = value
     )

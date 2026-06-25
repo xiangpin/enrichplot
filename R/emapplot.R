@@ -52,6 +52,7 @@ setMethod(
 #' one of 'category', 'group', 'all' and 'none'.
 #' @param node_label_size size of node label, default is 5.
 #' @param pie one of 'equal' or 'Count' to set the slice ratio of the pies
+#' @param layer optional layer or layers to retain for `mnseaResult` plots.
 # @param group logical, if TRUE, group the category.
 # @param group_style style of ellipse, one of "ggforce" an "polygon".
 # @param label_group_style style of group label, one of "shadowtext" and "ggforce".
@@ -87,11 +88,57 @@ prepare_emapplot_data <- function(x, showCategory, color, min_edge, size_edge) {
     )
 }
 
-prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_edge) {
+prepare_emapplot_mnsea_feature_data <- function(x, ids, layer = NULL) {
+    ids <- unique(as.character(ids))
+    ids <- ids[!is.na(ids) & nzchar(ids)]
+    if (length(ids) == 0) {
+        return(data.frame())
+    }
+
+    feature_list <- lapply(ids, function(id) {
+        fortify_mnsea_contribution(
+            x,
+            level = "feature",
+            pathway_id = id,
+            layer = layer
+        )
+    })
+    feature_df <- do.call(rbind, feature_list)
+    if (is.null(feature_df) || nrow(feature_df) == 0) {
+        return(data.frame())
+    }
+    rownames(feature_df) <- NULL
+    feature_df
+}
+
+prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_edge, layer = NULL) {
     selected <- select_terms(x, showCategory)
     if (nrow(selected$result) == 0) {
         yulab.utils::yulab_abort("No mnsea pathways available for emapplot.")
     }
+
+    pathway_df <- fortify_mnsea_contribution(x, level = "pathway", layer = layer)
+    feature_df <- prepare_emapplot_mnsea_feature_data(x, ids = selected$ids, layer = layer)
+    if (nrow(pathway_df) == 0 || nrow(feature_df) == 0) {
+        yulab.utils::yulab_abort("No mnsea layers available for emapplot after filtering.")
+    }
+
+    pathway_df <- pathway_df[pathway_df$ID %in% selected$ids, , drop = FALSE]
+    feature_df <- feature_df[feature_df$ID %in% selected$ids, , drop = FALSE]
+    retained_ids <- intersect(unique(pathway_df$ID), unique(feature_df$ID))
+    if (length(retained_ids) == 0) {
+        yulab.utils::yulab_abort("No mnsea pathways available for emapplot after filtering.")
+    }
+
+    keep <- selected$ids %in% retained_ids
+    selected$result <- selected$result[keep, , drop = FALSE]
+    selected$ids <- selected$ids[keep]
+    selected$labels <- selected$labels[keep]
+    selected$geneSets <- lapply(selected$ids, function(id) {
+        unique(feature_df$Feature[feature_df$ID == id])
+    })
+    names(selected$geneSets) <- selected$ids
+    selected$geneSets <- set_geneSet_labels(selected$geneSets, selected$labels)
 
     pair_sim <- x@termsim
     method <- x@method
@@ -115,6 +162,13 @@ prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_e
         method <- "JC"
     }
 
+    pathway_summary <- stats::aggregate(
+        cbind(contribution, share, n_feature) ~ ID + Description,
+        data = pathway_df[pathway_df$ID %in% selected$ids, , drop = FALSE],
+        FUN = max
+    )
+    pathway_summary$Description <- as.character(pathway_summary$Description)
+
     g <- build_emap_graph(
         enrichDf = selected$result,
         geneSets = selected$geneSets,
@@ -126,6 +180,13 @@ prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_e
     )
     plot_result <- selected$result
     plot_result$Description <- term_labels
+    plot_result <- merge(
+        plot_result,
+        pathway_summary,
+        by = c("ID", "Description"),
+        all.x = TRUE,
+        sort = FALSE
+    )
 
     list(
         graph = g,
@@ -146,6 +207,7 @@ emapplot_internal <- function(
     node_label = "category",
     node_label_size = 5,
     pie = "equal",
+    layer = NULL,
     label_format = 30,
     clusterFunction = stats::kmeans,
     nWords = 4,
@@ -165,7 +227,8 @@ emapplot_internal <- function(
             showCategory = showCategory,
             color = color,
             min_edge = min_edge,
-            size_edge = size_edge
+            size_edge = size_edge,
+            layer = layer
         )
     } else {
         gg <- prepare_emapplot_data(x, showCategory, color, min_edge, size_edge)
@@ -176,28 +239,64 @@ emapplot_internal <- function(
     names(size) <- unname(get_geneSet_labels(gg$geneSet))
     V(g)$size = size[V(g)$name]
 
-    p <- ggplot(g, layout = layout) +
-        geom_edge(color = color_edge, linewidth = size_edge)
+    p <- ggplot(g, layout = layout)
+    if (igraph::ecount(g) > 0) {
+        p <- p + geom_edge(color = color_edge, linewidth = size_edge)
+    }
 
     if (inherits(x, 'compareClusterResult')) {
         p <- add_node_pie(p, gg$data, pie, category_scale = size_category)
     } else {
-        if (color %in% names(as.data.frame(x))) {
+        if (color %in% names(gg$result)) {
+            color_scale <- switch(
+                color,
+                NES = list(
+                    colors = get_enrichplot_color(3),
+                    transform = "identity",
+                    reverse = TRUE
+                ),
+                contribution = list(
+                    colors = get_enrichplot_color(2),
+                    transform = "identity",
+                    reverse = TRUE
+                ),
+                share = list(
+                    colors = get_enrichplot_color(2),
+                    transform = "identity",
+                    reverse = TRUE
+                ),
+                list(
+                    colors = get_enrichplot_color(2),
+                    transform = "log10",
+                    reverse = TRUE
+                )
+            )
             p <- p %<+%
                 gg$result[, c("Description", color)] +
                 geom_point(aes(color = .data[[color]], size = .data$size)) +
-                scale_size(range = c(3, 8) * size_category)
-            p <- p + set_enrichplot_color(colors = get_enrichplot_color(2))
+                scale_size(
+                    range = c(3, 8) * size_category,
+                    name = if (inherits(x, "mnseaResult")) "Feature count" else ggplot2::waiver()
+                )
+            p <- p + set_enrichplot_color(
+                colors = color_scale$colors,
+                name = if (inherits(x, "mnseaResult")) mnsea_plot_label(color) else color,
+                transform = color_scale$transform,
+                reverse = color_scale$reverse
+            )
             p <- p +
                 guides(
                     size = guide_legend(order = 1),
-                    color = guide_colorbar(order = 2, reverse = TRUE)
+                    color = guide_colorbar(order = 2, reverse = color_scale$reverse)
                 )
         } else {
             p <- p %<+%
                 gg$result[, "Description", drop = FALSE] +
                 geom_point(aes(size = .data$size), color = color) +
-                scale_size(range = c(3, 8) * size_category)
+                scale_size(
+                    range = c(3, 8) * size_category,
+                    name = if (inherits(x, "mnseaResult")) "Feature count" else ggplot2::waiver()
+                )
         }
     }
 

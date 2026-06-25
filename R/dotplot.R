@@ -433,6 +433,10 @@ dotplot.mnseaResult <- function(
         as.character(df$Description),
         levels = rev(unique(as.character(df$Description[idx])))
     )
+    df <- filter_mnsea_layers(df, layer = layer)
+    if (nrow(df) == 0) {
+        yulab.utils::yulab_abort("No mnsea contribution data available for the selected `layer`.")
+    }
 
     color_scale <- switch(
         colorBy,
@@ -458,10 +462,11 @@ dotplot.mnseaResult <- function(
         x = x,
         size = size,
         colorBy = colorBy,
-        color = colorBy,
+        color = mnsea_plot_label(colorBy),
         label_func = label_func,
         font.size = font.size,
         title = title,
+        size_name = mnsea_plot_label(size),
         color_colors = color_scale$colors,
         color_transform = color_scale$transform,
         color_reverse = color_scale$reverse
@@ -506,6 +511,7 @@ dotplot.mnseaResult <- function(
     font.size,
     title,
     size_range = c(3, 8),
+    size_name = waiver(),
     shape_point = TRUE,
     color_colors = get_enrichplot_color(2),
     color_transform = "log10",
@@ -541,9 +547,9 @@ dotplot.mnseaResult <- function(
     if (size == "Count") {
         # For Count, use pretty breaks
         size_break <- pretty(df[[size]], n = 4)
-        p <- p + scale_size(range = size_range, breaks = size_break)
+        p <- p + scale_size(range = size_range, breaks = size_break, name = size_name)
     } else {
-        p <- p + scale_size(range = size_range)
+        p <- p + scale_size(range = size_range, name = size_name)
     }
     
     class(p) <- c("enrichplotDot", class(p))

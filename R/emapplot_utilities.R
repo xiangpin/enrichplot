@@ -99,8 +99,7 @@ build_emap_graph <- function(
 
     if (is.null(dim(enrichDf)) || nrow(enrichDf) == 1) {
         # when just one node
-        g <- graph.empty(0, directed = FALSE)
-        g <- add_vertices(g, nv = 1)
+        g <- igraph::make_empty_graph(n = 1, directed = FALSE)
         V(g)$name <- unname(get_term_labels(enrichDf, enrichDf$ID))
         V(g)$color <- "red"
         return(g)
@@ -121,12 +120,26 @@ build_emap_graph <- function(
         wd[, 2] <- get_term_labels(enrichDf, wd[, 2])
     }
 
-    g <- graph_from_data_frame(wd[, -3], directed = FALSE)
-    E(g)$width <- sqrt(wd[, 3] * 5) * cex_line
-    # Use similarity as the weight(length) of an edge
-    E(g)$weight <- wd[, 3]
-    g <- igraph::delete_edges(g, E(g)[wd[, 3] < min_edge])
     label_map <- get_term_labels(enrichDf, enrichDf$ID)
+    keep_edge <- wd[, 3] >= min_edge
+    vertex_df <- data.frame(
+        name = unname(label_map),
+        stringsAsFactors = FALSE
+    )
+    if (!any(keep_edge)) {
+        g <- graph_from_data_frame(
+            data.frame(from = character(0), to = character(0)),
+            directed = FALSE,
+            vertices = vertex_df
+        )
+    } else {
+        edge_df <- wd[keep_edge, , drop = FALSE]
+        g <- graph_from_data_frame(edge_df[, -3], directed = FALSE, vertices = vertex_df)
+        E(g)$width <- sqrt(edge_df[, 3] * 5) * cex_line
+        # Use similarity as the weight(length) of an edge
+        E(g)$weight <- edge_df[, 3]
+    }
+
     idx <- match(V(g)$name, label_map)
     cnt <- sapply(geneSets[enrichDf$ID[idx]], length)
     V(g)$size <- cnt
@@ -135,7 +148,6 @@ build_emap_graph <- function(
     } else {
         colVar <- color
     }
-
     V(g)$color <- colVar
     return(g)
 }

@@ -25,6 +25,7 @@
 #' @param includeAll logical value passed to `fortify()` when selecting terms
 #'   from a `compareClusterResult`.
 #' @param pathway_id optional pathway ID for `mnseaResult` subnetworks.
+#' @param layer optional layer or layers to retain for `mnseaResult` plots.
 #' @param include_couplings logical, whether inter-layer coupling edges should
 #'   be kept in `mnseaResult` network plots.
 #' @param ... additional parameters
@@ -117,12 +118,14 @@ cnetplot.gseaResult <- cnetplot.enrichResult
 prepare_mnsea_cnetplot_data <- function(
     x,
     pathway_id,
+    layer,
     include_couplings,
     include_isolated = FALSE
 ) {
     subnet <- fortify_mnsea_subnetwork(
         x,
         pathway_id = pathway_id,
+        layer = layer,
         include_couplings = include_couplings,
         include_isolated = include_isolated
     )
@@ -313,6 +316,7 @@ cnetplot.mnseaResult <- function(
     x,
     layout = igraph::layout_with_kk,
     pathway_id = NULL,
+    layer = NULL,
     include_couplings = TRUE,
     color_category = "#E5C494",
     size_category = 1,
@@ -324,6 +328,7 @@ cnetplot.mnseaResult <- function(
     plot_data <- prepare_mnsea_cnetplot_data(
         x = x,
         pathway_id = pathway_id,
+        layer = layer,
         include_couplings = include_couplings
     )
     g <- plot_data$graph
