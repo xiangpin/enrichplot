@@ -1,5 +1,6 @@
 # enrichplot 1.33.0.001
 
++ add a minimal `emapplot.mnseaResult()` that reuses cached term similarity when available and otherwise falls back to internal `JC` overlap for pathway-level map plots, with regression coverage (2026-06-24, Wed)
 + batch-refine `cnetplot.mnseaResult()` readability by splitting pathway and feature label layers, preferring shared features when labels are capped, and stabilizing layer ordering with expanded regression coverage (2026-06-24, Wed)
 + refine default label selection in `cnetplot.mnseaResult()` to keep pathway annotations while deduplicating repeated feature labels across layers, with regression coverage for the quieter defaults (2026-06-24, Wed)
 + clarify `cnetplot.mnseaResult()` legend titles for edge type, node type, layer, feature sign, and feature magnitude, with regression coverage for the updated defaults (2026-06-24, Wed)

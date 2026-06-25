@@ -62,6 +62,25 @@ test_that("heatplot works for mnseaResult pathway contribution view", {
     expect_setequal(unique(as.character(p$data$Description)), c("Pathway 1", "Pathway 2"))
 })
 
+test_that("emapplot works for mnseaResult without precomputed termsim", {
+    x <- mock_mnsea_result()
+
+    p <- emapplot(x, showCategory = 2, min_edge = 0)
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(c("label", "p.adjust") %in% colnames(p$data)))
+    expect_setequal(unique(as.character(p$data$label)), c("Pathway 1", "Pathway 2"))
+})
+
+test_that("emapplot mnseaResult respects stable term selection labels", {
+    x <- mock_mnsea_result()
+
+    p <- emapplot(x, showCategory = c("T2", "Pathway 1"), min_edge = 0)
+
+    expect_s3_class(p, "ggplot")
+    expect_setequal(unique(as.character(p$data$label)), c("Pathway 1", "Pathway 2"))
+})
+
 test_that("heatplot works for mnseaResult pathway-specific feature view", {
     x <- mock_mnsea_result()
 

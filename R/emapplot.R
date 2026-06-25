@@ -28,6 +28,16 @@ setMethod(
     }
 )
 
+#' @rdname emapplot
+#' @exportMethod emapplot
+setMethod(
+    "emapplot",
+    signature(x = "mnseaResult"),
+    function(x, showCategory = 30, ...) {
+        emapplot_internal(x, showCategory = showCategory, ...)
+    }
+)
+
 
 #' @rdname emapplot
 #' @param layout igraph layout
@@ -77,6 +87,53 @@ prepare_emapplot_data <- function(x, showCategory, color, min_edge, size_edge) {
     )
 }
 
+prepare_emapplot_mnsea_data <- function(x, showCategory, color, min_edge, size_edge) {
+    selected <- select_terms(x, showCategory)
+    if (nrow(selected$result) == 0) {
+        yulab.utils::yulab_abort("No mnsea pathways available for emapplot.")
+    }
+
+    pair_sim <- x@termsim
+    method <- x@method
+    term_labels <- unname(selected$labels)
+
+    use_cached_termsim <- length(pair_sim) > 0 &&
+        !is.null(dim(pair_sim)) &&
+        all(term_labels %in% rownames(pair_sim))
+
+    if (use_cached_termsim) {
+        pair_sim <- pair_sim[term_labels, term_labels, drop = FALSE]
+        if (!nzchar(method)) {
+            method <- "JC"
+        }
+    } else {
+        pair_sim <- get_similarity_matrix(
+            y = selected$result,
+            geneSets = selected$geneSets,
+            method = "JC"
+        )
+        method <- "JC"
+    }
+
+    g <- build_emap_graph(
+        enrichDf = selected$result,
+        geneSets = selected$geneSets,
+        color = color,
+        cex_line = size_edge,
+        min_edge = min_edge,
+        pair_sim = pair_sim,
+        method = method
+    )
+    plot_result <- selected$result
+    plot_result$Description <- term_labels
+
+    list(
+        graph = g,
+        geneSet = selected$geneSets,
+        result = plot_result
+    )
+}
+
 emapplot_internal <- function(
     x,
     layout = igraph::layout_with_kk,
@@ -96,6 +153,14 @@ emapplot_internal <- function(
 ) {
     if (inherits(x, 'compareClusterResult')) {
         gg <- graph_from_compareClusterResult(
+            x,
+            showCategory = showCategory,
+            color = color,
+            min_edge = min_edge,
+            size_edge = size_edge
+        )
+    } else if (inherits(x, 'mnseaResult')) {
+        gg <- prepare_emapplot_mnsea_data(
             x,
             showCategory = showCategory,
             color = color,

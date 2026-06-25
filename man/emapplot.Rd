@@ -5,6 +5,7 @@
 \alias{emapplot,enrichResult-method}
 \alias{emapplot,gseaResult-method}
 \alias{emapplot,compareClusterResult-method}
+\alias{emapplot,mnseaResult-method}
 \alias{prepare_emapplot_data}
 \title{emapplot}
 \usage{
@@ -15,6 +16,8 @@ emapplot(x, ...)
 \S4method{emapplot}{gseaResult}(x, showCategory = 30, ...)
 
 \S4method{emapplot}{compareClusterResult}(x, showCategory = 30, ...)
+
+\S4method{emapplot}{mnseaResult}(x, showCategory = 30, ...)
 
 prepare_emapplot_data(x, showCategory, color, min_edge, size_edge)
 }
