@@ -199,7 +199,12 @@ normalize_mnsea_edge_width <- function(x, size_edge) {
     size_edge * (0.8 + (x - xmin) / (xmax - xmin) * 1.2)
 }
 
-select_mnsea_feature_labels <- function(feature_nodes, membership = NULL, max_labels = 8L) {
+select_mnsea_feature_labels <- function(
+    feature_nodes,
+    membership = NULL,
+    max_labels = 8L,
+    prefer_share = TRUE
+) {
     if (nrow(feature_nodes) == 0) {
         return(feature_nodes)
     }
@@ -216,30 +221,89 @@ select_mnsea_feature_labels <- function(feature_nodes, membership = NULL, max_la
         return(label_nodes)
     }
 
-    label_nodes <- label_nodes[order(-label_nodes$plot_size, label_nodes$Feature), , drop = FALSE]
+    if (prefer_share) {
+        membership_rank <- c(share = 0L, exclusive = 1L)
+        label_nodes$membership_rank <- membership_rank[label_nodes$membership_class]
+        label_nodes$membership_rank[is.na(label_nodes$membership_rank)] <- 2L
+    } else {
+        label_nodes$membership_rank <- 0L
+    }
+
+    label_nodes <- label_nodes[
+        order(label_nodes$membership_rank, -label_nodes$plot_size, label_nodes$Feature),
+        ,
+        drop = FALSE
+    ]
     label_nodes <- label_nodes[!duplicated(label_nodes$Feature), , drop = FALSE]
 
     if (!is.null(max_labels) && nrow(label_nodes) > max_labels) {
         label_nodes <- label_nodes[seq_len(max_labels), , drop = FALSE]
     }
 
+    label_nodes$membership_rank <- NULL
     label_nodes
 }
 
 select_mnsea_label_data <- function(node_label, node_data, pathway_nodes, feature_nodes) {
-    feature_label_nodes <- select_mnsea_feature_labels(feature_nodes)
-    share_label_nodes <- select_mnsea_feature_labels(feature_nodes, membership = "share")
-    exclusive_label_nodes <- select_mnsea_feature_labels(feature_nodes, membership = "exclusive")
+    feature_label_nodes <- select_mnsea_feature_labels(feature_nodes, max_labels = 8L)
+    feature_label_nodes_quiet <- select_mnsea_feature_labels(feature_nodes, max_labels = 6L)
+    share_label_nodes <- select_mnsea_feature_labels(
+        feature_nodes,
+        membership = "share",
+        max_labels = 6L
+    )
+    exclusive_label_nodes <- select_mnsea_feature_labels(
+        feature_nodes,
+        membership = "exclusive",
+        max_labels = 6L
+    )
 
     switch(
         node_label,
-        category = pathway_nodes,
-        item = feature_label_nodes,
-        exclusive = exclusive_label_nodes,
-        share = share_label_nodes,
-        all = rbind(pathway_nodes, feature_label_nodes),
-        node_data
+        category = list(pathway = pathway_nodes, feature = feature_nodes[0, , drop = FALSE]),
+        item = list(pathway = pathway_nodes[0, , drop = FALSE], feature = feature_label_nodes),
+        exclusive = list(pathway = pathway_nodes[0, , drop = FALSE], feature = exclusive_label_nodes),
+        share = list(pathway = pathway_nodes[0, , drop = FALSE], feature = share_label_nodes),
+        all = list(pathway = pathway_nodes, feature = feature_label_nodes_quiet),
+        list(pathway = pathway_nodes, feature = feature_label_nodes_quiet)
     )
+}
+
+add_mnsea_label_layers <- function(p, label_data) {
+    if (nrow(label_data$pathway) > 0) {
+        p <- p +
+            geom_text_repel(
+                data = label_data$pathway,
+                aes(x = .data$x, y = .data$y, label = .data$label),
+                seed = 1,
+                size = 4.2,
+                fontface = "bold",
+                box.padding = 0.5,
+                point.padding = 0.35,
+                min.segment.length = 0,
+                segment.color = "grey60",
+                bg.color = "white",
+                bg.r = 0.12
+            )
+    }
+
+    if (nrow(label_data$feature) > 0) {
+        p <- p +
+            geom_text_repel(
+                data = label_data$feature,
+                aes(x = .data$x, y = .data$y, label = .data$label),
+                seed = 1,
+                size = 3.2,
+                box.padding = 0.25,
+                point.padding = 0.15,
+                min.segment.length = 0,
+                segment.color = "grey75",
+                bg.color = "white",
+                bg.r = 0.08
+            )
+    }
+
+    p
 }
 
 #' @rdname cnetplot
@@ -318,6 +382,11 @@ cnetplot.mnseaResult <- function(
     node_data[node_data$node_type == "feature", "membership_class"] <- feature_nodes$membership_class
     pathway_nodes <- node_data[node_data$node_type == "pathway", , drop = FALSE]
     feature_nodes <- node_data[node_data$node_type == "feature", , drop = FALSE]
+    layer_levels <- unique(plot_data$nodes$layer[plot_data$nodes$node_type == "feature"])
+    layer_levels <- layer_levels[!is.na(layer_levels)]
+    if (length(layer_levels) > 0) {
+        feature_nodes$layer <- factor(feature_nodes$layer, levels = layer_levels)
+    }
 
     p <- p +
         geom_point(
@@ -358,7 +427,7 @@ cnetplot.mnseaResult <- function(
             name = "Feature sign",
             drop = FALSE
         ) +
-        ggplot2::scale_fill_discrete(name = "Layer") +
+        ggplot2::scale_fill_discrete(name = "Layer", drop = FALSE) +
         ggplot2::scale_linetype_manual(
             values = c(
                 "Pathway membership" = "solid",
@@ -384,14 +453,7 @@ cnetplot.mnseaResult <- function(
             pathway_nodes = pathway_nodes,
             feature_nodes = feature_nodes
         )
-        p <- p +
-            geom_text_repel(
-                data = label_data,
-                aes(x = .data$x, y = .data$y, label = .data$label),
-                bg.color = "white",
-                bg.r = .1,
-                size = 4
-            )
+        p <- add_mnsea_label_layers(p, label_data)
     }
 
     p

@@ -116,8 +116,10 @@ test_that("cnetplot supports share and exclusive mnsea labels", {
     p_share <- cnetplot(x, pathway_id = "T1", node_label = "share")
     p_exclusive <- cnetplot(x, pathway_id = "T1", node_label = "exclusive")
 
-    share_labels <- unique(unlist(lapply(p_share$layers, function(layer) layer$data$label)))
-    exclusive_labels <- unique(unlist(lapply(p_exclusive$layers, function(layer) layer$data$label)))
+    share_label_layers <- Filter(function(layer) inherits(layer$geom, "GeomTextRepel"), p_share$layers)
+    exclusive_label_layers <- Filter(function(layer) inherits(layer$geom, "GeomTextRepel"), p_exclusive$layers)
+    share_labels <- unique(unlist(lapply(share_label_layers, function(layer) layer$data$label)))
+    exclusive_labels <- unique(unlist(lapply(exclusive_label_layers, function(layer) layer$data$label)))
 
     expect_true("g1" %in% share_labels || "g2" %in% share_labels)
     expect_true(length(exclusive_labels) == 0 || "g1" %in% exclusive_labels || "g2" %in% exclusive_labels)
@@ -127,7 +129,8 @@ test_that("cnetplot default mnsea labels keep pathway labels and deduplicate fea
     x <- mock_mnsea_result()
 
     p <- cnetplot(x, pathway_id = "T1", node_label = "all")
-    label_data <- p$layers[[4]]$data
+    label_layers <- Filter(function(layer) inherits(layer$geom, "GeomTextRepel"), p$layers)
+    label_data <- do.call(rbind, lapply(label_layers, function(layer) layer$data))
 
     expect_true("Pathway 1" %in% label_data$label)
     feature_labels <- label_data$label[label_data$node_type == "feature"]
@@ -138,9 +141,49 @@ test_that("cnetplot item labels use one representative label per feature", {
     x <- mock_mnsea_result()
 
     p <- cnetplot(x, pathway_id = "T1", node_label = "item")
-    item_labels <- p$layers[[4]]$data$label
+    label_layers <- Filter(function(layer) inherits(layer$geom, "GeomTextRepel"), p$layers)
+    item_labels <- unique(unlist(lapply(label_layers, function(layer) layer$data$label)))
 
     expect_equal(anyDuplicated(item_labels), 0L)
+})
+
+test_that("mnsea feature label selection prefers shared features when capped", {
+    feature_nodes <- data.frame(
+        Feature = c("g1", "g1", "g2", "g3"),
+        plot_size = c(0.6, 0.5, 1.5, 1.2),
+        membership_class = c("share", "share", "exclusive", "exclusive"),
+        stringsAsFactors = FALSE
+    )
+
+    selected <- enrichplot:::select_mnsea_feature_labels(feature_nodes, max_labels = 2)
+
+    expect_equal(selected$Feature, c("g1", "g2"))
+})
+
+test_that("mnsea label data splits pathway and feature labels for all mode", {
+    pathway_nodes <- data.frame(
+        label = "Pathway 1",
+        node_type = "pathway",
+        stringsAsFactors = FALSE
+    )
+    feature_nodes <- data.frame(
+        label = c("g1", "g1", "g2"),
+        Feature = c("g1", "g1", "g2"),
+        plot_size = c(1.2, 0.8, 0.7),
+        membership_class = c("share", "share", "exclusive"),
+        node_type = "feature",
+        stringsAsFactors = FALSE
+    )
+
+    label_data <- enrichplot:::select_mnsea_label_data(
+        node_label = "all",
+        node_data = feature_nodes[0, , drop = FALSE],
+        pathway_nodes = pathway_nodes,
+        feature_nodes = feature_nodes
+    )
+
+    expect_equal(label_data$pathway$label, "Pathway 1")
+    expect_equal(label_data$feature$label, c("g1", "g2"))
 })
 
 test_that("cnetplot encodes mnsea edge semantics and honors size_edge", {
