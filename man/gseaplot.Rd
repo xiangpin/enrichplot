@@ -3,6 +3,7 @@
 \name{gseaplot}
 \alias{gseaplot}
 \alias{gseaplot,gseaResult-method}
+\alias{gseaplot,mnseaResult-method}
 \alias{gseaplot.gseaResult}
 \title{gseaplot}
 \usage{
@@ -16,6 +17,18 @@ gseaplot(x, geneSetID, by = "all", title = "", ...)
   color = "black",
   color.line = "green",
   color.vline = "#FA5860",
+  ...
+)
+
+\S4method{gseaplot}{mnseaResult}(
+  x,
+  geneSetID,
+  by = "all",
+  title = "",
+  color = "black",
+  color.line = "green",
+  color.vline = "#FA5860",
+  layer = NULL,
   ...
 )
 
@@ -47,6 +60,8 @@ gseaplot.gseaResult(
 
 \item{color.vline}{color of vertical line indicating the
 maximum/minimal running enrichment score}
+
+\item{layer}{Optional \code{mnsea} layer. When \code{NULL}, use collapsed scores.}
 }
 \value{
 ggplot2 object

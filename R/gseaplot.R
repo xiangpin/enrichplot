@@ -27,6 +27,37 @@ setMethod(
 )
 
 #' @rdname gseaplot
+#' @param layer Optional `mnsea` layer. When `NULL`, use collapsed scores.
+#' @exportMethod gseaplot
+setMethod(
+    "gseaplot",
+    signature(x = "mnseaResult"),
+    function(
+        x,
+        geneSetID,
+        by = "all",
+        title = "",
+        color = "black",
+        color.line = "green",
+        color.vline = "#FA5860",
+        layer = NULL,
+        ...
+    ) {
+        gseaplot.mnseaResult(
+            x,
+            geneSetID = geneSetID,
+            by = by,
+            title = title,
+            color = color,
+            color.line = color.line,
+            color.vline = color.vline,
+            layer = layer,
+            ...
+        )
+    }
+)
+
+#' @rdname gseaplot
 #' @param color color of line segments
 #' @param color.line color of running enrichment score line
 #' @param color.vline color of vertical line indicating the
@@ -120,6 +151,194 @@ gseaplot.gseaResult <- function(
     #plot_list(gglist =  list(p.pos, p.res), ncol=1)
 
     aplot::gglist(gglist = list(p.pos, p.res), ncol = 1)
+}
+
+gseaplot.mnseaResult <- function(
+    x,
+    geneSetID,
+    by = "all",
+    title = "",
+    color = "black",
+    color.line = "green",
+    color.vline = "#FA5860",
+    layer = NULL,
+    ...
+) {
+    by <- match.arg(by, c("runningScore", "preranked", "all"))
+    gsdata <- gsInfo.mnseaResult(x, geneSetID = geneSetID, layer = layer)
+    p <- ggplot(gsdata, aes(x = .data$x)) +
+        theme_dose() +
+        xlab("Position in the Ranked List of Genes")
+    if (by == "runningScore" || by == "all") {
+        p.res <- p +
+            geom_linerange(
+                aes(ymin = .data$ymin, ymax = .data$ymax),
+                color = color
+            )
+        p.res <- p.res +
+            geom_line(
+                aes(y = .data$runningScore),
+                color = color.line,
+                linewidth = 1
+            )
+        enrichmentScore <- x@result[gsdata$ID[1], "enrichmentScore"]
+        es.df <- data.frame(
+            es = which.min(abs(p$data$runningScore - enrichmentScore))
+        )
+        p.res <- p.res +
+            geom_vline(
+                data = es.df,
+                aes(xintercept = .data$es),
+                colour = color.vline,
+                linetype = "dashed"
+            )
+        p.res <- p.res + ylab("Running Enrichment Score")
+        p.res <- p.res + geom_hline(yintercept = 0)
+    }
+    if (by == "preranked" || by == "all") {
+        df2 <- data.frame(x = which(p$data$position == 1))
+        df2$y <- p$data$geneList[df2$x]
+        p.pos <- p +
+            geom_segment(
+                data = df2,
+                aes(x = .data$x, xend = .data$x, y = .data$y, yend = 0),
+                color = color
+            )
+        p.pos <- p.pos +
+            ylab("Ranked List Metric") +
+            xlim(0, length(p$data$geneList))
+    }
+    if (by == "runningScore") {
+        return(p.res + ggtitle(title))
+    }
+    if (by == "preranked") {
+        return(p.pos + ggtitle(title))
+    }
+
+    p.pos <- p.pos +
+        xlab(NULL) +
+        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+    p.pos <- p.pos +
+        ggtitle(title) +
+        theme(plot.title = element_text(hjust = 0.5, size = rel(2)))
+
+    aplot::gglist(gglist = list(p.pos, p.res), ncol = 1)
+}
+
+get_mnsea_ranked_scores <- function(object, layer = NULL) {
+    if (is.null(layer)) {
+        geneList <- object@collapsed_scores
+    } else {
+        layer <- unique(as.character(layer))
+        if (length(layer) != 1) {
+            yulab.utils::yulab_abort(
+                "`layer` must be `NULL` or a single layer for `gseaplot()`."
+            )
+        }
+        keep_layer <- resolve_mnsea_layers(names(object@layer_scores), layer = layer)
+        if (length(keep_layer) == 0) {
+            yulab.utils::yulab_abort(
+                "No mnsea scores available for the selected `layer`."
+            )
+        }
+        geneList <- object@layer_scores[[keep_layer[1]]]
+    }
+
+    geneList <- geneList[!is.na(geneList)]
+    if (length(geneList) == 0 || is.null(names(geneList))) {
+        yulab.utils::yulab_abort("No ranked mnsea scores available for plotting.")
+    }
+    geneList
+}
+
+resolve_mnsea_gseaplot_id <- function(object, geneSetID) {
+    if (is.null(geneSetID)) {
+        return(default_mnsea_pathway_id(object))
+    }
+
+    geneSetID <- unname(geneSetID)
+    if (length(geneSetID) != 1) {
+        yulab.utils::yulab_abort(
+            "`gseaplot.mnseaResult()` only supports a single pathway."
+        )
+    }
+
+    result_df <- .result_data(object)
+    if (is.numeric(geneSetID)) {
+        idx <- as.integer(geneSetID)
+        if (is.na(idx) || idx < 1 || idx > nrow(result_df)) {
+            yulab.utils::yulab_abort("`geneSetID` is out of bounds.")
+        }
+        return(as.character(result_df$ID[idx]))
+    }
+
+    idx <- resolve_term_rows(object, geneSetID)
+    if (length(idx) == 0) {
+        yulab.utils::yulab_abort(
+            "No mnsea pathway matched the supplied `geneSetID`."
+        )
+    }
+    as.character(result_df$ID[idx[1]])
+}
+
+get_mnsea_geneSet <- function(object, geneSetID, layer = NULL) {
+    feature_df <- fortify_mnsea_contribution(
+        object,
+        level = "feature",
+        pathway_id = geneSetID,
+        layer = layer
+    )
+    geneSet <- unique(as.character(feature_df$Feature))
+    geneSet <- geneSet[!is.na(geneSet) & nzchar(geneSet)]
+
+    if (length(geneSet) == 0 && geneSetID %in% names(object@geneSets)) {
+        geneSet <- unique(as.character(object@geneSets[[geneSetID]]))
+        geneSet <- geneSet[!is.na(geneSet) & nzchar(geneSet)]
+    }
+
+    if (length(geneSet) == 0) {
+        yulab.utils::yulab_abort(
+            "No mnsea features available for the selected pathway/layer."
+        )
+    }
+    geneSet
+}
+
+gsInfo.mnseaResult <- function(object, geneSetID, layer = NULL) {
+    geneSetID <- resolve_mnsea_gseaplot_id(object, geneSetID)
+    geneList <- get_mnsea_ranked_scores(object, layer = layer)
+    geneSet <- get_mnsea_geneSet(object, geneSetID = geneSetID, layer = layer)
+    geneSet <- intersect(geneSet, names(geneList))
+    if (length(geneSet) == 0) {
+        yulab.utils::yulab_abort(
+            "No overlap between mnsea features and ranked scores for the selected pathway/layer."
+        )
+    }
+
+    exponent <- object@params[["exponent"]]
+    if (length(exponent) == 0 || is.na(exponent)) {
+        exponent <- 1
+    }
+
+    df <- gseaScores(geneList, geneSet, exponent, fortify = TRUE)
+    df$ymin <- 0
+    df$ymax <- 0
+    pos <- df$position == 1
+    h <- diff(range(df$runningScore)) / 20
+    df$ymin[pos] <- -h
+    df$ymax[pos] <- h
+    df$geneList <- geneList
+    if (length(object@gene2Symbol) == 0) {
+        df$gene <- names(geneList)
+    } else {
+        df$gene <- object@gene2Symbol[names(geneList)]
+    }
+
+    description <- as.character(get_term_labels(object, geneSetID)[[1]])
+    df$ID <- geneSetID
+    df$Description <- description
+    df$layer <- if (is.null(layer)) "collapsed" else as.character(layer)
+    df
 }
 
 

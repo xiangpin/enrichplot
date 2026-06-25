@@ -9,12 +9,14 @@ fortify_mnsea_contribution(
   x,
   level = c("pathway", "feature"),
   pathway_id = NULL,
+  layer = NULL,
   ...
 )
 
 fortify_mnsea_subnetwork(
   x,
   pathway_id = NULL,
+  layer = NULL,
   include_couplings = TRUE,
   include_isolated = FALSE,
   ...
@@ -26,6 +28,8 @@ fortify_mnsea_subnetwork(
 \item{level}{One of \code{"pathway"} or \code{"feature"}.}
 
 \item{pathway_id}{Optional pathway ID.}
+
+\item{layer}{Optional layer or layers to retain.}
 
 \item{...}{Additional parameters reserved for future extensions.}
 

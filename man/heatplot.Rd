@@ -41,6 +41,8 @@ by default wraps names longer than 30 characters}
 \item{pathway_id}{optional pathway ID for pathway-specific \code{mnseaResult}
 heatmaps.}
 
+\item{layer}{optional layer or layers to retain for \code{mnseaResult} plots.}
+
 \item{value}{fill value for \code{mnseaResult}; use \code{"share"} or
 \code{"contribution"} for term-layer heatmaps and \code{"score"} or \code{"abs_score"}
 for pathway-specific feature heatmaps.}

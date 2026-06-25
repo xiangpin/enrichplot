@@ -32,6 +32,7 @@
 prepare_mnsea_cnetplot_data(
   x,
   pathway_id,
+  layer,
   include_couplings,
   include_isolated = FALSE
 )
@@ -40,6 +41,7 @@ prepare_mnsea_cnetplot_data(
   x,
   layout = igraph::layout_with_kk,
   pathway_id = NULL,
+  layer = NULL,
   include_couplings = TRUE,
   color_category = "#E5C494",
   size_category = 1,
@@ -108,6 +110,8 @@ prepare_mnsea_cnetplot_data(
 \item{...}{additional parameters}
 
 \item{pathway_id}{optional pathway ID for \code{mnseaResult} subnetworks.}
+
+\item{layer}{optional layer or layers to retain for \code{mnseaResult} plots.}
 
 \item{include_couplings}{logical, whether inter-layer coupling edges should
 be kept in \code{mnseaResult} network plots.}

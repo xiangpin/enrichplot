@@ -49,6 +49,8 @@ one of 'category', 'group', 'all' and 'none'.}
 
 \item{pie}{one of 'equal' or 'Count' to set the slice ratio of the pies}
 
+\item{layer}{optional layer or layers to retain for \code{mnseaResult} plots.}
+
 \item{label_format}{a numeric value sets wrap length, alternatively a custom function to format axis labels.}
 
 \item{clusterFunction}{clustering method function, such as \code{stats::kmeans} (default),

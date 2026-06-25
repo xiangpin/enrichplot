@@ -140,6 +140,47 @@ test_that("heatplot works for mnseaResult pathway-specific feature view", {
     expect_true(all(p$data$ID == "T1"))
 })
 
+test_that("gseaplot works for mnseaResult with collapsed scores", {
+    x <- mock_mnsea_result()
+
+    p <- gseaplot(x, geneSetID = "T1", by = "runningScore")
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(c("ID", "Description", "runningScore", "position", "layer") %in% colnames(p$data)))
+    expect_equal(unique(as.character(p$data$layer)), "collapsed")
+    expect_equal(unique(as.character(p$data$ID)), "T1")
+    expect_equal(as.numeric(p$data$geneList), as.numeric(x@collapsed_scores))
+})
+
+test_that("gseaplot mnseaResult supports single-layer ranked scores", {
+    x <- mock_mnsea_result()
+
+    p <- gseaplot(x, geneSetID = "T1", by = "preranked", layer = "protein")
+
+    expect_s3_class(p, "ggplot")
+    expect_equal(unique(as.character(p$data$layer)), "protein")
+    expect_equal(as.numeric(p$data$geneList), as.numeric(x@layer_scores$protein))
+})
+
+test_that("gseaplot mnseaResult resolves numeric geneSetID to stable pathway IDs", {
+    x <- mock_mnsea_result()
+
+    p_idx <- gseaplot(x, geneSetID = 1, by = "runningScore")
+    p_id <- gseaplot(x, geneSetID = "T1", by = "runningScore")
+
+    expect_equal(as.numeric(p_idx$data$runningScore), as.numeric(p_id$data$runningScore))
+    expect_equal(as.character(p_idx$data$Description), as.character(p_id$data$Description))
+})
+
+test_that("gseaplot mnseaResult rejects multi-layer requests", {
+    x <- mock_mnsea_result()
+
+    expect_error(
+        gseaplot(x, geneSetID = "T1", by = "runningScore", layer = c("rna", "protein")),
+        "`layer` must be `NULL` or a single layer"
+    )
+})
+
 test_that("cnetplot uses the default mnsea pathway when pathway_id is NULL", {
     x <- mock_mnsea_result()
 
