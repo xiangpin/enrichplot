@@ -7,6 +7,8 @@
 \alias{upsetplot,enrichResult,ANY-method}
 \alias{upsetplot,gseaResult-method}
 \alias{upsetplot,gseaResult}
+\alias{upsetplot,mnseaResult-method}
+\alias{upsetplot,mnseaResult}
 \title{upsetplot method}
 \usage{
 upsetplot(x, ...)
@@ -14,6 +16,8 @@ upsetplot(x, ...)
 \S4method{upsetplot}{enrichResult}(x, n = 10, ...)
 
 \S4method{upsetplot}{gseaResult}(x, n = 10, ...)
+
+\S4method{upsetplot}{mnseaResult}(x, n = 10, ...)
 }
 \arguments{
 \item{x}{object}
@@ -21,6 +25,12 @@ upsetplot(x, ...)
 \item{...}{additional parameters}
 
 \item{n}{number of categories to be plotted}
+
+\item{layer}{Optional \code{mnsea} layer. When \code{NULL}, use collapsed scores.}
+
+\item{value}{score summary to display for overlapping features.}
+
+\item{core_enrichment}{logical. Should only core mnsea features be used?}
 }
 \value{
 plot

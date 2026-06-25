@@ -234,6 +234,36 @@ test_that("ridgeplot mnseaResult rejects multi-layer requests", {
     )
 })
 
+test_that("upsetplot works for mnseaResult with collapsed scores", {
+    x <- mock_mnsea_result()
+    df <- build_mnsea_upset_df(x, n = 2)
+    p <- upsetplot(x, n = 2)
+
+    expect_s3_class(p, "ggplot")
+    expect_true(all(c("Feature", "score", "abs_score", "layer", "Description") %in% colnames(df)))
+    expect_equal(unique(as.character(df$layer)), "collapsed")
+    expect_setequal(unique(as.character(df$Feature)), c("g1", "g2", "g3"))
+})
+
+test_that("upsetplot mnseaResult supports single-layer feature overlap", {
+    x <- mock_mnsea_result()
+    df <- build_mnsea_upset_df(x, n = 2, layer = "protein", value = "abs_score")
+    p <- upsetplot(x, n = 2, layer = "protein", value = "abs_score")
+
+    expect_s3_class(p, "ggplot")
+    expect_equal(unique(as.character(df$layer)), "protein")
+    expect_setequal(unique(as.numeric(df$abs_score)), c(0.4, 0.9, 1.0))
+})
+
+test_that("upsetplot mnseaResult respects core enrichment filter", {
+    x <- mock_mnsea_result()
+    df_core <- build_mnsea_upset_df(x, n = 2, layer = "rna", core_enrichment = TRUE)
+    df_all <- build_mnsea_upset_df(x, n = 2, layer = "rna", core_enrichment = FALSE)
+
+    expect_false("g3" %in% as.character(df_core$Feature))
+    expect_true("g3" %in% as.character(df_all$Feature))
+})
+
 test_that("cnetplot uses the default mnsea pathway when pathway_id is NULL", {
     x <- mock_mnsea_result()
 

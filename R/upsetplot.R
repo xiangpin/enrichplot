@@ -27,6 +27,17 @@ setMethod("upsetplot", signature(x="gseaResult"),
               upsetplot.gseaResult(x, n, ...)
           })
 
+#' @rdname upsetplot-methods
+#' @aliases upsetplot,mnseaResult
+#' @param layer Optional `mnsea` layer. When `NULL`, use collapsed scores.
+#' @param value score summary to display for overlapping features.
+#' @param core_enrichment logical. Should only core mnsea features be used?
+#' @exportMethod upsetplot
+setMethod("upsetplot", signature(x="mnseaResult"),
+          function(x, n=10, ...) {
+              upsetplot.mnseaResult(x, n, ...)
+          })
+
 
 #' @importFrom rlang check_installed
 upsetplot.enrichResult <- function(x, n=10, ...) {
@@ -96,6 +107,99 @@ upsetplot.gseaResult <- function(x, n = 10, type = "boxplot", ...) {
         theme_dose(font.size = 12) +
         xlab(NULL) + ylab(NULL) +
         ggupset::scale_x_upset(order_by = "degree")
+}
+
+upsetplot.mnseaResult <- function(
+    x,
+    n = 10,
+    type = "boxplot",
+    layer = NULL,
+    value = c("score", "abs_score"),
+    core_enrichment = FALSE,
+    ...
+) {
+    value <- match.arg(value)
+    y <- build_mnsea_upset_df(
+        x,
+        n = n,
+        layer = layer,
+        value = value,
+        core_enrichment = core_enrichment
+    )
+
+    if (type == "boxplot") {
+        ly_dist <- geom_boxplot()
+    } else {
+        ly_dist <- geom_violin()
+    }
+
+    require_suggested("ggupset", "for `upsetplot()`.")
+    ggplot(y, aes(x = .data$Description, y = .data[[value]])) +
+        ly_dist +
+        geom_jitter(width = .2, alpha = .6) +
+        theme_dose(font.size = 12) +
+        xlab(NULL) + ylab(mnsea_plot_label(value)) +
+        ggupset::scale_x_upset(order_by = "degree")
+}
+
+build_mnsea_upset_df <- function(
+    object,
+    n = 10,
+    layer = NULL,
+    value = c("score", "abs_score"),
+    core_enrichment = FALSE
+) {
+    value <- match.arg(value)
+    selected_ids <- resolve_mnsea_ridge_ids(object, showCategory = n)
+    geneList <- get_mnsea_ranked_scores(object, layer = layer)
+
+    feature_df <- do.call(
+        rbind,
+        lapply(selected_ids, function(id) {
+            df <- fortify_mnsea_contribution(
+                object,
+                level = "feature",
+                pathway_id = id,
+                layer = layer
+            )
+            if (core_enrichment && "is_core" %in% colnames(df)) {
+                df <- df[df$is_core %in% TRUE, , drop = FALSE]
+            }
+            df
+        })
+    )
+
+    if (is.null(feature_df) || nrow(feature_df) == 0) {
+        yulab.utils::yulab_abort(
+            "No mnsea features available for upsetplot after filtering."
+        )
+    }
+
+    feature_df <- feature_df[feature_df$ID %in% selected_ids, , drop = FALSE]
+    feature_df$Feature <- as.character(feature_df$Feature)
+    feature_df <- feature_df[feature_df$Feature %in% names(geneList), , drop = FALSE]
+    if (nrow(feature_df) == 0) {
+        yulab.utils::yulab_abort(
+            "No overlap between mnsea features and ranked scores for upsetplot."
+        )
+    }
+
+    labels <- get_term_labels(object, selected_ids)
+    feature_df$Description <- unname(as.character(labels[feature_df$ID]))
+    feature_df <- feature_df[!duplicated(feature_df[, c("Feature", "ID")]), , drop = FALSE]
+
+    category <- split(feature_df$Description, feature_df$Feature)
+    feature_ids <- names(category)
+    score <- geneList[feature_ids]
+    y <- data.frame(
+        Feature = feature_ids,
+        score = as.numeric(score),
+        abs_score = abs(as.numeric(score)),
+        layer = if (is.null(layer)) "collapsed" else as.character(layer),
+        stringsAsFactors = FALSE
+    )
+    y$Description <- unname(category[y$Feature])
+    y
 }
 
 ## @rdname upsetplot-methods
